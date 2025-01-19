@@ -2,7 +2,7 @@
 Implements a default login provider using Flask-Login.
 """
 
-from flask_spark.helpers.login_provider import AbstractLoginProvider
+from flaskspark.helpers.login_provider import AbstractLoginProvider
 
 class DefaultLoginProvider(AbstractLoginProvider):
     """

@@ -2,7 +2,7 @@
 Implements an OAuth-based login provider.
 """
 
-from flask_spark.helpers.login_provider import AbstractLoginProvider
+from flaskspark.helpers.login_provider import AbstractLoginProvider
 
 class OAuthLoginProvider(AbstractLoginProvider):
     """

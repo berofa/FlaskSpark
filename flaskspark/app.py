@@ -4,14 +4,16 @@ Flask application factory class with configurable login providers.
 
 from dotenv import load_dotenv
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 import pkgutil
 
 # Global extensions
 db = SQLAlchemy()
 migrate = Migrate()
+login_manager = LoginManager()
 
 class FlaskSpark:
     """
@@ -43,11 +45,13 @@ class FlaskSpark:
         # Initialize global extensions
         db.init_app(self.app)
         migrate.init_app(self.app, db)
+        login_manager.init_app(self.app)
 
         # Configure login provider if provided
         self.login_provider = login_provider
         if self.login_provider:
-            self.login_provider.app = self.app
+            #self.login_provider.app = self.app
+            self.login_provider = self.login_provider(self.app)
             self.login_provider.configure()
 
         # Automatically register models and views

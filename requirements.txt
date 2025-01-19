@@ -1,0 +1,12 @@
+authlib
+cssmin
+flask
+flask-assets
+flask_login
+flask-migrate
+flask_session
+flask_sqlalchemy
+jsmin
+libsass
+python-dotenv
+requests
