@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="author" content="Martin Weissen">
+        <meta name="description" content="weissen.me Dashboard">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>weissen.me</title>
+
+        <link rel="shortcut icon" href="{{url_for('static', filename='images/favicon/favicon.ico')}}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{url_for('static', filename='images/favicon/apple-touch-icon.png')}}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{url_for('static', filename='images/favicon/favicon-32x32.png')}}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{url_for('static', filename='images/favicon/favicon-16x16.png')}}">
+        <link rel="manifest" href="{{url_for('static', filename='images/favicon/site.webmanifest')}}">
+
+        <link rel="stylesheet" href= "{{ url_for('static',filename='styles/app.min.css') }}" type= "text/css">
+    </head>
+
+    <body>
+        <div class="wrapper">
+            {% block body %}{% endblock %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+            <a href="{{ url_for('auth.logout') }}">Sign out</a>
+        </div>
+
+    	<script src="{{url_for('static', filename='scripts/app.min.js')}}"></script>
+    </body>
+
+</html>
