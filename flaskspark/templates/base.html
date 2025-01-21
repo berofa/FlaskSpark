@@ -3,11 +3,11 @@
 
     <head>
         <meta charset="utf-8" />
-        <meta name="author" content="Martin Weissen">
-        <meta name="description" content="weissen.me Dashboard">
+        <meta name="author" content="berofa">
+        <meta name="description" content="FlaskSpark">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>weissen.me</title>
+        <title>FlaskSpark</title>
 
         <link rel="shortcut icon" href="{{url_for('static', filename='images/favicon/favicon.ico')}}">
         <link rel="apple-touch-icon" sizes="180x180" href="{{url_for('static', filename='images/favicon/apple-touch-icon.png')}}">
@@ -33,7 +33,6 @@
             </div>
             {% endif %}
             {% endwith %}
-            <a href="{{ url_for('auth.logout') }}">Sign out</a>
         </div>
 
     	<script src="{{url_for('static', filename='scripts/app.min.js')}}"></script>

@@ -3,11 +3,12 @@ Flask application factory class with configurable login providers.
 """
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, session
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
+import os
 import pkgutil
 
 # Global extensions
@@ -35,7 +36,11 @@ class FlaskSpark:
         self.app_module = app_module
 
         # Create the Flask app instance
-        self.app = Flask(__name__)
+        self.app = Flask(__name__, template_folder="templates")
+
+        # Add the FlaskSpark templates
+        flaskspark_template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "templates"))
+        self.app.jinja_loader.searchpath.append(flaskspark_template_dir)
 
         # Load configuration
         self.app.config.from_object("config.Config")
@@ -45,18 +50,20 @@ class FlaskSpark:
         # Initialize global extensions
         db.init_app(self.app)
         migrate.init_app(self.app, db)
-        login_manager.init_app(self.app)
 
         # Configure login provider if provided
         self.login_provider = login_provider
         if self.login_provider:
-            #self.login_provider.app = self.app
+            login_manager.init_app(self.app)
             self.login_provider = self.login_provider(self.app)
             self.login_provider.configure()
 
         # Automatically register models and views
-        self.register_application_models()
-        self.register_application_views()
+        self._register_application_models()
+        self._register_application_views()
+
+        # Register user layout context processor
+        self._register_user_layout()
 
     def __getattr__(self, name):
         """
@@ -86,14 +93,14 @@ class FlaskSpark:
             imported_modules[name] = import_module(name)
         return imported_modules
 
-    def register_application_models(self):
+    def _register_application_models(self):
         """
         Automatically imports and registers all models.
         """
         models_package = f"{self.app_module}.models"
         self._import_submodules(models_package)
 
-    def register_application_views(self):
+    def _register_application_views(self):
         """
         Automatically imports and registers all views.
         """
@@ -112,3 +119,28 @@ class FlaskSpark:
                         raise ValueError(f"Login is required for view {endpoint}, but no login provider is configured.")
 
                     self.app.add_url_rule(url, view_func=attribute.as_view(endpoint))
+    
+    # Get the layout from the session
+    # @todo: Implement this functionality. Currently it is static...
+    def _register_user_layout(self):
+        """
+        Registers a context processor to inject the user's chosen layout into templates.
+        """
+        @self.app.context_processor
+        def inject_user_layout():
+            """
+            Injects the user's chosen layout into all templates.
+
+            Checks if the layout specified in the session exists in the 
+            'app/resources/templates/layouts' directory. If not found or 
+            invalid, defaults to 'layouts/default.html'.
+            """
+            layouts_dir = os.path.join(self.app.root_path, 'templates', 'layouts')
+            user_layout = session.get('layout', 'layouts/default.html')  # Default layout
+            
+            # Validate the user-selected layout
+            layout_path = os.path.join(layouts_dir, user_layout)
+            if not os.path.isfile(layout_path):
+                user_layout = 'layouts/default.html'
+
+            return {'layout': user_layout}
