@@ -24,6 +24,20 @@ class AbstractLoginProvider(ABC):
         self.app = app
         self.login_manager = LoginManager()  # Initialize LoginManager
         self.login_manager.init_app(app)  # Attach LoginManager to the Flask app
+        self.check_configuration(app.config)
+
+    @abstractmethod
+    def check_configuration(self, config):
+        """
+        Check the configuration of the login provider.
+
+        Args:
+            config (dict): The Flask application configuration.
+
+        Raises:
+            ValueError: If the configuration is invalid.
+        """
+        pass
 
     @abstractmethod
     def configure(self):
