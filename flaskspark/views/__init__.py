@@ -1,0 +1,1 @@
+"""FlaskSpark views package."""
