@@ -133,7 +133,9 @@ class OAuthLoginProvider(AbstractLoginProvider):
             session["nonce"] = nonce
             session["next"] = request.args.get("next")
             session.modified = True
-            redirect_uri = url_for("auth.callback", _external=True)
+            redirect_uri = self.app.config.get("OAUTH_REDIRECT_URI") or url_for(
+                "auth.callback", _external=True
+            )
             client = self.oauth.create_client(self.app.config["OAUTH_NAME"])
             return client.authorize_redirect(redirect_uri, state=state, nonce=nonce)
 
