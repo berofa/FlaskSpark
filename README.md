@@ -200,6 +200,13 @@ OAUTH_CLIENT_SECRET
 OAUTH_SCOPE
 ```
 
+Recommended behind reverse proxies / SSO gateways:
+```
+OAUTH_REDIRECT_URI=https://your-public-host/auth/callback
+```
+If `OAUTH_REDIRECT_URI` is set, FlaskSpark uses it directly for the OAuth redirect.
+Otherwise it builds the callback URL dynamically with `url_for(..., _external=True)`.
+
 Optional role mapping config:
 ```
 OAUTH_GROUPS_CLAIM=groups
@@ -260,7 +267,14 @@ SECRET_KEY = "..."
 SQLALCHEMY_DATABASE_URI = "sqlite:///instance/app.db"
 BABEL_DEFAULT_LOCALE = "en"
 BABEL_SUPPORTED_LOCALES = ["en", "de"]
+APP_BIND_HOST = "0.0.0.0"
+APP_PORT = 5067
 ```
+
+Server binding notes:
+- `APP_BIND_HOST` is the local interface used by `app.run(...)` (for example `0.0.0.0` in container/LAN setups).
+- `APP_PORT` is the listening port.
+- `APP_HOST` remains available as an optional external hostname setting for app-level URL logic, but it is not used for socket binding.
 
 Environment defaults:
 - `ENVIRONMENT=development` sets `FLASK_ENV=development` and `DEBUG=True`.

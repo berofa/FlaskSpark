@@ -83,6 +83,7 @@ class Config:
     OAUTH_CLIENT_ID = os.environ.get("OAUTH_CLIENT_ID")
     OAUTH_CLIENT_SECRET = os.environ.get("OAUTH_CLIENT_SECRET")
     OAUTH_SCOPE = os.environ.get("OAUTH_SCOPE")
+    OAUTH_REDIRECT_URI = os.environ.get("OAUTH_REDIRECT_URI")
     OAUTH_GROUPS_CLAIM = os.environ.get("OAUTH_GROUPS_CLAIM", "groups")
     OAUTH_ROLE_PRIORITY = _split_csv(os.environ.get("OAUTH_ROLE_PRIORITY"))
     OAUTH_ROLE_MAP = _parse_role_map(os.environ.get("OAUTH_ROLE_MAP"))
@@ -108,4 +109,5 @@ class Config:
 
     """Server configuration."""
     APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
+    APP_BIND_HOST = os.environ.get("APP_BIND_HOST", "0.0.0.0")
     APP_PORT = int(os.environ.get("APP_PORT", "5067"))
