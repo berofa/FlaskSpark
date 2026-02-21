@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "FlaskSpark"
+version = "0.1.0"
+description = "FlaskSpark is a lightweight and customizable Flask boilerplate designed to ignite your web application development process."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+  { name = "berofa" }
+]
+requires-python = ">=3.8"
+dependencies = [
+  "authlib",
+  "flask>=2.0",
+  "flask-assets",
+  "flask-babel",
+  "flask-login",
+  "flask-migrate",
+  "flask-session",
+  "flask-sqlalchemy",
+  "libsass",
+  "python-dotenv",
+  "rcssmin",
+  "requests",
+  "rjsmin",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["flaskspark*"]
+
+[tool.setuptools.package-data]
+flaskspark = [
+  "templates/**/*.html",
+  "static/**/*",
+]
