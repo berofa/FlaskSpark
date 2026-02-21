@@ -16,6 +16,7 @@ from flaskspark.helpers.login_provider import AbstractLoginProvider
 from flaskspark.models.role import Role
 from flaskspark.models.user import User
 
+
 logger = logging.getLogger(__name__)
 
 
