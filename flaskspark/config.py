@@ -105,7 +105,10 @@ class Config:
     ASSETS_JS_OUTPUT = os.environ.get("ASSETS_JS_OUTPUT", "scripts/app.min.js")
     ASSETS_SCSS_FILTERS = os.environ.get("ASSETS_SCSS_FILTERS", "libsass,rcssmin")
     ASSETS_JS_FILTERS = os.environ.get("ASSETS_JS_FILTERS", "rjsmin")
+    ASSETS_SCSS_INCLUDE_PATHS = _split_csv(os.environ.get("ASSETS_SCSS_INCLUDE_PATHS"))
     ASSETS_BUNDLES = []
+    VENDOR_INCLUDE_BOOTSTRAP = os.environ.get("VENDOR_INCLUDE_BOOTSTRAP", "False").lower() == "true"
+    APP_LAYOUT_TEMPLATE = os.environ.get("APP_LAYOUT_TEMPLATE", "layouts/framework.html")
 
     """Server configuration."""
     APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")

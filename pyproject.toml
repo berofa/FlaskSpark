@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FlaskSpark"
-version = "0.1.1"
+version = "0.1.2"
 description = "FlaskSpark is a lightweight and customizable Flask boilerplate designed to ignite your web application development process."
 readme = "README.md"
 license = { file = "LICENSE" }

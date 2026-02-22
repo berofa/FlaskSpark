@@ -242,28 +242,27 @@ class FlaskSpark:
         Raises:
             ImportError: If the LoginProvider class cannot be found.
         """
-        try:
-            # Convert the class name to the corresponding module name
-            module_name = f"login_provider_{login_provider_name.lower()}"
-            module_path = f"flaskspark.helpers.{module_name}"
+        module_name = f"login_provider_{login_provider_name.lower()}"
+        class_name = f"{login_provider_name}LoginProvider"
+        candidate_modules = [
+            f"{self.app_module}.helpers.{module_name}",
+            f"flaskspark.helpers.{module_name}",
+        ]
+        last_error = None
 
-            # Dynamically import the module
-            module = importlib.import_module(module_path)
+        for module_path in candidate_modules:
+            try:
+                module = importlib.import_module(module_path)
+                login_provider_class = getattr(module, class_name)
+                return login_provider_class(self.app)
+            except (ImportError, AttributeError) as exc:
+                last_error = exc
 
-            # Construct the class name dynamically
-            class_name = f"{login_provider_name}LoginProvider"
-
-            # Retrieve the class dynamically
-            login_provider_class = getattr(module, class_name)
-
-            # Instantiate the class with the Flask app
-            return login_provider_class(self.app)
-
-        except (ImportError, AttributeError) as e:
-            raise ImportError(
-                f"Could not load LoginProvider '{login_provider_name}'. Ensure the module is named "
-                f"'login_provider_{login_provider_name.lower()}' and the class is named '{login_provider_name}LoginProvider'."
-            ) from e
+        raise ImportError(
+            f"Could not load LoginProvider '{login_provider_name}'. "
+            f"Tried modules: {', '.join(candidate_modules)}. "
+            f"Expected class name: '{class_name}'."
+        ) from last_error
 
     def _register_flaskspark_models(self):
         """
@@ -403,7 +402,7 @@ class FlaskSpark:
 
             Checks if the layout specified in the session exists in the 
             'app/resources/templates/layouts' directory. If not found or 
-            invalid, defaults to 'layouts/default.html'.
+            invalid, defaults to 'layouts/framework.html'.
 
             Args:
                 None
@@ -412,18 +411,17 @@ class FlaskSpark:
                 dict: Layout mapping for template context.
             """
             layouts_dir = os.path.join(self.app.root_path, 'templates', 'layouts')
-            #user_layout = session.get('layout', 'layouts/default.html')
-            user_layout = "layouts/main.html"
+            user_layout = self.app.config.get("APP_LAYOUT_TEMPLATE", "layouts/framework.html")
 
             try:
                 self.search_directory(user_layout, dir_type="template")
             except FileNotFoundError as e:
                 print(e)
             
-            # Validate the user-selected layout
+            # Validate the user-selected layout.
             layout_path = os.path.join(layouts_dir, user_layout)
             if not os.path.isfile(layout_path):
-                user_layout = 'layouts/default.html'
+                user_layout = "layouts/framework.html"
 
             return {'layout': user_layout}
 
@@ -493,6 +491,9 @@ class FlaskSpark:
             return
 
         assets = Environment(self.app)
+        # Ensure bundle source resolution works for both app-local assets and
+        # FlaskSpark-provided vendored assets.
+        assets.load_path = [self.app_static_dir, self.flaskspark_static_dir]
         environment = (self.app.config.get("ENVIRONMENT") or "development").lower()
         if environment == "production":
             assets.auto_build = False
@@ -519,15 +520,26 @@ class FlaskSpark:
 
         self._validate_asset_filters(scss_filters)
         self._validate_asset_filters(js_filters)
+        self._configure_scss_include_paths(scss_filters)
         self._ensure_asset_output_dirs(static_root, [scss_output, js_output])
 
+        scss_sources = [scss_entry]
+        js_sources = [js_entry]
+
+        # If enabled, merge framework-provided Bootstrap sources into the
+        # app bundles so outputs stay app-local (styles/app.min.css and
+        # scripts/app.min.js) and follow the same minification pipeline.
+        if self.app.config.get("VENDOR_INCLUDE_BOOTSTRAP", False):
+            scss_sources = ["vendor/bootstrap/scss/bootstrap.scss", *scss_sources]
+            js_sources = ["vendor/bootstrap/js/bootstrap.bundle.js", *js_sources]
+
         scss_bundle = Bundle(
-            scss_entry,
+            *scss_sources,
             filters=scss_filters,
             output=scss_output,
         )
         js_bundle = Bundle(
-            js_entry,
+            *js_sources,
             filters=js_filters,
             output=js_output,
         )
@@ -625,6 +637,66 @@ class FlaskSpark:
             if directory and not os.path.exists(directory):
                 os.makedirs(directory, exist_ok=True)
 
+    def _configure_scss_include_paths(self, scss_filters: str) -> None:
+        """
+        Configure libsass include paths for shorter and more robust SCSS imports.
+
+        Args:
+            scss_filters (str): Comma-separated SCSS filter list.
+
+        Returns:
+            None
+        """
+        filter_names = [item.strip() for item in scss_filters.split(",") if item.strip()]
+        if "libsass" not in filter_names:
+            return
+
+        include_paths: List[str] = []
+        configured_paths = self.app.config.get("ASSETS_SCSS_INCLUDE_PATHS", [])
+        if isinstance(configured_paths, str):
+            configured_paths = [item.strip() for item in configured_paths.split(",") if item.strip()]
+
+        for path in configured_paths:
+            include_paths.append(self._resolve_asset_path(path))
+
+        # Always include app vendor assets. Include FlaskSpark vendor assets so
+        # imports like "bootstrap/scss/..." resolve without relative path hacks.
+        include_paths.append(os.path.join(self.app_static_dir, "vendor"))
+        include_paths.append(os.path.join(self.flaskspark_static_dir, "vendor"))
+
+        existing = self.app.config.get("LIBSASS_INCLUDES", [])
+        if isinstance(existing, str):
+            existing = [item.strip() for item in existing.split(",") if item.strip()]
+
+        merged = []
+        for path in [*existing, *include_paths]:
+            if path and path not in merged:
+                merged.append(path)
+        self.app.config["LIBSASS_INCLUDES"] = merged
+
+    def _resolve_asset_path(self, path: str) -> str:
+        """
+        Resolve asset include path candidates to an absolute path.
+
+        Resolution order:
+            1. absolute path
+            2. app base directory
+            3. app static directory
+            4. current working directory
+        """
+        if os.path.isabs(path):
+            return path
+
+        candidates = [
+            os.path.join(self.app_base_dir, path),
+            os.path.join(self.app_static_dir, path),
+            os.path.join(os.getcwd(), path),
+        ]
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                return os.path.abspath(candidate)
+        return os.path.abspath(candidates[0])
+
     @staticmethod
     def search_directory(filename, dir_type="template"):
         """
@@ -632,7 +704,7 @@ class FlaskSpark:
         and then in the corresponding directory of FlaskSpark.
 
         Args:
-            filename (str): The relative path to the file (e.g., 'views/main/get.html' or 'css/style.css').
+            filename (str): The relative path to the file (e.g., 'layouts/framework.html' or 'css/style.css').
             dir_type (str): The type of directory ('template' or 'static').
 
         Returns:
