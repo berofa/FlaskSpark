@@ -1,63 +1,96 @@
 """
 Base method view helpers for FlaskSpark.
 
-Provides a helper to return JSON or HTML responses and resolve templates from
-either the application or FlaskSpark template directories.
+Lets every view serve HTML for browsers and JSON for API clients from the same
+URL (content negotiation via Accept header, `?format=json` or a JSON body).
 """
 
-from flask import jsonify, request
-from flask import current_app, render_template as flask_render_template
+from flask import flash, jsonify, redirect, render_template
 from flask.views import MethodView
-import os
+
+from flaskspark.helpers.content_negotiation import to_jsonable, wants_json
+
 
 class FlaskSparkMethodView(MethodView):
     """
     Base class for FlaskSpark class-based views.
     """
 
-    # Restrict access to authenticated users only
-    #decorators = [login_required]
-    
-    #@staticmethod
-    def return_response(self, data, template=None):
+    @staticmethod
+    def wants_json():
         """
-        Generates a response based on the request type.
-
-        This function determines whether the request expects a JSON or HTML response. 
-        If the request expects JSON, it returns a JSON response with the given data. 
-        If an HTML template is provided, it renders the template using the data.
+        Return True if the current request expects a JSON response.
 
         Args:
-            data (dict): The data to include in the response, either as JSON or for rendering the template.
-            template (str, optional): The name of the HTML template to render. Defaults to None.
+            None
 
         Returns:
-            Response: A Flask response object containing either JSON data or rendered HTML content.
+            bool: True for JSON, False for HTML.
+        """
+        return wants_json()
+
+    def return_response(self, data, template=None, status=200, context=None,
+                        redirect_to=None, message=None, category="success"):
+        """
+        Return the view's data as JSON or as HTML, depending on the request.
+
+        JSON: `data` is converted to JSON-serialisable types and returned with
+        `status`. HTML: if `redirect_to` is given (typical after a POST), `message`
+        is flashed and the client is redirected; otherwise `template` is rendered
+        with `data` and `context` as template variables.
+
+        Args:
+            data (dict | list): The payload; also the template variables if it is a dict.
+            template (str, optional): Template to render for HTML requests.
+            status (int, optional): HTTP status code. Defaults to 200.
+            context (dict, optional): Additional template variables (HTML only, not exposed as JSON).
+            redirect_to (str, optional): URL to redirect HTML clients to instead of rendering.
+            message (str, optional): Flash message for HTML clients (only with `redirect_to`).
+            category (str, optional): Flash category. Defaults to "success".
+
+        Returns:
+            Response: A Flask response object.
 
         Raises:
-            FileNotFoundError: If the template cannot be found.
+            ValueError: If neither `template` nor `redirect_to` is given for an HTML request.
+            jinja2.TemplateNotFound: If the template exists neither in the application nor in FlaskSpark.
         """
-        if request.is_json:
-            # Return JSON response if the request expects JSON
-            return jsonify(data)
-        
-        # Applikations-Templates prüfen
-        template_path_app = os.path.join(current_app.template_folder, template)
-        if os.path.exists(template_path_app):
-            return flask_render_template(template, **data)
-        
-        # FlaskSpark-Templates prüfen
-        flaskspark_template_dir = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../templates")
-        )
-        template_path_spark = os.path.join(flaskspark_template_dir, template)
+        if wants_json():
+            return jsonify(to_jsonable(data)), status
 
-        if os.path.exists(template_path_spark):
-            # FlaskSpark-Templates verwenden
-            return flask_render_template(template, **data)
-        
-        # Fehler ausgeben, wenn das Template nicht gefunden wurde
-        raise FileNotFoundError(f"Template '{template}' not found in application or FlaskSpark.")
+        if redirect_to:
+            if message:
+                flash(message, category)
+            return redirect(redirect_to)
 
-        # Render and return HTML response if the request does not expect JSON
-        #return render_template(template, **data)
+        if not template:
+            raise ValueError("return_response() needs a template or redirect_to for HTML requests.")
+
+        # The Jinja loader searches the application templates first, then FlaskSpark's.
+        variables = dict(data) if isinstance(data, dict) else {"data": data}
+        variables.update(context or {})
+        return render_template(template, **variables), status
+
+    def return_error(self, message, status=400, redirect_to=None, category="danger", **details):
+        """
+        Return an error as JSON (`{"error": ..., **details}`) or flash it and redirect.
+
+        Args:
+            message (str): Human-readable error message.
+            status (int, optional): HTTP status code for JSON clients. Defaults to 400.
+            redirect_to (str, optional): URL to redirect HTML clients to. Without it,
+                HTML clients get a plain error response with `status`.
+            category (str, optional): Flash category. Defaults to "danger".
+            **details: Additional fields for the JSON body.
+
+        Returns:
+            Response: A Flask response object.
+        """
+        if wants_json():
+            return jsonify(to_jsonable({"error": message, **details})), status
+
+        if redirect_to:
+            flash(message, category)
+            return redirect(redirect_to)
+
+        return message, status
