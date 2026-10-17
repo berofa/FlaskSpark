@@ -180,6 +180,9 @@ class FlaskSpark:
             # Register user layout context processor
             self._register_user_layout()
 
+            # Return errors as JSON to clients that requested JSON
+            self._register_error_handlers()
+
         # Handle errors during initialization
         self._handle_errors(initialization_logic)
 
@@ -325,6 +328,30 @@ class FlaskSpark:
                         raise ValueError(f"Login is required for view {endpoint}, but no login provider is configured.")
 
                     self.app.add_url_rule(url, view_func=attribute.as_view(endpoint))
+
+    def _register_error_handlers(self):
+        """
+        Registers error handlers that answer JSON clients with a JSON error body.
+
+        HTML clients keep Flask's default error pages.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        from werkzeug.exceptions import HTTPException, InternalServerError
+        from flaskspark.helpers.content_negotiation import wants_json
+
+        def json_error(error):
+            if not wants_json():
+                return error
+            return jsonify({"error": error.name, "message": error.description, "status": error.code}), error.code
+
+        self.app.register_error_handler(HTTPException, json_error)
+        # Unhandled exceptions arrive as InternalServerError (500).
+        self.app.register_error_handler(InternalServerError, json_error)
 
     def _is_database_required(self):
         """

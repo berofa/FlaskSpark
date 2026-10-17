@@ -480,20 +480,61 @@ class TaskDetailApiView(FlaskSparkMethodView):
         return "", 204
 ```
 
-### Optional helper: `return_response(...)`
-`FlaskSparkMethodView` provides `return_response(data, template=...)`:
-- if request is JSON, returns JSON
-- otherwise renders the given template
+### HTML and JSON from the same view: `return_response(...)`
+Every action of a `FlaskSparkMethodView` can serve both browsers (HTML) and API clients (JSON) from the same URL.
+`return_response(...)` decides per request (content negotiation):
+
+1. Query parameter `?format=json` (or `?format=html` to force HTML)
+2. `Accept` header that prefers `application/json` over `text/html`
+3. Fallback: JSON request body (`Content-Type: application/json`)
+
+A wildcard `Accept: */*` (e.g. curl's default) gets HTML. `self.wants_json()` exposes the decision to your own code.
+
+Signature:
+```python
+self.return_response(data, template=None, status=200, context=None,
+                     redirect_to=None, message=None, category="success")
+self.return_error(message, status=400, redirect_to=None, category="danger", **details)
+```
+
+- **JSON:** `data` is returned with `status`. Values are made JSON-serialisable first
+  (`datetime`/`date` as ISO 8601, `Decimal` as float, sets/tuples as lists, dataclasses, objects with `to_dict()`).
+- **HTML:** `template` is rendered with the keys of `data` plus `context` as template variables.
+  `context` is for template-only values that should not be part of the JSON.
+- **HTML after a POST:** with `redirect_to` the client is redirected (Post/Redirect/Get), `message` is flashed.
+- **Errors:** `return_error(...)` returns `{"error": message, **details}` with `status` to JSON clients and
+  flashes + redirects HTML clients.
+- **HTTP errors** (404, 405, 500 …) are returned as `{"error", "message", "status"}` to JSON clients;
+  HTML clients keep the regular error pages.
 
 Example:
 ```python
-class DashboardView(FlaskSparkMethodView):
-    url = "/dashboard"
-    endpoint = "dashboard"
+from flask import request
+from flaskspark.views.flaskspark_method_view import FlaskSparkMethodView
+
+
+class TasksView(FlaskSparkMethodView):
+    url = "/tasks"
+    endpoint = "tasks"
 
     def get(self):
-        data = {"title": "Dashboard"}
-        return self.return_response(data, template="dashboard.html")
+        return self.return_response({"tasks": load_tasks()}, template="tasks.html")
+
+    def post(self):
+        # Form fields from the page or a JSON body from API clients
+        payload = (request.get_json(silent=True) if request.is_json else request.form) or {}
+        title = (payload.get("title") or "").strip()
+        if not title:
+            return self.return_error("title is required", redirect_to="/tasks")
+        task = create_task(title)
+        return self.return_response(task, status=201, redirect_to="/tasks", message="Task created")
+```
+
+```sh
+curl http://localhost:5000/tasks                                   # HTML
+curl -H 'Accept: application/json' http://localhost:5000/tasks     # JSON
+curl http://localhost:5000/tasks?format=json                       # JSON
+curl -H 'Content-Type: application/json' -d '{"title":"Buy milk"}' http://localhost:5000/tasks  # 201 + JSON
 ```
 
 ### Login-protected class-based views
