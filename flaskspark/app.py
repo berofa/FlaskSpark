@@ -525,7 +525,9 @@ class FlaskSpark:
         if environment == "production":
             assets.auto_build = False
             assets.debug = False
-            assets.cache = True
+            # The filter cache is keyed on the entry file's content only, so edits in imported
+            # partials (e.g. _theme.scss) are not picked up; apps can turn it off via ASSETS_CACHE.
+            assets.cache = self.app.config.get("ASSETS_CACHE", True)
             assets.manifest = "file"
             self.app.config.setdefault("ASSETS_BUILD_ON_START", True)
         else:

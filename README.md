@@ -374,6 +374,7 @@ Why not just `app.run()`?
 | `ASSETS_DEBUG` | `false` | Asset debug flag. |
 | `ASSETS_BUILD_ON_START` | `false` | Forces bundle builds at startup. |
 | `ASSETS_FORCE_BUILD` | `false` | Forces rebuild even when cached outputs exist. |
+| `ASSETS_CACHE` | `true` in production | webassets filter cache. It is keyed on the entry file's content, so changes in imported SCSS partials are missed; set `False` (app config) together with `ASSETS_FORCE_BUILD` to rebuild from all sources on start. |
 | `ASSETS_SCSS_ENTRY` | `scss/app.scss` | Main SCSS entry file (relative to app static root). |
 | `ASSETS_JS_ENTRY` | `js/app.js` | Main JS entry file (relative to app static root). |
 | `ASSETS_SCSS_OUTPUT` | `styles/app.min.css` | Main CSS output path. |

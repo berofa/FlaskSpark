@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Production no longer overrides `ASSETS_CACHE`: apps can disable the webassets filter cache, which
+  missed changes in imported SCSS partials.
+
 ## [0.1.2] - 2026-02-22
 
 ### Highlights
