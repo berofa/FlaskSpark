@@ -21,6 +21,24 @@ def _split_csv(value: Optional[str]) -> List[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+def _parse_role_defaults(value: Optional[str]) -> list:
+    """
+    Parse a role defaults string into a list of (name, is_admin, rank).
+
+    Args:
+        value (str | None): Format "Name:rank[:admin],Name2:rank2".
+
+    Returns:
+        list[tuple[str, bool, int]]: Parsed roles, empty when unset.
+    """
+    roles = []
+    for item in _split_csv(value):
+        parts = [part.strip() for part in item.split(":")]
+        if len(parts) >= 2 and parts[0] and parts[1].lstrip("-").isdigit():
+            roles.append((parts[0], len(parts) > 2 and parts[2].lower() == "admin", int(parts[1])))
+    return roles
+
+
 def _parse_role_map(value: Optional[str]) -> dict:
     """
     Parse a role map string into a dict.
@@ -87,6 +105,7 @@ class Config:
     OAUTH_GROUPS_CLAIM = os.environ.get("OAUTH_GROUPS_CLAIM", "groups")
     OAUTH_ROLE_PRIORITY = _split_csv(os.environ.get("OAUTH_ROLE_PRIORITY"))
     OAUTH_ROLE_MAP = _parse_role_map(os.environ.get("OAUTH_ROLE_MAP"))
+    ROLE_DEFAULTS = _parse_role_defaults(os.environ.get("ROLE_DEFAULTS"))
 
     """Babel (i18n) configuration."""
     BABEL_DEFAULT_LOCALE = os.environ.get("BABEL_DEFAULT_LOCALE", "en")

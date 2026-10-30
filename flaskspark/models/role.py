@@ -4,9 +4,19 @@ Role model and helpers for FlaskSpark.
 
 from __future__ import annotations
 
+from flask import current_app
 from flaskspark import db
 from sqlalchemy import inspect
 from sqlalchemy.exc import OperationalError
+
+
+#: Default roles as (name, is_admin, rank); apps override them with the config value ROLE_DEFAULTS.
+DEFAULT_ROLES = [
+    ("Administrators", True, 100),
+    ("Editors", False, 80),
+    ("Users", False, 50),
+    ("Guests", False, 10),
+]
 
 
 class Role(db.Model):
@@ -44,7 +54,8 @@ class Role(db.Model):
         """
         Ensure the default roles exist.
 
-        Creates the default portal roles if they are missing.
+        Creates the default portal roles if they are missing. The roles come from the config value
+        ROLE_DEFAULTS (list of (name, is_admin, rank)), otherwise from DEFAULT_ROLES.
 
         Args:
             None
@@ -62,12 +73,7 @@ class Role(db.Model):
                 return {}
         except OperationalError:
             return {}
-        defaults = [
-            ("Administrators", True, 100),
-            ("Editors", False, 80),
-            ("Users", False, 50),
-            ("Guests", False, 10),
-        ]
+        defaults = current_app.config.get("ROLE_DEFAULTS") or DEFAULT_ROLES
         roles = {}
         for name, is_admin, rank in defaults:
             role = Role.query.filter_by(name=name).first()

@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+- `ROLE_DEFAULTS` config: apps choose the default roles that `Role.ensure_defaults()` creates (default unchanged:
+  Administrators, Editors, Users, Guests).
+
 ### Fixed
 - Production no longer overrides `ASSETS_CACHE`: apps can disable the webassets filter cache, which
   missed changes in imported SCSS partials.

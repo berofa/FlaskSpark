@@ -366,6 +366,7 @@ Why not just `app.run()`?
 | `OAUTH_GROUPS_CLAIM` | `groups` | Claim name used for group extraction. |
 | `OAUTH_ROLE_PRIORITY` | `[]` | Ordered group names for role mapping (CSV env input). |
 | `OAUTH_ROLE_MAP` | `{}` | Group-to-role mapping (format: `group:Role,group2:Role2`). |
+| `ROLE_DEFAULTS` | `[]` | Default roles created at login/startup (format: `Name:rank[:admin],Name2:rank2`; in code a list of `(name, is_admin, rank)`). Empty: Administrators, Editors, Users, Guests. |
 | `BABEL_DEFAULT_LOCALE` | `en` | Fallback locale. |
 | `BABEL_SUPPORTED_LOCALES` | `["en"]` | Allowed locales (CSV env input). |
 | `BABEL_TRANSLATION_DIRECTORIES` | `locales` | Translation directory path(s) for Flask-Babel. |
