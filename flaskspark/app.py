@@ -14,6 +14,7 @@ from sqlalchemy import inspect
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql import text
 import importlib
+import importlib.util
 import logging
 import os
 import pkgutil
@@ -39,8 +40,10 @@ class FlaskSpark:
         flaskspark_static_dir (str): Absolute path to FlaskSpark's static directory.
         flaskspark_template_dir (str): Absolute path to FlaskSpark's template directory.
         login_provider (AbstractLoginProvider | None): Configured login provider instance.
+        module_packages (list[str]): Extra packages of the app's modules (see `modules`).
+        static_dirs (list[str]): Static directories in lookup order: app, modules, FlaskSpark.
     """
-    def __init__(self, app_module="app", config=None, login_provider=None, dotenv_path=".env"):
+    def __init__(self, app_module="app", config=None, login_provider=None, dotenv_path=".env", modules=None):
         """
         Initializes the Flask application.
 
@@ -49,6 +52,10 @@ class FlaskSpark:
             config (dict, optional): Custom configuration settings.
             login_provider (LoginProvider, optional): The login provider name or instance.
             dotenv_path (str, optional): Path to the .env file.
+            modules (list[str], optional): Packages of self-contained app modules (e.g. 'modules.mail.web').
+                Each one is set up like the app itself: its `views` and `models` subpackages are registered,
+                its `templates` directory is searched after the app's, its `static` directory is served under
+                /static after the app's.
 
         Returns:
             None
@@ -82,6 +89,11 @@ class FlaskSpark:
             self.app_template_dir = os.path.join(self.app_base_dir, "templates")
             self.flaskspark_static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "static"))
             self.flaskspark_template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "templates"))
+            self.module_packages = list(modules or [])
+            module_dirs = [self._package_dir(name) for name in self.module_packages]
+            self.static_dirs = [self.app_static_dir,
+                                *(d for d in (os.path.join(m, "static") for m in module_dirs) if os.path.isdir(d)),
+                                self.flaskspark_static_dir]
 
             # Create the Flask app instance
             self.app = Flask(
@@ -96,7 +108,10 @@ class FlaskSpark:
             self.app.static_folder = self.app_static_dir
             self.app.static_url_path = "/static"
             
-            # Add the FlaskSpark templates
+            # Add the templates of the modules, then the FlaskSpark templates
+            for module_dir in module_dirs:
+                if os.path.isdir(os.path.join(module_dir, "templates")):
+                    self.app.jinja_loader.searchpath.append(os.path.join(module_dir, "templates"))
             self.app.jinja_loader.searchpath.append(self.flaskspark_template_dir)
 
             # Override the default static endpoint
@@ -105,9 +120,9 @@ class FlaskSpark:
                 """
                 Serve static files from multiple directories.
 
-                This function overrides the default static endpoint to first look for
-                the requested static file in the application's static directory. If the
-                file is not found there, it falls back to the FlaskSpark static directory.
+                This function overrides the default static endpoint to look for the
+                requested static file in the application's static directory, then in
+                the static directories of the modules, then in FlaskSpark's.
 
                 Args:
                     filename (str): The relative path to the requested static file.
@@ -123,14 +138,10 @@ class FlaskSpark:
                     - This custom route allows `url_for('static', filename=...)` to
                     function seamlessly.
                 """
-                app_static_file = os.path.join(self.app_static_dir, filename)
-                if os.path.exists(app_static_file):
-                    return send_from_directory(self.app_static_dir, filename)
-                
-                flaskspark_static_file = os.path.join(self.flaskspark_static_dir, filename)
-                if os.path.exists(flaskspark_static_file):
-                    return send_from_directory(self.flaskspark_static_dir, filename)
-                
+                for directory in self.static_dirs:
+                    if os.path.exists(os.path.join(directory, filename)):
+                        return send_from_directory(directory, filename)
+
                 return "Static file not found", 404
 
             # Load configuration
@@ -198,9 +209,44 @@ class FlaskSpark:
         """
         return getattr(self.app, name)
 
+    @staticmethod
+    def _package_dir(package):
+        """
+        Directory of an importable package.
+
+        Args:
+            package (str): Dotted package name (e.g., 'modules.mail.web').
+
+        Returns:
+            str: Absolute path of the package directory.
+
+        Raises:
+            ModuleNotFoundError: If the package does not exist or is a plain module.
+        """
+        spec = importlib.util.find_spec(package)
+        if spec is None or not spec.submodule_search_locations:
+            raise ModuleNotFoundError(f"FlaskSpark module package '{package}' not found")
+        return os.path.abspath(list(spec.submodule_search_locations)[0])
+
+    def _module_subpackages(self, name):
+        """
+        The subpackage `name` (e.g. 'views') of every module package that has one.
+
+        Args:
+            name (str): Name of the subpackage.
+
+        Returns:
+            list[str]: Dotted names of the existing subpackages.
+        """
+        return [f"{package}.{name}" for package in self.module_packages
+                if importlib.util.find_spec(f"{package}.{name}") is not None]
+
     def _import_submodules(self, package):
         """
         Dynamically imports all submodules in a given package (recursively).
+
+        With STRICT_IMPORTS a submodule that fails to import stops the start instead of
+        being skipped with a warning (a view would otherwise be missing silently).
         
         Args:
             package (str): The package path to import from (e.g., 'app.models').
@@ -228,6 +274,8 @@ class FlaskSpark:
                 imported_module = importlib.import_module(name)
                 imported_modules[name] = imported_module
             except Exception as e:
+                if self.app.config.get("STRICT_IMPORTS"):
+                    raise
                 logging.warning(f"[FlaskSpark] Failed to import submodule '{name}': {e}")
 
         return imported_modules
@@ -297,8 +345,8 @@ class FlaskSpark:
         Returns:
             None
         """
-        models_package = f"{self.app_module}.models"
-        self._import_submodules(models_package)
+        for package in [f"{self.app_module}.models", *self._module_subpackages("models")]:
+            self._import_submodules(package)
 
     def _register_application_views(self):
         """
@@ -313,12 +361,16 @@ class FlaskSpark:
         Returns:
             None
         """
-        views_package = f"{self.app_module}.views"
-        for module_name, module in self._import_submodules(views_package).items():
+        views = {}
+        for package in [f"{self.app_module}.views", *self._module_subpackages("views")]:
+            views.update(self._import_submodules(package))
+        for module_name, module in views.items():
             # Register views dynamically
             for attribute_name in dir(module):
                 attribute = getattr(module, attribute_name)
-                if isinstance(attribute, type) and hasattr(attribute, "as_view"):
+                # Only classes defined in this module: an imported base class (FlaskSparkMethodView) or a view
+                # imported from elsewhere would otherwise get a route of its own (/<module_name>).
+                if isinstance(attribute, type) and hasattr(attribute, "as_view") and attribute.__module__ == module.__name__:
                     # If the class is a view, register it
                     endpoint = getattr(attribute, "endpoint", module_name)
                     url = getattr(attribute, "url", f"/{module_name}")
@@ -520,7 +572,7 @@ class FlaskSpark:
         assets = Environment(self.app)
         # Ensure bundle source resolution works for both app-local assets and
         # FlaskSpark-provided vendored assets.
-        assets.load_path = [self.app_static_dir, self.flaskspark_static_dir]
+        assets.load_path = list(self.static_dirs)
         environment = (self.app.config.get("ENVIRONMENT") or "development").lower()
         if environment == "production":
             assets.auto_build = False

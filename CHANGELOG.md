@@ -5,10 +5,16 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added
+- Module packages: `FlaskSpark(modules=[...])` registers the views and models of further packages and serves their
+  templates and static files after the app's (`FlaskSpark.static_dirs`).
+- `STRICT_IMPORTS` config: a view or model module that fails to import stops the start (default: skipped with a
+  warning, as before).
 - `ROLE_DEFAULTS` config: apps choose the default roles that `Role.ensure_defaults()` creates (default unchanged:
   Administrators, Editors, Users, Guests).
 
 ### Fixed
+- View discovery registers only the view classes defined in a module: the imported `FlaskSparkMethodView` no longer
+  gets a stray route `/<module_name>` in every view module.
 - Production no longer overrides `ASSETS_CACHE`: apps can disable the webassets filter cache, which
   missed changes in imported SCSS partials.
 

@@ -174,6 +174,24 @@ python app.py
 - Views: Files under `app/views/` are auto-imported, and view classes inheriting from `FlaskSparkMethodView` are auto-registered as routes.
 - Models: Files under `app/models/` are auto-imported and included in SQLAlchemy metadata.
 - Templates/static: App files are resolved first; FlaskSpark files are fallback.
+- A submodule that fails to import is skipped with a warning; with `STRICT_IMPORTS` it stops the start instead.
+
+### Module packages
+Larger apps can keep each feature in a package of its own, next to `app/`:
+
+```python
+FlaskSpark(app_module="app", login_provider="OAuth", modules=["modules.mail.web", "modules.calendar.web"])
+```
+
+Each module package is set up like the app itself:
+
+- `<package>/views/` and `<package>/models/` are auto-imported and registered (same rules as `app/views/`);
+- `<package>/templates/` is searched after the app's templates and before FlaskSpark's (keep a module's
+  templates in a folder of its own, e.g. `templates/mail/`, so names don't clash);
+- `<package>/static/` is served under `/static/` after the app's static files and before FlaskSpark's.
+
+`FlaskSpark.static_dirs` lists the static directories in this lookup order (e.g. for tools that read the files).
+A package that doesn't exist stops the start.
 
 ## Assets (SCSS / JS)
 FlaskSpark uses Flask-Assets to build your frontend bundles.  
@@ -367,6 +385,7 @@ Why not just `app.run()`?
 | `OAUTH_ROLE_PRIORITY` | `[]` | Ordered group names for role mapping (CSV env input). |
 | `OAUTH_ROLE_MAP` | `{}` | Group-to-role mapping (format: `group:Role,group2:Role2`). |
 | `ROLE_DEFAULTS` | `[]` | Default roles created at login/startup (format: `Name:rank[:admin],Name2:rank2`; in code a list of `(name, is_admin, rank)`). Empty: Administrators, Editors, Users, Guests. |
+| `STRICT_IMPORTS` | `false` | A view or model module that fails to import stops the start instead of being skipped with a warning. |
 | `BABEL_DEFAULT_LOCALE` | `en` | Fallback locale. |
 | `BABEL_SUPPORTED_LOCALES` | `["en"]` | Allowed locales (CSV env input). |
 | `BABEL_TRANSLATION_DIRECTORIES` | `locales` | Translation directory path(s) for Flask-Babel. |

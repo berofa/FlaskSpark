@@ -106,6 +106,8 @@ class Config:
     OAUTH_ROLE_PRIORITY = _split_csv(os.environ.get("OAUTH_ROLE_PRIORITY"))
     OAUTH_ROLE_MAP = _parse_role_map(os.environ.get("OAUTH_ROLE_MAP"))
     ROLE_DEFAULTS = _parse_role_defaults(os.environ.get("ROLE_DEFAULTS"))
+    # A view or model module that fails to import stops the start (default: skipped with a warning).
+    STRICT_IMPORTS = os.environ.get("STRICT_IMPORTS", "false").lower() in ("1", "true", "yes")
 
     """Babel (i18n) configuration."""
     BABEL_DEFAULT_LOCALE = os.environ.get("BABEL_DEFAULT_LOCALE", "en")
