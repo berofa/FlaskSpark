@@ -1,0 +1,7 @@
+/* ui-carousel: rules for the slotted items (in the page, where shadow styles cannot reach). */
+@layer components {
+  ui-carousel-item {
+    display: block;
+    height: 100%;
+  }
+}

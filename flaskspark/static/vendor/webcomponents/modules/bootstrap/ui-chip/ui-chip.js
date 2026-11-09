@@ -1,41 +1,31 @@
 import { registerComponent } from "../../../core/registry.js";
+import { HOST_TOKENS_CLASS } from "../../../core/shadow-sheet-transforms.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
 import { escapeHtml } from "../../../core/escape.js";
+import { morph } from "../../../core/morph.js";
+import { BOOTSTRAP_SHADOW_STYLES, themeColor } from "../shadow-styles.js";
+import { DISMISS_ICON, installChipsDataApi } from "./chips-controller.js";
+import "./ui-chip-input.js";
 
 /**
- * <ui-chip>: compact pill for toggles, filters and tags (Bootstrap has no chip;
- * styled with Bootstrap's tokens). Renders a native <button> (or <a>) inside.
+ * <ui-chip> (Bootstrap 6 .chip): a small interactive element for a person, place, tag or value.
  *
  * Attributes:
- * - active: selected state. A click toggles it and fires `change` (bubbles);
- *   exposed as aria-pressed. Changing it from script updates the chip in place
- *   (keeps the focus) and does not fire `change`.
- * - color: colour of the leading dot (any CSS colour); no dot without it.
- *   The dot is dimmed while the chip is not active.
- * - size: "sm" or "lg".
- * - disabled.
- * - removable: adds a × button; it fires the cancelable `ui-chip:remove`
- *   (bubbles) and removes the chip unless the event is cancelled.
- * - href (+ target, rel): link chip instead of a toggle.
- * - static: display only (no button, no toggling), e.g. for tags.
- * - name, value (default "on"): form-associated; submits value while active.
- * - label: accessible name (icon-only chips).
- *
- * Slot: default (chip text).
- * CSS parts: chip (the pill), dot, remove.
- * Custom properties (set on the element or any ancestor):
- *   --ui-chip-color, --ui-chip-bg, --ui-chip-border-color,
- *   --ui-chip-hover-color, --ui-chip-hover-bg, --ui-chip-hover-border-color,
- *   --ui-chip-active-color, --ui-chip-active-bg, --ui-chip-active-border-color,
- *   --ui-chip-font-size, --ui-chip-font-weight, --ui-chip-padding-y, --ui-chip-padding-x,
- *   --ui-chip-radius, --ui-chip-dot-size, --ui-chip-dot-inactive-opacity.
+ * - variant: theme colour (subtle; active: solid).
+ * - active: the solid appearance. toggle: a click (Enter, Space) toggles it and fires `change` (bubbles);
+ *   the chip is a button with aria-pressed. name / value ("on"): form-associated, submits while active.
+ * - href (+ target, rel): a link chip.
+ * - dismissible: a remove button; fires the cancelable ui-chip:remove (bubbles), then removes the chip.
+ * - img (+ img-alt): an avatar in front (.chip-img); slot "icon": an icon (.chip-icon).
+ * - color: a coloured dot in front (any CSS colour; dimmed while a toggle chip is not active).
+ * - disabled; label: accessible name; remove-label: name of the remove button ("Remove").
+ * Parts: chip, img, icon, dot, dismiss.
  */
 export class UiChip extends ShadowComponentElement {
-  static stylesheet = new URL("./ui-chip.css", import.meta.url).href;
+  static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-chip.css", import.meta.url).href];
   static formAssociated = true;
-  static observedAttributes = [
-    "active", "color", "size", "disabled", "removable", "href", "target", "rel", "static", "name", "value", "label",
-  ];
+  static observedAttributes = ["variant", "active", "toggle", "href", "target", "rel", "dismissible", "img", "img-alt", "color",
+    "disabled", "label", "remove-label", "name", "value"];
 
   #internals;
   #defaultActive = null;
@@ -44,27 +34,33 @@ export class UiChip extends ShadowComponentElement {
   constructor() {
     super();
     this.#internals = this.attachInternals();
+    this.shadowRoot.addEventListener("click", (event) => {
+      if (this.#disabled) {
+        return;
+      }
+      if (event.target.closest?.(".chip-dismiss")) {
+        event.stopPropagation();
+        this.dismiss();
+      } else if (this.hasAttribute("toggle") && event.target.closest?.(".chip")) {
+        this.#toggle();
+      }
+    });
+    this.shadowRoot.addEventListener("keydown", (event) => {
+      if (this.hasAttribute("toggle") && !this.#disabled && (event.key === "Enter" || event.key === " ")
+        && event.target.classList?.contains("chip")) {
+        event.preventDefault();
+        this.#toggle();
+      }
+    });
   }
 
   connectedCallback() {
-    if (this.#defaultActive === null) {
-      this.#defaultActive = this.hasAttribute("active");
-    }
+    this.#defaultActive ??= this.hasAttribute("active");
     super.connectedCallback();
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === "active" && this.hasRendered && oldValue !== newValue) {
-      // State change only: update in place instead of re-rendering (keeps the focus).
-      this.#chip?.setAttribute("aria-pressed", String(this.active));
-      this.#syncFormValue();
-      return;
-    }
-    super.attributeChangedCallback(name, oldValue, newValue);
-  }
-
-  get #chip() {
-    return this.shadowRoot.querySelector('[part~="chip"]');
+  get #disabled() {
+    return this.hasAttribute("disabled") || this.#formDisabled;
   }
 
   get active() {
@@ -92,51 +88,56 @@ export class UiChip extends ShadowComponentElement {
   }
 
   focus(options) {
-    this.shadowRoot.querySelector("button, a")?.focus(options);
+    this.shadowRoot.querySelector(".chip[tabindex], a.chip, .chip-dismiss")?.focus(options);
+  }
+
+  #toggle() {
+    this.active = !this.active;
+    this.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  /** Removes the chip unless ui-chip:remove is cancelled; true when removed. */
+  dismiss() {
+    if (!this.dispatchEvent(new CustomEvent("ui-chip:remove", { bubbles: true, cancelable: true }))) {
+      return false;
+    }
+    this.remove();
+    return true;
+  }
+
+  renderShadow() {
+    morph(this.shadowRoot, this.render());
+    this.#internals.setFormValue(this.name && this.hasAttribute("toggle") && this.active ? this.value : null);
   }
 
   render() {
-    const color = this.getAttribute("color");
-    const dot = color ? `<span class="ui-chip__dot" part="dot" style="--ui-chip-dot-color: ${escapeHtml(color)}"></span>` : "";
+    const variant = themeColor(this.getAttribute("variant"));
+    const disabled = this.#disabled;
+    const toggle = this.hasAttribute("toggle");
+    const classes = ["chip", HOST_TOKENS_CLASS, variant ? `theme-${variant}` : "", this.active ? "active" : "",
+      disabled ? "disabled" : "", toggle && this.getAttribute("color") ? "chip-toggle" : ""].filter(Boolean).join(" ");
     const label = this.getAttribute("label");
-    const aria = label ? ` aria-label="${escapeHtml(label)}"` : "";
-    const disabled = this.hasAttribute("disabled") || this.#formDisabled;
-    const remove = this.hasAttribute("removable") && !disabled
-      ? '<button type="button" class="ui-chip__remove" part="remove" aria-label="Entfernen" data-remove>×</button>'
-      : "";
-    const content = `${dot}<span class="ui-chip__text"><slot></slot></span>`;
+    const aria = (label ? ` aria-label="${escapeHtml(label)}"` : "") + (disabled ? ' aria-disabled="true"' : "");
+    const img = this.getAttribute("img");
+    const color = this.getAttribute("color");
+    const content = [
+      img ? `<img class="chip-img" part="img" src="${escapeHtml(img)}" alt="${escapeHtml(this.getAttribute("img-alt") || "")}" width="16" height="16">` : "",
+      color ? `<span class="chip-icon" part="dot"><span class="chip-dot" style="--ui-chip-dot-color: ${escapeHtml(color)}"></span></span>` : "",
+      this.querySelector(':scope > [slot="icon"]') ? '<span class="chip-icon" part="icon"><slot name="icon"></slot></span>' : "",
+      "<slot></slot>",
+    ].join("");
     const href = this.getAttribute("href");
-
-    let chip;
-    if (this.hasAttribute("static")) {
-      chip = `<span class="ui-chip" part="chip"${aria}>${content}</span>`;
-    } else if (href && !disabled) {
-      chip = `<a class="ui-chip" part="chip" href="${escapeHtml(href)}" target="${escapeHtml(this.getAttribute("target") || "")}" rel="${escapeHtml(this.getAttribute("rel") || "")}"${aria}>${content}</a>`;
-    } else {
-      chip = `<button type="button" class="ui-chip" part="chip" aria-pressed="${this.active}" ${disabled ? "disabled" : ""}${aria}>${content}</button>`;
+    if (href && !disabled) {
+      const target = this.getAttribute("target");
+      const rel = this.getAttribute("rel");
+      return `<a class="${classes}" part="chip" href="${escapeHtml(href)}"${target ? ` target="${escapeHtml(target)}"` : ""}`
+        + `${rel ? ` rel="${escapeHtml(rel)}"` : ""}${aria}>${content}</a>`;
     }
-    return `<span class="ui-chip__wrap${remove ? " ui-chip__wrap--removable" : ""}">${chip}${remove}</span>`;
-  }
-
-  afterRender() {
-    const chip = this.#chip;
-    if (chip?.tagName === "BUTTON") {
-      chip.addEventListener("click", () => {
-        this.active = !this.active;
-        this.dispatchEvent(new Event("change", { bubbles: true }));
-      });
-    }
-    this.shadowRoot.querySelector("[data-remove]")?.addEventListener("click", () => {
-      const event = new CustomEvent("ui-chip:remove", { bubbles: true, cancelable: true });
-      if (this.dispatchEvent(event)) {
-        this.remove();
-      }
-    });
-    this.#syncFormValue();
-  }
-
-  #syncFormValue() {
-    this.#internals.setFormValue(this.name && this.active ? this.value : null);
+    const dismiss = this.hasAttribute("dismissible")
+      ? `<button type="button" class="chip-dismiss" part="dismiss" aria-label="${escapeHtml(this.getAttribute("remove-label") || "Remove")}"`
+        + `${disabled ? " disabled" : ""}>${DISMISS_ICON}</button>` : "";
+    const role = toggle ? ` role="button" aria-pressed="${this.active}" tabindex="${disabled ? -1 : 0}"` : "";
+    return `<span class="${classes}" part="chip"${role}${aria}>${content}${dismiss}</span>`;
   }
 
   formResetCallback() {
@@ -147,10 +148,7 @@ export class UiChip extends ShadowComponentElement {
     this.#formDisabled = disabled;
     this.requestRender();
   }
-
-  formStateRestoreCallback(state) {
-    this.active = state !== null;
-  }
 }
 
 registerComponent("ui-chip", UiChip);
+installChipsDataApi();

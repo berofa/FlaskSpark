@@ -1,147 +1,29 @@
+/* ui-chip and ui-chip-input (Bootstrap 6 chips): plain CSS on top of the shared Bootstrap copy. */
 :host {
+  display: inline-block;
   vertical-align: middle;
 }
 
-.ui-chip__wrap {
-  display: inline-flex;
-  align-items: stretch;
-  max-width: 100%;
+:host(ui-chip-input) {
+  display: block;
 }
 
-.ui-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  max-width: 100%;
-  margin: 0;
-  padding: var(--ui-chip-padding-y, 0.22rem) var(--ui-chip-padding-x, 0.7rem);
-  font-family: inherit;
-  font-size: var(--ui-chip-font-size, 0.8rem);
-  font-weight: var(--ui-chip-font-weight, 500);
-  line-height: 1.5;
-  color: var(--ui-chip-color, var(--bs-secondary-color));
-  text-decoration: none;
-  white-space: nowrap;
-  background: var(--ui-chip-bg, transparent);
-  border: var(--bs-border-width, 1px) solid var(--ui-chip-border-color, var(--bs-border-color));
-  border-radius: var(--ui-chip-radius, 50rem);
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.15s, background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
-}
-
-.ui-chip:hover {
-  color: var(--ui-chip-hover-color, var(--bs-body-color));
-  background: var(--ui-chip-hover-bg, var(--bs-tertiary-bg));
-  border-color: var(--ui-chip-hover-border-color, var(--ui-chip-border-color, var(--bs-border-color)));
-}
-
-.ui-chip:focus-visible {
-  outline: 0;
-  box-shadow: 0 0 0 var(--bs-focus-ring-width, 0.25rem) var(--bs-focus-ring-color, rgba(13, 110, 253, 0.25));
-}
-
-.ui-chip:disabled {
-  cursor: default;
-  opacity: 0.55;
-}
-
-span.ui-chip {
-  cursor: default;
-}
-
-:host([active]) .ui-chip {
-  color: var(--ui-chip-active-color, var(--bs-body-color));
-  background: var(--ui-chip-active-bg, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15));
-  border-color: var(--ui-chip-active-border-color, var(--bs-primary, #0d6efd));
-}
-
-.ui-chip__text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ui-chip__dot {
-  flex: none;
-  width: var(--ui-chip-dot-size, 0.55rem);
-  height: var(--ui-chip-dot-size, 0.55rem);
+.chip-dot {
+  width: var(--ui-chip-dot-size, 0.5rem);
+  height: var(--ui-chip-dot-size, 0.5rem);
+  background-color: var(--ui-chip-dot-color);
   border-radius: 50%;
-  background: var(--ui-chip-dot-color);
-  opacity: var(--ui-chip-dot-inactive-opacity, 0.3);
-  transition: opacity 0.15s;
 }
 
-:host([active]) .ui-chip__dot,
-:host([static]) .ui-chip__dot,
-:host([href]) .ui-chip__dot {
-  opacity: 1;
+.chip-toggle:not(.active) .chip-dot {
+  opacity: var(--ui-chip-dot-inactive-opacity, 0.45);
 }
 
-.ui-chip__wrap--removable .ui-chip {
-  padding-right: calc(var(--ui-chip-padding-x, 0.7rem) * 0.5);
-  border-right: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+.chip[role="button"]:focus-visible,
+.chip-input > .chip:focus-visible {
+  outline: var(--bs-focus-ring);
 }
 
-.ui-chip__remove {
-  display: inline-flex;
-  align-items: center;
-  margin: 0;
-  padding: 0 calc(var(--ui-chip-padding-x, 0.7rem) * 0.6) 0 calc(var(--ui-chip-padding-x, 0.7rem) * 0.3);
-  font: inherit;
-  font-size: calc(var(--ui-chip-font-size, 0.8rem) * 1.15);
-  line-height: 1;
-  color: var(--ui-chip-color, var(--bs-secondary-color));
-  background: var(--ui-chip-bg, transparent);
-  border: var(--bs-border-width, 1px) solid var(--ui-chip-border-color, var(--bs-border-color));
-  border-left: 0;
-  border-radius: 0 var(--ui-chip-radius, 50rem) var(--ui-chip-radius, 50rem) 0;
-  cursor: pointer;
-}
-
-.ui-chip__remove:hover {
-  color: var(--bs-danger, #dc3545);
-}
-
-.ui-chip__remove:focus-visible {
-  outline: 0;
-  box-shadow: 0 0 0 var(--bs-focus-ring-width, 0.25rem) var(--bs-focus-ring-color, rgba(13, 110, 253, 0.25));
-}
-
-:host([active]) .ui-chip__remove {
-  background: var(--ui-chip-active-bg, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15));
-  border-color: var(--ui-chip-active-border-color, var(--bs-primary, #0d6efd));
-}
-
-:host([size="sm"]) {
-  --ui-chip-font-size: 0.72rem;
-  --ui-chip-padding-y: 0.12rem;
-  --ui-chip-padding-x: 0.55rem;
-}
-
-:host([size="lg"]) {
-  --ui-chip-font-size: 0.95rem;
-  --ui-chip-padding-y: 0.35rem;
-  --ui-chip-padding-x: 0.9rem;
-}
-
-:host([hidden]) {
-  display: none !important;
-}
-
-:host {
-  display: inline-block;
-  box-sizing: border-box;
-  color: var(--bs-body-color);
-}
-
-:host *,
-:host *::before,
-:host *::after {
-  box-sizing: border-box;
-}
-
-[hidden] {
-  display: none !important;
+.chip-input-label {
+  color: var(--bs-fg-2);
 }

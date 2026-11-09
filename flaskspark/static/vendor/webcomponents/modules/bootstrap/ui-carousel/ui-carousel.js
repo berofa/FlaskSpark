@@ -1,256 +1,239 @@
 import { registerComponent } from "../../../core/registry.js";
+import { HOST_TOKENS_CLASS } from "../../../core/shadow-sheet-transforms.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
 import { escapeHtml } from "../../../core/escape.js";
-import { afterTransition } from "../../../core/transitions.js";
+import { morph } from "../../../core/morph.js";
+import { assignItemSlots } from "../../../core/slotted-items.js";
+import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
+import { CarouselController, installCarouselDataApi } from "./carousel-controller.js";
+
+const ITEM = "ui-carousel-item:not([data-carousel-clone])";
+const PLACEMENTS = new Set(["top", "bottom", "overlay"]);
 
 /**
- * <ui-carousel>.
+ * <ui-carousel> (Bootstrap 6 carousel on scroll snap) with <ui-carousel-item> children.
  *
- * The slide choreography toggles Bootstrap's carousel-item-* classes on the
- * <ui-carousel-item> host elements: the hosts share one formatting context
- * inside .carousel-inner, so the float/transform dance works across the
- * shadow boundaries. The matching styles live in :host(...) rules of the
- * item stylesheet.
+ * The carousel renders Bootstrap's markup in its shadow tree: one .carousel-item per item (content slotted),
+ * the controls and the indicators. Sliding, swiping and momentum come from the browser; CarouselController
+ * adds the controls, active-slide syncing, autoplay and the ends.
  *
  * Attributes:
- * - controls / indicators: render prev/next controls and indicator buttons.
- * - interval: autoplay in milliseconds (pauses on hover).
- * - fade: cross-fade instead of sliding (mirrored onto the items).
- * - prev-label / next-label: aria-labels of the controls.
+ * - controls, indicators, play-pause: render prev / next buttons, indicators, a play / pause button.
+ * - placement: top (with the heading slot), bottom (default) or overlay (over the slides).
+ * - fade (crossfade), center (snap the active slide to the centre), auto (variable width: size the items).
+ * - autoplay, interval (ms, default 5000), ends (loop | wrap | stop), keyboard="false", pause="false".
+ * - prev-label, next-label, play-label, pause-label, indicator-label ("Slide {n}"): accessible names.
+ * Visible slides, gap and peek are CSS: --bs-carousel-items, --bs-carousel-items-gap, --bs-carousel-items-peek.
  *
- * Methods / events:
- * - next(), prev(), to(index)
- * - ui-carousel:slid (bubbles) with detail { index, direction }.
+ * <ui-carousel-item>: active (start slide), interval (ms, own autoplay interval).
+ * Methods: next(), prev(), to(index), cycle(), pause(), nextWhenVisible(), togglePlayPause(),
+ * activeIndex, items. Events (bubble): ui-carousel:slide (cancelable) and ui-carousel:slid with
+ * detail { from, to, direction, relatedTarget } (relatedTarget: the <ui-carousel-item>).
+ * Parts: carousel, inner, item, controls, control, prev, next, play-pause, indicators, indicator, heading.
  */
 export class UiCarousel extends ShadowComponentElement {
-  static stylesheet = new URL("./ui-carousel.css", import.meta.url).href;
-  static observedAttributes = ["controls", "indicators", "interval", "fade", "prev-label", "next-label"];
+  static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-carousel.css", import.meta.url).href];
+  static documentStylesheet = new URL("./ui-carousel.document.css", import.meta.url).href;
+  static observedAttributes = ["controls", "indicators", "play-pause", "placement", "fade", "center", "auto", "autoplay",
+    "interval", "ends", "keyboard", "pause", "prev-label", "next-label", "play-label", "pause-label", "indicator-label"];
 
-  #sliding = false;
-  #cycleTimer = null;
-  #hovered = false;
-  #knownItems = [];
+  #controller = null;
+  #items = [];
+  #observer = null;
 
-  constructor() {
-    super();
-    this.addEventListener("mouseenter", () => {
-      this.#hovered = true;
-      this.#stopCycle();
-    });
-    this.addEventListener("mouseleave", () => {
-      this.#hovered = false;
-      this.#startCycle();
-    });
-    this.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        this.next();
-      } else if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        this.prev();
-      }
-    });
-  }
-
-  disconnectedCallback() {
-    this.#stopCycle();
-  }
-
-  render() {
-    const items = this.getItems();
-    const activeIndex = Math.max(items.findIndex((item) => item.hasAttribute("active")), 0);
-    const indicators = this.hasAttribute("indicators")
-      ? `
-        <div class="carousel-indicators">
-          ${items.map((item, index) => `
-            <button
-              type="button"
-              class="${index === activeIndex ? "active" : ""}"
-              data-index="${index}"
-              aria-label="Slide ${index + 1}"
-              ${index === activeIndex ? 'aria-current="true"' : ""}
-            ></button>
-          `).join("")}
-        </div>
-      `
-      : "";
-    const controls = this.hasAttribute("controls")
-      ? `
-        <button class="carousel-control-prev" type="button" data-slide="prev" aria-label="${escapeHtml(this.getAttribute("prev-label") || "Previous")}">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-slide="next" aria-label="${escapeHtml(this.getAttribute("next-label") || "Next")}">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        </button>
-      `
-      : "";
-    return `
-      <div class="carousel slide">
-        ${indicators}
-        <div class="carousel-inner">
-          <slot></slot>
-        </div>
-        ${controls}
-      </div>
-    `;
-  }
-
-  afterRender() {
-    this.shadowRoot.querySelector("[data-slide='prev']")?.addEventListener("click", () => this.prev());
-    this.shadowRoot.querySelector("[data-slide='next']")?.addEventListener("click", () => this.next());
-    this.shadowRoot.querySelector(".carousel-indicators")?.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-index]");
-      if (button) {
-        this.to(Number.parseInt(button.dataset.index, 10));
-      }
-    });
-    // Re-rendering recreates the slot, which fires slotchange again — only
-    // re-render when the item set actually changed, or this would loop.
-    this.#knownItems = this.getItems();
-    this.shadowRoot.querySelector("slot").addEventListener("slotchange", () => {
-      if (this.#itemsChanged()) {
+  connectedCallback() {
+    super.connectedCallback();
+    this.#observer ??= new MutationObserver((records) => {
+      const relevant = records.some((record) => (record.type === "childList"
+        ? [...record.addedNodes, ...record.removedNodes].some((node) => node.nodeType === 1 && !node.hasAttribute("data-carousel-clone"))
+        : record.target.parentElement === this && !record.target.hasAttribute("data-carousel-clone")));
+      if (relevant) {
         this.requestRender();
       }
     });
-    this.#syncItems();
-    this.#startCycle();
+    this.#observer.observe(this, { childList: true, subtree: true, attributes: true, attributeFilter: ["interval", "active"] });
   }
 
-  getItems() {
-    return Array.from(this.querySelectorAll(":scope > ui-carousel-item"));
+  disconnectedCallback() {
+    this.#observer?.disconnect();
+    this.#controller?.dispose();
+    this.#controller = null;
   }
 
-  getActiveIndex() {
-    return this.getItems().findIndex((item) => item.hasAttribute("active"));
-  }
-
-  next() {
-    this.#slide("next");
-  }
-
-  prev() {
-    this.#slide("prev");
-  }
-
-  to(index) {
-    const activeIndex = this.getActiveIndex();
-    if (index === activeIndex) {
-      return;
+  renderShadow() {
+    morph(this.shadowRoot, this.render());
+    const root = this.shadowRoot.querySelector(".carousel");
+    if (this.#controller && this.#controller.root !== root) {
+      this.#controller.dispose();
+      this.#controller = null;
     }
-    this.#slide(index > activeIndex ? "next" : "prev", index);
-  }
-
-  #itemsChanged() {
-    const items = this.getItems();
-    const unchanged = items.length === this.#knownItems.length
-      && items.every((item, index) => item === this.#knownItems[index]);
-    if (unchanged) {
-      return false;
-    }
-    this.#knownItems = items;
-    return true;
-  }
-
-  #syncItems() {
-    const items = this.getItems();
-    if (!items.length) {
-      return;
-    }
-    const fade = this.hasAttribute("fade");
-    items.forEach((item) => item.toggleAttribute("fade", fade));
-    if (!items.some((item) => item.hasAttribute("active"))) {
-      items[0].setAttribute("active", "");
+    if (this.#controller) {
+      this.#controller.refresh();
+    } else {
+      this.#controller = new CarouselController(root, {
+        config: () => ({
+          autoplay: this.hasAttribute("autoplay"),
+          ends: this.getAttribute("ends") || undefined,
+          interval: this.getAttribute("interval") || undefined,
+          keyboard: this.getAttribute("keyboard") ?? undefined,
+          pause: this.getAttribute("pause") ?? undefined,
+        }),
+        emit: (name, detail, cancelable) => this.dispatchEvent(new CustomEvent(`ui-carousel:${name}`, { bubbles: true, cancelable, detail })),
+        relatedTarget: (item) => this.#items[Number(item?.dataset.index)],
+        makeClone: (item) => this.#makeClone(item),
+        removeClone: (clone) => this.querySelectorAll(`[slot="${clone.dataset.cloneSlot}"]`).forEach((node) => node.remove()),
+      });
     }
   }
 
-  #slide(direction, targetIndex = null) {
-    if (this.#sliding) {
-      return;
-    }
-    const items = this.getItems();
-    if (items.length < 2) {
-      return;
-    }
-    const activeIndex = Math.max(this.getActiveIndex(), 0);
-    const nextIndex = targetIndex ?? (direction === "next"
-      ? (activeIndex + 1) % items.length
-      : (activeIndex - 1 + items.length) % items.length);
-    const activeItem = items[activeIndex];
-    const nextItem = items[nextIndex];
-    if (!nextItem || nextItem === activeItem) {
-      return;
-    }
+  /** A loop clone: a copy of the light item (styled by the page) in a slot of a clone slide. */
+  #makeClone(item) {
+    const source = this.#items[Number(item.dataset.index)];
+    const name = `clone-${Date.now()}`;
+    const copy = source.cloneNode(true);
+    copy.setAttribute("data-carousel-clone", "");
+    copy.removeAttribute("id");
+    copy.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
+    copy.setAttribute("aria-hidden", "true");
+    copy.inert = true;
+    copy.slot = name;
+    this.append(copy);
+    const slide = item.cloneNode(false);
+    slide.dataset.cloneSlot = name;
+    slide.removeAttribute("data-index");
+    slide.innerHTML = `<slot name="${name}"></slot>`;
+    return slide;
+  }
 
-    this.#sliding = true;
-    const directionalClass = direction === "next" ? "carousel-item-next" : "carousel-item-prev";
-    const orderClass = direction === "next" ? "carousel-item-start" : "carousel-item-end";
+  get items() {
+    return [...this.#items];
+  }
 
-    nextItem.classList.add(directionalClass);
-    nextItem.offsetHeight; // force reflow so the slide transition runs
-    activeItem.classList.add(orderClass);
-    nextItem.classList.add(orderClass);
+  get activeIndex() {
+    return this.#controller?.activeIndex ?? 0;
+  }
 
-    afterTransition(nextItem, () => {
-      nextItem.classList.remove(directionalClass, orderClass);
-      nextItem.setAttribute("active", "");
-      activeItem.classList.remove(orderClass);
-      activeItem.removeAttribute("active");
-      this.#sliding = false;
-      this.#syncIndicators(nextIndex);
-      this.dispatchEvent(new CustomEvent("ui-carousel:slid", {
-        bubbles: true,
-        detail: { index: nextIndex, direction },
-      }));
+  #label(name, fallback) {
+    return escapeHtml(this.getAttribute(name) || fallback);
+  }
+
+  #controls(overlay) {
+    const style = overlay ? " btn-subtle theme-secondary" : "";
+    const buttons = [];
+    if (this.hasAttribute("play-pause")) {
+      buttons.push(`<button class="btn-icon btn-sm${style} carousel-control-play-pause" type="button" part="control play-pause" `
+        + `data-bs-pause-label="${this.#label("pause-label", "Pause")}" data-bs-play-label="${this.#label("play-label", "Play")}" `
+        + `aria-label="${this.#label("pause-label", "Pause")}"><span class="carousel-icon-pause" aria-hidden="true"></span>`
+        + '<span class="carousel-icon-play" aria-hidden="true"></span></button>');
+    }
+    if (this.hasAttribute("controls")) {
+      for (const [direction, label] of [["prev", "Previous"], ["next", "Next"]]) {
+        buttons.push(`<button class="btn-icon btn-sm${style}" type="button" part="control ${direction}" data-bs-slide="${direction}" `
+          + `aria-label="${this.#label(`${direction}-label`, label)}"><span class="carousel-icon-${direction}" aria-hidden="true"></span></button>`);
+      }
+    }
+    return buttons.length ? `<div part="controls">${buttons.join("")}</div>` : "";
+  }
+
+  #indicators() {
+    if (!this.hasAttribute("indicators")) {
+      return "";
+    }
+    const label = this.getAttribute("indicator-label") || "Slide {n}";
+    const active = this.#controller?.activeIndex ?? this.#initialIndex();
+    const buttons = this.#items.map((_, index) => `<button type="button" part="indicator" data-bs-target data-bs-slide-to="${index}"`
+      + `${index === active ? ' class="active" aria-current="true"' : ""} aria-label="${escapeHtml(label.replace("{n}", String(index + 1)))}"></button>`);
+    return `<div class="carousel-indicators" part="indicators">${buttons.join("")}</div>`;
+  }
+
+  #initialIndex() {
+    return Math.max(this.#items.findIndex((item) => item.hasAttribute("active")), 0);
+  }
+
+  render() {
+    this.#items = assignItemSlots(this, ITEM, "item");
+    const placement = PLACEMENTS.has(this.getAttribute("placement")) ? this.getAttribute("placement") : "bottom";
+    const overlay = placement === "overlay";
+    const active = this.#controller?.activeIndex ?? this.#initialIndex();
+    const playing = this.#controller?.timer != null;
+    const classes = ["carousel", "slide", HOST_TOKENS_CLASS, this.hasAttribute("fade") ? "carousel-fade" : "",
+      this.hasAttribute("center") ? "carousel-center" : "", this.hasAttribute("auto") ? "carousel-auto" : "",
+      overlay ? "carousel-overlay" : "", playing ? "carousel-playing" : ""].filter(Boolean).join(" ");
+    const slides = this.#items.map((item, index) => {
+      const interval = item.getAttribute("interval");
+      return `<div class="carousel-item${index === active ? " active" : ""}" part="item" data-index="${index}"`
+        + `${interval ? ` data-bs-interval="${escapeHtml(interval)}"` : ""}><slot name="item-${index}"></slot></div>`;
     });
+    const inner = `<div class="carousel-inner" part="inner">${slides.join("")}</div>`;
+    const controls = this.#controls(overlay);
+    const indicators = this.#indicators();
+    let markup;
+    if (overlay) {
+      const bar = controls || indicators ? `<div class="carousel-overlay-controls">${controls}${indicators}</div>` : "";
+      markup = inner + bar;
+    } else if (placement === "top") {
+      const heading = '<div class="carousel-heading" part="heading"><slot name="heading"></slot></div>';
+      markup = `<div class="carousel-bar">${heading}${controls}</div>${inner}`
+        + (indicators ? `<div class="carousel-bar justify-content-center">${indicators}</div>` : "");
+    } else {
+      const bar = controls || indicators
+        ? `<div class="carousel-bar${controls && indicators ? "" : controls ? "" : " justify-content-center"}">${controls}${indicators}</div>` : "";
+      markup = inner + bar;
+    }
+    return `<div class="${classes}" part="carousel">${markup}</div>`;
   }
 
-  #syncIndicators(activeIndex) {
-    this.shadowRoot?.querySelectorAll(".carousel-indicators [data-index]").forEach((button) => {
-      const active = Number.parseInt(button.dataset.index, 10) === activeIndex;
-      button.classList.toggle("active", active);
-      if (active) {
-        button.setAttribute("aria-current", "true");
+  #wire() {
+    if (this.wired) {
+      return;
+    }
+    this.wired = true;
+    this.shadowRoot.addEventListener("click", (event) => {
+      const control = event.target.closest?.("[data-bs-slide], [data-bs-slide-to], .carousel-control-play-pause");
+      if (!control || control.disabled || !this.#controller) {
+        return;
+      }
+      if (control.classList.contains("carousel-control-play-pause")) {
+        this.#controller.togglePlayPause();
+        return;
+      }
+      this.#controller.pauseFromInteraction();
+      if (control.hasAttribute("data-bs-slide-to")) {
+        this.#controller.to(control.getAttribute("data-bs-slide-to"));
+      } else if (control.getAttribute("data-bs-slide") === "next") {
+        this.#controller.next();
       } else {
-        button.removeAttribute("aria-current");
+        this.#controller.prev();
       }
     });
   }
 
-  #startCycle() {
-    this.#stopCycle();
-    const interval = Number.parseInt(this.getAttribute("interval") || "0", 10);
-    if (interval > 0 && !this.#hovered && this.isConnected) {
-      this.#cycleTimer = window.setInterval(() => this.next(), interval);
-    }
+  constructor() {
+    super();
+    this.#wire();
   }
 
-  #stopCycle() {
-    if (this.#cycleTimer !== null) {
-      window.clearInterval(this.#cycleTimer);
-      this.#cycleTimer = null;
-    }
-  }
+  next() { this.#controller?.next(); }
+
+  prev() { this.#controller?.prev(); }
+
+  to(index) { this.#controller?.to(index); }
+
+  cycle() { this.#controller?.cycle(); }
+
+  pause() { this.#controller?.pause(); }
+
+  nextWhenVisible() { this.#controller?.nextWhenVisible(); }
+
+  togglePlayPause() { this.#controller?.togglePlayPause(); }
+
+  /** Autoplay off for good (what a control click does); used by external data-bs-slide triggers. */
+  pauseFromInteraction() { this.#controller?.pauseFromInteraction(); }
 }
 
-/**
- * <ui-carousel-item>.
- *
- * Attributes:
- * - active: current slide (managed by the carousel).
- *
- * Slots: default. Direct children with class "carousel-caption" get the
- * Bootstrap caption placement.
- */
-export class UiCarouselItem extends ShadowComponentElement {
-  static stylesheet = new URL("./ui-carousel.css", import.meta.url).href;
-  // "active" and "fade" are intentionally not observed: the carousel drives
-  // them (plus the transient carousel-item-* classes) purely through CSS.
-  static observedAttributes = [];
-
-  render() {
-    return "<slot></slot>";
-  }
-}
+/** One slide of a <ui-carousel>; its content is slotted into the rendered .carousel-item. */
+export class UiCarouselItem extends HTMLElement {}
 
 registerComponent("ui-carousel", UiCarousel);
 registerComponent("ui-carousel-item", UiCarouselItem);
+installCarouselDataApi();

@@ -1,6 +1,6 @@
 {
   "name": "ui-carousel",
-  "description": "Bootstrap carousel with ui-carousel-item slides.",
+  "description": "Bootstrap carousel on scroll snap: controls, indicators, play/pause, top/bottom/overlay, fade, several items, peek, variable width, centre, autoplay with per-slide intervals, loop/wrap/stop, data API.",
   "elements": [
     "ui-carousel",
     "ui-carousel-item"
@@ -8,6 +8,42 @@
   "entry": "ui-carousel.js",
   "files": [
     "ui-carousel.js",
-    "ui-carousel.css"
-  ]
+    "carousel-controller.js",
+    "ui-carousel.css",
+    "ui-carousel.document.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".carousel",
+        "prefix": "--bs-carousel-"
+      }
+    ],
+    "optional": [
+      "--bs-carousel-interval"
+    ],
+    "descriptions": {
+      "--bs-carousel-gap": "Space between the slides and the control rows.",
+      "--bs-carousel-indicator-bg": "Colour of the indicators.",
+      "--bs-carousel-indicator-width": "Width of an indicator (the active one: 2.5 times).",
+      "--bs-carousel-indicator-height": "Height of an indicator.",
+      "--bs-carousel-indicator-spacer": "Space between indicators.",
+      "--bs-carousel-indicator-opacity-duration": "Duration of the indicator opacity transition.",
+      "--bs-carousel-indicator-opacity-timing": "Timing function of that transition.",
+      "--bs-carousel-indicator-width-duration": "Duration of the indicator width transition.",
+      "--bs-carousel-indicator-width-timing": "Timing function of that transition.",
+      "--bs-carousel-indicator-progress-bg": "Fill of the active indicator while autoplaying.",
+      "--bs-carousel-control-icon-width": "Size of the control icons.",
+      "--bs-carousel-control-prev-icon": "Mask image of the previous icon.",
+      "--bs-carousel-control-next-icon": "Mask image of the next icon.",
+      "--bs-carousel-control-pause-icon": "Mask image of the pause icon.",
+      "--bs-carousel-control-play-icon": "Mask image of the play icon.",
+      "--bs-carousel-items": "Whole slides visible at once.",
+      "--bs-carousel-items-gap": "Space between slides.",
+      "--bs-carousel-items-peek": "How much of the neighbouring slides shows.",
+      "--bs-carousel-fade-duration": "Duration of the crossfade.",
+      "--bs-carousel-fade-timing": "Timing function of the crossfade.",
+      "--bs-carousel-interval": "Duration of the indicator progress (set by the autoplay from the interval)."
+    }
+  }
 }

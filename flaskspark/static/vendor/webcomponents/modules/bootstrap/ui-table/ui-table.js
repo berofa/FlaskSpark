@@ -1,57 +1,54 @@
 import { registerComponent } from "../../../core/registry.js";
+import { HOST_TOKENS_CLASS } from "../../../core/shadow-sheet-transforms.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
+import { BOOTSTRAP_SHADOW_STYLES, themeColor } from "../shadow-styles.js";
 
 const ALIGN = new Set(["top", "middle", "bottom"]);
+const BREAKPOINTS = new Set(["sm", "md", "lg", "xl", "2xl"]);
 
 /**
- * <ui-table>: Bootstrap .table for an author-provided light-DOM <table>.
+ * <ui-table>: Bootstrap 6 .table for an author-provided light-DOM <table>.
  *
- * Table rows cannot be slotted into a shadow <table> (the HTML table model
- * needs real parent/child elements), so the component moves the <table>
- * child into its shadow tree and styles it there. A newly inserted <table>
- * child replaces the current one. Script access goes through the `table`
- * property (document.querySelector does not reach into the shadow tree).
- *
- * The stylesheet also contains Bootstrap's reboot and utility classes, so
- * cell markup like text-end, text-success, fw-semibold, small or
- * font-monospace keeps working. Page-level classes do not apply inside.
+ * Table rows cannot be slotted into a shadow <table> (the HTML table model needs real parent / child
+ * elements), so the component moves its <table> child into its shadow tree and styles it there. A newly
+ * inserted <table> child replaces the current one. Script access goes through the `table` property.
+ * The shadow tree has the whole Bootstrap CSS, so cell markup like text-end, table-active, table-group-divider,
+ * theme-success on a row or align-middle keeps working; classes on the <table> are kept (caption-top, mb-0).
  *
  * Attributes:
- * - size: "sm" for .table-sm.
- * - striped, hover, bordered, borderless: Bootstrap table modifiers.
- * - valign: "top" | "middle" | "bottom" (vertical cell alignment). Not "align":
- *   browsers map that legacy attribute to text-align on any element.
- * - responsive: horizontal scrolling wrapper (.table-responsive).
- *
- * Classes on the <table> itself are kept (e.g. "mb-0", "caption-top").
- *
- * CSS parts: wrapper, table.
- * Custom properties: --ui-table-head-color, --ui-table-head-font-weight
- * (th cells), plus Bootstrap's --bs-table-* via ::part(table).
+ * - variant: theme colour of the whole table. size="sm": compact cells.
+ * - striped, striped-columns, hover, bordered, borderless: Bootstrap's accents and borders.
+ * - valign: top | middle | bottom (vertical alignment of the cells).
+ * - card: rounded, bordered and clipped like a card (.table-card).
+ * - responsive: horizontal scrolling (.table-responsive), or below a breakpoint: sm | md | lg | xl | 2xl.
+ * - stacked: rows as blocks with label–value pairs (.table-stacked), or below a container width:
+ *   sm | md | lg | xl | 2xl. Cells without data-cell get the label of their column header.
+ * Parts: wrapper, table.
  */
 export class UiTable extends ShadowComponentElement {
-  static stylesheet = new URL("./ui-table.css", import.meta.url).href;
-  static observedAttributes = ["size", "striped", "hover", "bordered", "borderless", "valign", "responsive"];
+  static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-table.css", import.meta.url).href];
+  static observedAttributes = ["variant", "size", "striped", "striped-columns", "hover", "bordered", "borderless", "valign",
+    "card", "responsive", "stacked"];
 
   #table = null;
   #authorClasses = "";
   #observer = null;
+  #rows = null;
 
   connectedCallback() {
     this.#adopt();
-    if (!this.#observer) {
-      this.#observer = new MutationObserver(() => {
-        if (this.#adopt()) {
-          this.requestRender();
-        }
-      });
-    }
+    this.#observer ??= new MutationObserver(() => {
+      if (this.#adopt()) {
+        this.requestRender();
+      }
+    });
     this.#observer.observe(this, { childList: true });
     super.connectedCallback();
   }
 
   disconnectedCallback() {
     this.#observer?.disconnect();
+    this.#rows?.disconnect();
   }
 
   /** The managed <table> element (lives in the shadow tree once rendered). */
@@ -70,8 +67,16 @@ export class UiTable extends ShadowComponentElement {
     return true;
   }
 
+  #breakpoint(name) {
+    const value = this.getAttribute(name);
+    return BREAKPOINTS.has(value) ? `${value}:` : "";
+  }
+
   render() {
-    return `<div class="${this.hasAttribute("responsive") ? "table-responsive" : "ui-table"}" part="wrapper" data-wrapper></div>`;
+    const responsive = this.hasAttribute("responsive") || (this.hasAttribute("stacked") && this.#breakpoint("stacked"));
+    const classes = [responsive ? `${this.#breakpoint("responsive")}table-responsive` : "", this.hasAttribute("card") ? "table-card" : "",
+      "ui-table-wrapper"].filter(Boolean).join(" ");
+    return `<div class="${classes}" part="wrapper" data-wrapper></div>`;
   }
 
   afterRender() {
@@ -79,19 +84,45 @@ export class UiTable extends ShadowComponentElement {
     if (!table) {
       return;
     }
-    const classes = ["table"];
-    if (this.getAttribute("size") === "sm") classes.push("table-sm");
-    if (this.hasAttribute("striped")) classes.push("table-striped");
-    if (this.hasAttribute("hover")) classes.push("table-hover");
-    if (this.hasAttribute("bordered")) classes.push("table-bordered");
-    if (this.hasAttribute("borderless")) classes.push("table-borderless");
+    const variant = themeColor(this.getAttribute("variant"));
     const align = this.getAttribute("valign");
-    if (ALIGN.has(align)) classes.push(`align-${align}`);
-    table.className = [...classes, this.#authorClasses].join(" ").trim();
+    const classes = ["table", HOST_TOKENS_CLASS,
+      variant ? `theme-${variant}` : "",
+      this.getAttribute("size") === "sm" ? "table-sm" : "",
+      this.hasAttribute("striped") ? "table-striped" : "",
+      this.hasAttribute("striped-columns") ? "table-striped-columns" : "",
+      this.hasAttribute("hover") ? "table-hover" : "",
+      this.hasAttribute("bordered") ? "table-bordered" : "",
+      this.hasAttribute("borderless") ? "table-borderless" : "",
+      ALIGN.has(align) ? `align-${align}` : "",
+      this.hasAttribute("stacked") ? `${this.#breakpoint("stacked")}table-stacked` : "",
+      this.#authorClasses];
+    table.className = classes.filter(Boolean).join(" ");
     table.setAttribute("part", "table");
-    // render() replaced the shadow content; (re-)insert the table node itself,
-    // which keeps its listeners and form state.
+    // render() replaced the shadow content; (re-)insert the table node itself, which keeps its listeners and form state.
     this.shadowRoot.querySelector("[data-wrapper]").append(table);
+    this.#rows?.disconnect();
+    if (this.hasAttribute("stacked")) {
+      this.#labelCells();
+      this.#rows = new MutationObserver(() => this.#labelCells());
+      this.#rows.observe(table, { childList: true, subtree: true });
+    }
+  }
+
+  /** Stacked rows show each cell's data-cell as its label: fill it from the column headers where missing. */
+  #labelCells() {
+    const headers = [...(this.#table.tHead?.rows[0]?.cells || [])].map((cell) => cell.textContent.trim());
+    for (const body of this.#table.tBodies) {
+      for (const row of body.rows) {
+        let column = 0;
+        for (const cell of row.cells) {
+          if (!cell.hasAttribute("data-cell") && headers[column]) {
+            cell.setAttribute("data-cell", headers[column]);
+          }
+          column += cell.colSpan || 1;
+        }
+      }
+    }
   }
 }
 

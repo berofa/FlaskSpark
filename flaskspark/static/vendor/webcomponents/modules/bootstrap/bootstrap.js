@@ -15,6 +15,7 @@ import { UiCard, UiCardGroup } from "./ui-card/ui-card.js";
 import { UiCarousel, UiCarouselItem } from "./ui-carousel/ui-carousel.js";
 import { UiCheck } from "./ui-check/ui-check.js";
 import { UiChip } from "./ui-chip/ui-chip.js";
+import { UiChipInput } from "./ui-chip/ui-chip-input.js";
 import { UiCloseButton } from "./ui-close-button/ui-close-button.js";
 import { UiCollapse } from "./ui-collapse/ui-collapse.js";
 import { UiDialog } from "./ui-dialog/ui-dialog.js";
@@ -57,6 +58,7 @@ export {
   UiCarouselItem,
   UiCheck,
   UiChip,
+  UiChipInput,
   UiCloseButton,
   UiCollapse,
   UiDialog,

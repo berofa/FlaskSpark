@@ -11,13 +11,18 @@ const FIELD_HOSTS = ":is(ui-input, ui-select, ui-textarea)";
  * (.badge-outline, .btn-sm): those must keep winning on the inner element.
  */
 export const TOKEN_HOISTS = Object.freeze([
+  { selector: ".accordion", prefix: "--bs-accordion-", host: "ui-accordion" },
   { selector: ".alert", prefix: "--bs-alert-", host: "ui-alert" },
   { selector: ".badge", prefix: "--bs-badge-", host: "ui-badge" },
   { selector: ".btn", prefix: "--bs-btn-", host: "ui-button" },
   { selector: ".btn-styled", prefix: "--bs-btn-", host: "ui-button" },
   { selector: ".btn-close", prefix: "--bs-btn-close-", host: "ui-close-button" },
   { selector: ".breadcrumb", prefix: "--bs-breadcrumb-", host: "ui-breadcrumb" },
+  { selector: ".carousel", prefix: "--bs-carousel-", host: "ui-carousel" },
+  { selector: ".chip", prefix: "--bs-chip-", host: ":is(ui-chip, ui-chip-input)" },
+  { selector: ".chip-input", prefix: "--bs-chip-input-", host: "ui-chip-input" },
   { selector: ".card", prefix: "--bs-card-", host: "ui-card" },
+  { selector: ".table", prefix: "--bs-table-", host: "ui-table" },
   { selector: ".list-group", prefix: "--bs-list-group-", host: ":is(ui-list-group, ui-tabs)" },
   { selector: ".nav", prefix: "--bs-nav-", host: "ui-tabs" },
   { selector: ".nav-tabs", prefix: "--bs-nav-tabs-", host: "ui-tabs" },
