@@ -1,53 +1,86 @@
-:host([hidden]) {
-  display: none !important;
-}
-
+/* ui-grid: equal columns per Bootstrap 6 breakpoint. */
 :host {
+  --ui-grid-columns: 1;
+  --ui-grid-gap: var(--bs-spacer);
+  --ui-grid-gap-x: var(--ui-grid-gap);
+  --ui-grid-gap-y: var(--ui-grid-gap);
+  --ui-grid-align: stretch;
   display: block;
-  box-sizing: border-box;
-  color: var(--bs-body-color);
-}
-
-:host *,
-:host *::before,
-:host *::after {
-  box-sizing: border-box;
-}
-
-[hidden] {
-  display: none !important;
-}
-
-:host {
-  --_grid-gap: 1rem;
 }
 
 .ui-grid {
+  --_columns: var(--ui-grid-columns);
   display: grid;
-  grid-template-columns: repeat(var(--_grid-columns, 1), minmax(0, 1fr));
-  gap: var(--_grid-gap);
+  grid-template-columns: repeat(var(--_columns), minmax(0, 1fr));
+  gap: var(--ui-grid-gap-y) var(--ui-grid-gap-x);
+  align-items: var(--ui-grid-align);
 }
 
-@media (min-width: 576px) {
-  .ui-grid {
-    grid-template-columns: repeat(var(--_grid-columns-sm, var(--_grid-columns, 1)), minmax(0, 1fr));
+/* The container variant measures the grid itself. */
+:host([container]) {
+  container-type: inline-size;
+}
+
+::slotted(*) {
+  grid-column: span var(--ui-grid-span, 1);
+}
+
+@media (width >= 576px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-sm, var(--ui-grid-columns));
   }
 }
 
-@media (min-width: 768px) {
-  .ui-grid {
-    grid-template-columns: repeat(var(--_grid-columns-md, var(--_grid-columns-sm, var(--_grid-columns, 1))), minmax(0, 1fr));
+@container (width >= 576px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-sm, var(--ui-grid-columns));
   }
 }
 
-@media (min-width: 992px) {
-  .ui-grid {
-    grid-template-columns: repeat(var(--_grid-columns-lg, var(--_grid-columns-md, var(--_grid-columns-sm, var(--_grid-columns, 1)))), minmax(0, 1fr));
+@media (width >= 768px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns)));
   }
 }
 
-@media (min-width: 1200px) {
-  .ui-grid {
-    grid-template-columns: repeat(var(--_grid-columns-xl, var(--_grid-columns-lg, var(--_grid-columns-md, var(--_grid-columns-sm, var(--_grid-columns, 1))))), minmax(0, 1fr));
+@container (width >= 768px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns)));
+  }
+}
+
+@media (width >= 1024px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns))));
+  }
+}
+
+@container (width >= 1024px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns))));
+  }
+}
+
+@media (width >= 1280px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-xl, var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns)))));
+  }
+}
+
+@container (width >= 1280px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-xl, var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns)))));
+  }
+}
+
+@media (width >= 1536px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-2xl, var(--_columns-xl, var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns))))));
+  }
+}
+
+@container (width >= 1536px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-2xl, var(--_columns-xl, var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns))))));
   }
 }

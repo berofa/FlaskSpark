@@ -1,6 +1,6 @@
 {
   "name": "ui-dropzone",
-  "description": "Area to drop files on or pick them with the file dialog; hands the files to the host (upload is the host's job).",
+  "description": "Drop / pick / paste files: hand-over events or a form field with a file list; accept, size and count limits with messages.",
   "elements": [
     "ui-dropzone"
   ],
@@ -8,5 +8,31 @@
   "files": [
     "ui-dropzone.js",
     "ui-dropzone.css"
-  ]
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-dropzone-",
+        "file": "ui-dropzone.css"
+      }
+    ],
+    "descriptions": {
+      "--ui-dropzone-padding": "Padding of the area.",
+      "--ui-dropzone-gap": "Space between icon, text and hint.",
+      "--ui-dropzone-color": "Text colour.",
+      "--ui-dropzone-bg": "Background.",
+      "--ui-dropzone-border-width": "Border width.",
+      "--ui-dropzone-border-style": "Border style (dashed).",
+      "--ui-dropzone-border-color": "Border colour.",
+      "--ui-dropzone-radius": "Corner radius.",
+      "--ui-dropzone-hover-border-color": "Border colour on hover.",
+      "--ui-dropzone-over-color": "Text colour while files are dragged over (theme: its fg).",
+      "--ui-dropzone-over-bg": "Background while files are dragged over (theme: its subtle bg).",
+      "--ui-dropzone-over-border-color": "Border colour while files are dragged over (theme: its bg).",
+      "--ui-dropzone-invalid-border-color": "Border colour when invalid.",
+      "--ui-dropzone-hint-font-size": "Font size of the hint.",
+      "--ui-dropzone-list-gap": "Space between the listed files."
+    }
+  }
 }

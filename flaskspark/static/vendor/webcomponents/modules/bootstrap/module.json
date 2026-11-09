@@ -1,6 +1,6 @@
 {
   "name": "bootstrap",
-  "description": "Bootstrap components as web components with shadow roots, themed via CSS variables (migrating from Bootstrap 5 to 6).",
+  "description": "Bootstrap components as web components with shadow roots, themed via CSS variables (Bootstrap 6).",
   "entry": "bootstrap.js",
   "files": [
     "bootstrap.js",
@@ -12,7 +12,6 @@
     "ui-tokens.css"
   ],
   "vendor": [
-    "bootstrap",
     "bootstrap6"
   ]
 }

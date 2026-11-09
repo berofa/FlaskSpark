@@ -1,12 +1,39 @@
 {
   "name": "ui-gallery",
-  "description": "Images and videos as thumbnail tiles with a lightbox (previous/next, video player); optionally editable and sortable.",
+  "description": "Images and videos as thumbnail tiles with a lightbox (previous/next, keyboard, swipe, video player); declarative items, editable and sortable.",
   "elements": [
-    "ui-gallery"
+    "ui-gallery",
+    "ui-gallery-item"
   ],
   "entry": "ui-gallery.js",
   "files": [
     "ui-gallery.js",
     "ui-gallery.css"
-  ]
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-gallery-",
+        "file": "ui-gallery.css"
+      }
+    ],
+    "descriptions": {
+      "--ui-gallery-tile-size": "Minimum width of a tile (columns fill the row).",
+      "--ui-gallery-tile-aspect": "Aspect ratio of a tile.",
+      "--ui-gallery-gap": "Space between tiles.",
+      "--ui-gallery-radius": "Corner radius of a tile.",
+      "--ui-gallery-tile-bg": "Background of a tile (visible without thumbnail).",
+      "--ui-gallery-tile-color": "Text colour of a tile without thumbnail.",
+      "--ui-gallery-object-fit": "How a thumbnail fills its tile.",
+      "--ui-gallery-hover-scale": "Zoom of a thumbnail on hover.",
+      "--ui-gallery-play-size": "Size of the play mark on videos.",
+      "--ui-gallery-caption-color": "Colour of the captions.",
+      "--ui-gallery-caption-font-size": "Font size of the captions.",
+      "--ui-gallery-backdrop": "Backdrop of the lightbox.",
+      "--ui-gallery-lightbox-color": "Text colour in the lightbox.",
+      "--ui-gallery-lightbox-padding": "Padding of the lightbox.",
+      "--ui-gallery-drop-color": "Outline of the drop target while sorting."
+    }
+  }
 }

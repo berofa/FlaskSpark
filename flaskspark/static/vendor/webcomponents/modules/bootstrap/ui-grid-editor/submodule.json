@@ -1,6 +1,6 @@
 {
   "name": "ui-grid-editor",
-  "description": "Editor for ui-grid layouts (drag, resize, persist).",
+  "description": "Editor for ui-grid layouts: drag items between cells, merge / split cells, add / remove rows and columns, save as JSON.",
   "elements": [
     "ui-grid-editor"
   ],
@@ -11,5 +11,28 @@
   ],
   "requires": [
     "ui-grid"
-  ]
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-grid-editor-",
+        "file": "ui-grid-editor.css"
+      }
+    ],
+    "descriptions": {
+      "--ui-grid-editor-boundary-size": "Width / height of the toolbars between rows and columns.",
+      "--ui-grid-editor-item-gap": "Space between the items of a cell.",
+      "--ui-grid-editor-area-padding": "Padding of a cell.",
+      "--ui-grid-editor-area-min-height": "Minimum height of a cell.",
+      "--ui-grid-editor-area-bg": "Background of a cell.",
+      "--ui-grid-editor-area-border-color": "Border colour of a cell (dashed when empty).",
+      "--ui-grid-editor-area-radius": "Corner radius of a cell.",
+      "--ui-grid-editor-empty-bg": "Background of the empty-cell note.",
+      "--ui-grid-editor-empty-color": "Text colour of the empty-cell note.",
+      "--ui-grid-editor-drop-color": "Outline of the cell under a dragged item.",
+      "--ui-grid-editor-line-color": "Colour of the dotted row / column lines.",
+      "--ui-grid-editor-control-shadow": "Shadow of the button groups."
+    }
+  }
 }

@@ -2,15 +2,39 @@ import { registerComponent } from "../../../core/registry.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
 import { escapeHtml } from "../../../core/escape.js";
 import { defaultLayout, normalizeGridLayout, normalizeItemId } from "../ui-grid/grid-layout.js";
+import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
 
+/** Texts of the editor; each can be replaced with an attribute "<key>-label" (e.g. merge-left-label). */
+const LABELS = {
+  "empty": "Empty cell",
+  "merge-left": "Merge left",
+  "merge-up": "Merge up",
+  "merge-right": "Merge right",
+  "merge-down": "Merge down",
+  "unmerge": "Unmerge cell",
+  "add-row": "Add row",
+  "remove-row": "Remove row",
+  "add-column": "Add column",
+  "remove-column": "Remove column",
+  "row-actions": "Row actions",
+  "column-actions": "Column actions",
+  "cell-actions": "Cell actions",
+};
+
+/**
+ * <ui-grid-editor>: edits a ui-grid layout: items (cards) are dragged between cells, cells are merged and
+ * split, rows and columns added and removed. Not a Bootstrap component: built from Bootstrap 6 cards, badges,
+ * buttons and tokens, themed with its own --ui-grid-editor-* tokens.
+ *
+ * Data: a <script type="application/json"> child or the property `data` = {items: [{id, eyebrow, title,
+ * description, meta, badge}], layout} (layout normalized like grid_layout.py).
+ * Attributes: save-url (POSTs {layout} as JSON after every change), <key>-label for every text (see LABELS).
+ * Events (bubble): ui-grid-editor:change {layout} after every change, ui-grid-editor:error {error, layout}
+ * when saving failed.
+ */
 export class UiGridEditor extends ShadowComponentElement {
-  static stylesheet = new URL("./ui-grid-editor.css", import.meta.url).href;
-  static observedAttributes = [
-    "save-url",
-    "empty-label",
-    "saved-label",
-    "save-failed-label",
-  ];
+  static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-grid-editor.css", import.meta.url).href];
+  static observedAttributes = ["save-url", ...Object.keys(LABELS).map((key) => `${key}-label`)];
 
   constructor() {
     super();
@@ -60,11 +84,7 @@ export class UiGridEditor extends ShadowComponentElement {
   }
 
   readLabels() {
-    return {
-      emptyLabel: this.getAttribute("empty-label") || "Empty cell",
-      savedLabel: this.getAttribute("saved-label") || "Layout saved.",
-      saveFailedLabel: this.getAttribute("save-failed-label") || "Save failed.",
-    };
+    return Object.fromEntries(Object.entries(LABELS).map(([key, text]) => [key, this.getAttribute(`${key}-label`) || text]));
   }
 
   initialize() {
@@ -267,7 +287,7 @@ export class UiGridEditor extends ShadowComponentElement {
         <div class="card-body">
           <div class="ui-grid-editor-item__header">
             <div class="ui-grid-editor-item__eyebrow">${escapeHtml(item.eyebrow)}</div>
-            ${item.badge ? `<span class="badge text-bg-primary">${escapeHtml(item.badge)}</span>` : ""}
+            ${item.badge ? `<span class="badge theme-primary">${escapeHtml(item.badge)}</span>` : ""}
           </div>
           <h4 class="ui-grid-editor-item__title">${escapeHtml(item.title)}</h4>
           ${item.description ? `<p class="ui-grid-editor-item__description">${escapeHtml(item.description)}</p>` : ""}
@@ -452,7 +472,7 @@ export class UiGridEditor extends ShadowComponentElement {
     actions.forEach((action) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "btn btn-sm btn-light ui-grid-editor-control";
+      button.className = "btn-subtle btn-sm theme-secondary ui-grid-editor-control";
       button.textContent = action.icon;
       button.title = action.title;
       button.setAttribute("aria-label", action.title);
@@ -465,10 +485,10 @@ export class UiGridEditor extends ShadowComponentElement {
 
   buildControls(area) {
     const actions = [
-      ["left", "←", "Merge left", this.canMerge(area, "left"), () => this.merge(area, "left")],
-      ["up", "↑", "Merge up", this.canMerge(area, "up"), () => this.merge(area, "up")],
-      ["right", "→", "Merge right", this.canMerge(area, "right"), () => this.merge(area, "right")],
-      ["down", "↓", "Merge down", this.canMerge(area, "down"), () => this.merge(area, "down")],
+      ["left", "←", this.labels["merge-left"], this.canMerge(area, "left"), () => this.merge(area, "left")],
+      ["up", "↑", this.labels["merge-up"], this.canMerge(area, "up"), () => this.merge(area, "up")],
+      ["right", "→", this.labels["merge-right"], this.canMerge(area, "right"), () => this.merge(area, "right")],
+      ["down", "↓", this.labels["merge-down"], this.canMerge(area, "down"), () => this.merge(area, "down")],
       ["split", "⤢", "Unmerge cell", area.row_span > 1 || area.column_span > 1, () => this.split(area)],
     ]
       .filter(([, , , enabled]) => enabled)
@@ -480,7 +500,7 @@ export class UiGridEditor extends ShadowComponentElement {
 
     const controls = document.createElement("div");
     controls.className = "ui-grid-editor-controls";
-    controls.appendChild(this.buildActionGroup("Cell actions", actions));
+    controls.appendChild(this.buildActionGroup(this.labels["cell-actions"], actions));
     return controls;
   }
 
@@ -616,7 +636,7 @@ export class UiGridEditor extends ShadowComponentElement {
     const actions = [
       {
         icon: "+",
-        title: "Add row",
+        title: this.labels["add-row"],
         onClick: () => this.addRowAt(boundaryIndex + 1),
       },
     ];
@@ -624,7 +644,7 @@ export class UiGridEditor extends ShadowComponentElement {
     if (this.canRemoveRow(removeTargetRow) && this.state.rows_count > 1) {
       actions.push({
         icon: "−",
-        title: "Remove row",
+        title: this.labels["remove-row"],
         onClick: () => this.removeRowAt(removeTargetRow),
       });
     }
@@ -633,7 +653,7 @@ export class UiGridEditor extends ShadowComponentElement {
     toolbar.className = "ui-grid-editor-row-toolbar";
     toolbar.style.gridColumn = `1 / span ${this.getEditorGridColumnTrackCount()}`;
     toolbar.style.gridRow = String((boundaryIndex * 2) + 1);
-    toolbar.appendChild(this.buildActionGroup("Row actions", actions));
+    toolbar.appendChild(this.buildActionGroup(this.labels["row-actions"], actions));
     return toolbar;
   }
 
@@ -657,7 +677,7 @@ export class UiGridEditor extends ShadowComponentElement {
     const actions = [
       {
         icon: "+",
-        title: "Add column",
+        title: this.labels["add-column"],
         onClick: () => this.addColumnAt(boundaryIndex + 1),
       },
     ];
@@ -665,7 +685,7 @@ export class UiGridEditor extends ShadowComponentElement {
     if (this.canRemoveColumn(removeTargetColumn) && this.state.columns_count > 1) {
       actions.push({
         icon: "−",
-        title: "Remove column",
+        title: this.labels["remove-column"],
         onClick: () => this.removeColumnAt(removeTargetColumn),
       });
     }
@@ -674,7 +694,7 @@ export class UiGridEditor extends ShadowComponentElement {
     toolbar.className = "ui-grid-editor-column-toolbar";
     toolbar.style.gridColumn = String((boundaryIndex * 2) + 1);
     toolbar.style.gridRow = `1 / span ${this.getEditorGridRowTrackCount()}`;
-    toolbar.appendChild(this.buildActionGroup("Column actions", actions));
+    toolbar.appendChild(this.buildActionGroup(this.labels["column-actions"], actions));
     return toolbar;
   }
 
@@ -712,7 +732,7 @@ export class UiGridEditor extends ShadowComponentElement {
     stack.className = `ui-grid-editor-stack${area.item_ids.length === 1 ? " ui-grid-editor-stack--single" : ""}`;
 
     if (!area.item_ids.length) {
-      stack.appendChild(this.createEmptyState(this.labels.emptyLabel));
+      stack.appendChild(this.createEmptyState(this.labels.empty));
     } else {
       area.item_ids.forEach((itemId) => {
         const itemNode = this.createItemNode(itemId);

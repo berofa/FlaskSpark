@@ -34,7 +34,6 @@
     ]
   },
   "vendor": [
-    "bootstrap",
     "bootstrap6"
   ]
 }

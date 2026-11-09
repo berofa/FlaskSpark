@@ -1,59 +1,100 @@
+/* ui-dropzone: drop area on Bootstrap 6 tokens. */
+:host {
+  --ui-dropzone-padding: var(--bs-spacer-5, 1.5rem) var(--bs-spacer);
+  --ui-dropzone-gap: var(--bs-spacer-1, 0.25rem);
+  --ui-dropzone-color: var(--bs-fg-2);
+  --ui-dropzone-bg: var(--bs-bg-1);
+  --ui-dropzone-border-width: 2px;
+  --ui-dropzone-border-style: dashed;
+  --ui-dropzone-border-color: var(--bs-border-color);
+  --ui-dropzone-radius: var(--bs-radius-5);
+  --ui-dropzone-hover-border-color: var(--bs-fg-3);
+  --ui-dropzone-over-color: var(--bs-theme-fg, var(--bs-primary-fg, var(--bs-primary-bg)));
+  --ui-dropzone-over-bg: var(--bs-theme-bg-subtle, var(--bs-bg-2));
+  --ui-dropzone-over-border-color: var(--bs-theme-bg, var(--bs-primary-bg));
+  --ui-dropzone-invalid-border-color: var(--bs-danger-bg);
+  --ui-dropzone-hint-font-size: var(--bs-font-size-sm);
+  --ui-dropzone-list-gap: var(--bs-spacer-1, 0.25rem);
+  display: block;
+}
+
 .ui-dropzone {
   display: flex;
   flex-direction: column;
+  gap: var(--ui-dropzone-gap);
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
-  padding: var(--ui-dropzone-padding, 1.5rem 1rem);
-  color: var(--ui-dropzone-color, var(--bs-secondary-color));
+  padding: var(--ui-dropzone-padding);
+  color: var(--ui-dropzone-color);
   text-align: center;
-  background: var(--ui-dropzone-bg, transparent);
-  border: 2px dashed var(--ui-dropzone-border-color, var(--bs-border-color));
-  border-radius: var(--ui-dropzone-radius, var(--bs-border-radius-lg, 0.5rem));
   cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s;
+  background: var(--ui-dropzone-bg);
+  border: var(--ui-dropzone-border-width) var(--ui-dropzone-border-style) var(--ui-dropzone-border-color);
+  border-radius: var(--ui-dropzone-radius);
 }
 
-.ui-dropzone:hover, .ui-dropzone.is-over {
-  background: var(--ui-dropzone-over-bg, var(--bs-tertiary-bg));
-  border-color: var(--ui-dropzone-over-border-color, var(--bs-primary));
+@media (prefers-reduced-motion: no-preference) {
+  .ui-dropzone {
+    transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  }
+}
+
+.ui-dropzone:hover {
+  border-color: var(--ui-dropzone-hover-border-color);
 }
 
 .ui-dropzone:focus-visible {
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb, 13, 110, 253), 0.25);
+  outline: var(--bs-focus-ring);
+}
+
+/* Theme colour of the drag-over state (variant sets the theme tokens on the zone). */
+.ui-dropzone.is-over {
+  color: var(--ui-dropzone-over-color);
+  background: var(--ui-dropzone-over-bg);
+  border-color: var(--ui-dropzone-over-border-color);
+  border-style: solid;
+}
+
+.ui-dropzone.is-invalid {
+  border-color: var(--ui-dropzone-invalid-border-color);
 }
 
 .ui-dropzone[aria-disabled="true"] {
-  opacity: 0.55;
   cursor: not-allowed;
-  pointer-events: none;
+  opacity: var(--bs-control-disabled-opacity, 0.65);
 }
 
-.ui-dropzone__label {
-  font-weight: 500;
+.ui-dropzone-icon {
+  display: inline-flex;
 }
 
-.ui-dropzone__hint {
-  font-size: 0.8125rem;
+.ui-dropzone-hint {
+  font-size: var(--ui-dropzone-hint-font-size);
+  opacity: 0.8;
 }
 
-:host([hidden]) {
-  display: none !important;
+.ui-dropzone-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-dropzone-list-gap);
+  margin: var(--bs-spacer-2) 0 0;
 }
 
-:host {
-  display: block;
-  box-sizing: border-box;
-  color: var(--bs-body-color);
+.ui-dropzone-file {
+  display: flex;
+  gap: var(--bs-spacer-2);
+  align-items: center;
 }
 
-:host *,
-:host *::before,
-:host *::after {
-  box-sizing: border-box;
+.ui-dropzone-file-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-[hidden] {
-  display: none !important;
+.ui-dropzone-file-size {
+  font-size: var(--bs-font-size-sm);
+  color: var(--bs-fg-3);
 }

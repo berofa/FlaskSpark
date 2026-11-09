@@ -21,7 +21,7 @@ import { UiCollapse } from "./ui-collapse/ui-collapse.js";
 import { UiDialog } from "./ui-dialog/ui-dialog.js";
 import { UiDrawer } from "./ui-drawer/ui-drawer.js";
 import { UiDropzone } from "./ui-dropzone/ui-dropzone.js";
-import { UiGallery } from "./ui-gallery/ui-gallery.js";
+import { UiGallery, UiGalleryItem } from "./ui-gallery/ui-gallery.js";
 import { UiGrid } from "./ui-grid/ui-grid.js";
 import { UiGridEditor } from "./ui-grid-editor/ui-grid-editor.js";
 import { UiInput } from "./ui-input/ui-input.js";
@@ -65,6 +65,7 @@ export {
   UiDrawer,
   UiDropzone,
   UiGallery,
+  UiGalleryItem,
   UiGrid,
   UiGridEditor,
   UiInput,

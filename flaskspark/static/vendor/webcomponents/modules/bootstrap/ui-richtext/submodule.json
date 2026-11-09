@@ -1,12 +1,41 @@
 {
   "name": "ui-richtext",
-  "description": "Formatted text (bold, italic, underline, strikethrough, lists, quote, links) as a form-associated custom element; the value is HTML, pasted HTML is cleaned.",
+  "description": "Formatted text (bold, italic, underline, strikethrough, lists, quote, links) as a Bootstrap 6 form field; the value is HTML, pasted HTML is cleaned, the toolbar shows the formatting at the cursor.",
   "elements": [
     "ui-richtext"
   ],
   "entry": "ui-richtext.js",
   "files": [
     "ui-richtext.js",
-    "ui-richtext.css"
-  ]
+    "ui-richtext.css",
+    "ui-richtext.document.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-richtext-",
+        "file": "ui-richtext.css"
+      }
+    ],
+    "descriptions": {
+      "--ui-richtext-color": "Text colour.",
+      "--ui-richtext-bg": "Background.",
+      "--ui-richtext-border-width": "Border width.",
+      "--ui-richtext-border-color": "Border colour.",
+      "--ui-richtext-radius": "Corner radius.",
+      "--ui-richtext-padding-y": "Vertical padding of the text.",
+      "--ui-richtext-padding-x": "Horizontal padding of the text.",
+      "--ui-richtext-line-height": "Line height.",
+      "--ui-richtext-toolbar-bg": "Background of the toolbar.",
+      "--ui-richtext-toolbar-gap": "Space between the tool groups.",
+      "--ui-richtext-tool-active-bg": "Background of a pressed tool.",
+      "--ui-richtext-placeholder-color": "Colour of the placeholder.",
+      "--ui-richtext-disabled-bg": "Background when disabled.",
+      "--ui-richtext-invalid-border-color": "Border colour when invalid.",
+      "--ui-richtext-quote-border": "Line of a quote.",
+      "--ui-richtext-quote-color": "Text colour of a quote.",
+      "--ui-richtext-link-color": "Colour of links."
+    }
+  }
 }
