@@ -54,6 +54,7 @@ export class UiCombobox extends FormControlElement {
   }
 
   disconnectedCallback() {
+    super.disconnectedCallback();
     this.#observer?.disconnect();
     this.#controller?.hide();
   }

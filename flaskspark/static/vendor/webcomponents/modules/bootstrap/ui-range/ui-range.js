@@ -36,6 +36,7 @@ export class UiRange extends FormControlElement {
   }
 
   disconnectedCallback() {
+    super.disconnectedCallback();
     this.#observer?.disconnect();
   }
 

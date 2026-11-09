@@ -134,6 +134,7 @@ export class UiDatepicker extends FormControlElement {
   }
 
   disconnectedCallback() {
+    super.disconnectedCallback();
     this.#controller?.dispose();
     this.#controller = null;
   }

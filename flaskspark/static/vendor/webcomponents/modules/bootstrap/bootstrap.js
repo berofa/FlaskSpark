@@ -7,6 +7,7 @@
  */
 import { UiAccordion, UiAccordionItem } from "./ui-accordion/ui-accordion.js";
 import { UiAlert } from "./ui-alert/ui-alert.js";
+import { UiAvatar, UiAvatarStack } from "./ui-avatar/ui-avatar.js";
 import { UiBadge } from "./ui-badge/ui-badge.js";
 import { UiBreadcrumb, UiBreadcrumbItem } from "./ui-breadcrumb/ui-breadcrumb.js";
 import { UiButton } from "./ui-button/ui-button.js";
@@ -30,9 +31,14 @@ import { UiInput } from "./ui-input/ui-input.js";
 import { UiListGroup, UiListGroupItem } from "./ui-list-group/ui-list-group.js";
 import { MenuController, UiMenu } from "./ui-menu/ui-menu.js";
 import { UiOtp } from "./ui-otp/ui-otp.js";
+import { UiPagination } from "./ui-pagination/ui-pagination.js";
+import { UiPlaceholder } from "./ui-placeholder/ui-placeholder.js";
 import { UiPopover } from "./ui-popover/ui-popover.js";
+import { UiProgress, UiProgressBar } from "./ui-progress/ui-progress.js";
 import { UiRange } from "./ui-range/ui-range.js";
 import { UiSelect } from "./ui-select/ui-select.js";
+import { UiSpinner } from "./ui-spinner/ui-spinner.js";
+import { UiStep, UiStepper } from "./ui-stepper/ui-stepper.js";
 import { UiTable } from "./ui-table/ui-table.js";
 import { UiTabs, UiTabPanel } from "./ui-tabs/ui-tabs.js";
 import { UiRichtext } from "./ui-richtext/ui-richtext.js";
@@ -41,6 +47,7 @@ import { UiToast, UiToastContainer, showToast } from "./ui-toast/ui-toast.js";
 import "./toggler.js";
 import "./strength.js";
 import "./nav-overflow.js";
+import "./scrollspy.js";
 import { UiTooltip } from "./ui-tooltip/ui-tooltip.js";
 import { setupThemeSwitcher } from "./theme.js";
 
@@ -54,6 +61,8 @@ export {
   UiAccordion,
   UiAccordionItem,
   UiAlert,
+  UiAvatar,
+  UiAvatarStack,
   UiBadge,
   UiBreadcrumb,
   UiBreadcrumbItem,
@@ -84,9 +93,16 @@ export {
   MenuController,
   UiMenu,
   UiOtp,
+  UiPagination,
+  UiPlaceholder,
   UiPopover,
+  UiProgress,
+  UiProgressBar,
   UiRange,
   UiSelect,
+  UiSpinner,
+  UiStep,
+  UiStepper,
   UiTable,
   UiTabs,
   UiTabPanel,
@@ -106,4 +122,5 @@ export { escapeHtml } from "../../core/escape.js";
 export { applyTheme, setupThemeSwitcher } from "./theme.js";
 export { toggle as toggleToggler } from "./toggler.js";
 export { NavOverflowController, plainNavOverflow } from "./nav-overflow.js";
+export { ScrollSpyController, plainScrollSpy } from "./scrollspy.js";
 export { normalizeGridLayout, defaultLayout, buildUnitAreas } from "./ui-grid/grid-layout.js";

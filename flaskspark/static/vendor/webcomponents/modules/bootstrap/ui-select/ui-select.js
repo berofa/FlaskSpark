@@ -46,6 +46,7 @@ export class UiSelect extends FormControlElement {
   }
 
   disconnectedCallback() {
+    super.disconnectedCallback();
     this.#observer?.disconnect();
   }
 

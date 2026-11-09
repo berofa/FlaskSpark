@@ -12,6 +12,7 @@
     "toggler.js",
     "strength.js",
     "nav-overflow.js",
+    "scrollspy.js",
     "ui-tokens.css"
   ],
   "vendor": [

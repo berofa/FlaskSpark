@@ -2,7 +2,7 @@ import { registerComponent } from "../../../core/registry.js";
 import { HOST_TOKENS_CLASS } from "../../../core/shadow-sheet-transforms.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
 import { escapeHtml } from "../../../core/escape.js";
-import { validationMessage } from "../../../core/validation.js";
+import { onSubmitAttempt, validationMessage, validationMode } from "../../../core/validation.js";
 import { BOOTSTRAP_SHADOW_STYLES, themeColor } from "../shadow-styles.js";
 
 const BUTTON_APPEARANCES = new Set(["solid", "outline", "subtle", "text"]);
@@ -53,6 +53,8 @@ export class UiCheck extends ShadowComponentElement {
   #defaultChecked = null;
   #formDisabled = false;
   #touched = false;
+  #forced = false;
+  #stopSubmitWatch = null;
 
   constructor() {
     super();
@@ -64,6 +66,25 @@ export class UiCheck extends ShadowComponentElement {
       this.#defaultChecked = this.hasAttribute("checked");
     }
     super.connectedCallback();
+    this.#watchForm(this.#internals.form);
+  }
+
+  disconnectedCallback() {
+    this.#stopSubmitWatch?.();
+    this.#stopSubmitWatch = null;
+  }
+
+  formAssociatedCallback(form) {
+    this.#watchForm(form);
+  }
+
+  /** A submit attempt shows the feedback (like :user-invalid). */
+  #watchForm(form) {
+    this.#stopSubmitWatch?.();
+    this.#stopSubmitWatch = onSubmitAttempt(form, this, () => {
+      this.#touched = true;
+      this.#syncFormState();
+    });
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -137,9 +158,10 @@ export class UiCheck extends ShadowComponentElement {
     return this.#internals.reportValidity();
   }
 
-  /** Show its feedback and tell whether it is valid. */
+  /** Show its feedback (also without data-bs-validate) and tell whether it is valid. */
   validate() {
     this.#touched = true;
+    this.#forced = true;
     this.#syncFormState();
     return this.checkValidity();
   }
@@ -250,8 +272,11 @@ export class UiCheck extends ShadowComponentElement {
     } else {
       this.#internals.setValidity({});
     }
-    const show = this.#touched && Boolean(message);
+    // Like Bootstrap 6: client-side feedback only inside data-bs-validate ("valid": also valid), or after validate().
+    const mode = validationMode(this, this.#internals.form);
+    const show = (this.#forced || (mode !== null && this.#touched)) && Boolean(message);
     input.classList.toggle("is-invalid", show);
+    input.classList.toggle("is-valid", !message && Boolean(mode?.valid) && this.#touched);
     this.toggleAttribute("invalid", show);
     const feedback = this.shadowRoot.querySelector('[part="feedback"]');
     if (feedback) {
@@ -274,6 +299,7 @@ export class UiCheck extends ShadowComponentElement {
 
   formResetCallback() {
     this.#touched = false;
+    this.#forced = false;
     this.checked = Boolean(this.#defaultChecked);
   }
 

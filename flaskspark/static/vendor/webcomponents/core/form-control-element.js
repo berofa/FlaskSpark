@@ -1,7 +1,7 @@
 import { ShadowComponentElement } from "./shadow-component-element.js";
 import { escapeHtml } from "./escape.js";
 import { HOST_TOKENS_CLASS } from "./shadow-sheet-transforms.js";
-import { validationMessage } from "./validation.js";
+import { onSubmitAttempt, validationMessage, validationMode } from "./validation.js";
 
 /** Attributes forwarded 1:1 from the host to the native control. */
 const SHARED_PASSTHROUGH = ["placeholder", "readonly", "required", "autocomplete", "spellcheck"];
@@ -24,9 +24,11 @@ const SHARED_PASSTHROUGH = ["placeholder", "readonly", "required", "autocomplete
  * Slots: slot="prefix" content goes into the prefix (e.g. an icon before its text), slot="suffix" content
  * behind the control inside the group (buttons or a select that belong to the field, in its height).
  *
- * Validation feedback: once the user left the field (or validate() was called), an invalid value shows
- * Bootstrap's is-invalid with a message below (German: «Pflichtfeld», «Keine gültige E-Mail-Adresse», …),
- * updated while typing. type="email" also needs a domain with a dot. validate() marks it and returns validity.
+ * Validation feedback like Bootstrap 6: client-side only inside data-bs-validate (on the form or an ancestor;
+ * "valid" in its value also shows valid fields), once the user left the field or tried to submit the form (like
+ * :user-invalid). Then an invalid value shows is-invalid with a message below (German: «Pflichtfeld», «Keine
+ * gültige E-Mail-Adresse», …), updated while typing. Without data-bs-validate the browser's own messages apply
+ * (the form is blocked all the same). A server message (error) and validate() show in any case. type="email" also needs a domain with a dot. validate() marks it and returns validity.
  * A page may set two properties: validator(value) -> message ("" = valid), and formatter(value) ->
  * Promise<string|null>: applied after a pause in typing and on leaving the field (null: not readable,
  * shown as invalid with formatterMessage).
@@ -55,7 +57,9 @@ export class FormControlElement extends ShadowComponentElement {
   // Current value once the user (or script) changed it; null = follow the value attribute.
   #dirtyValue = null;
   #formDisabled = false;
-  #touched = false; // left once (or validate()): its feedback shows from now on
+  #touched = false; // left once, or the form was submitted: its feedback shows from now on (with data-bs-validate)
+  #forced = false; // validate() was called: feedback also without data-bs-validate
+  #stopSubmitWatch = null;
   #formatTimer = 0;
   #formatError = "";
   #serverError = false; // the error attribute applies until the user changes the value
@@ -126,15 +130,39 @@ export class FormControlElement extends ShadowComponentElement {
     return this.#internals.reportValidity();
   }
 
-  /** Show its feedback (also before it was left) and tell whether it is valid. */
+  /** Show its feedback (also before it was left, and without data-bs-validate) and tell whether it is valid. */
   validate() {
     this.#touched = true;
+    this.#forced = true;
     this.syncFormState();
     return this.checkValidity();
   }
 
   focus(options) {
     this.control?.focus(options);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.#watchForm(this.form);
+  }
+
+  disconnectedCallback() {
+    this.#stopSubmitWatch?.();
+    this.#stopSubmitWatch = null;
+  }
+
+  formAssociatedCallback(form) {
+    this.#watchForm(form);
+  }
+
+  /** A submit attempt shows the feedback of every control (like :user-invalid). */
+  #watchForm(form) {
+    this.#stopSubmitWatch?.();
+    this.#stopSubmitWatch = onSubmitAttempt(form, this, () => {
+      this.#touched = true;
+      this.syncFormState();
+    });
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -388,9 +416,11 @@ export class FormControlElement extends ShadowComponentElement {
     } else {
       this.#internals.setValidity(control.validity.valid ? { customError: true } : control.validity, message, control);
     }
-    const show = (this.#touched || this.#serverError) && Boolean(message);
+    const mode = validationMode(this, this.form);
+    const client = this.#forced || (mode !== null && this.#touched);
+    const show = (client || this.#serverError) && Boolean(message);
     const validText = this.getAttribute("valid-feedback");
-    const showValid = this.#touched && !message && validText !== null;
+    const showValid = !message && ((mode?.valid && this.#touched) || (this.#forced && validText !== null));
     const marked = this.validationTarget || control;
     marked.classList.toggle("is-invalid", show);
     marked.classList.toggle("is-valid", showValid);
@@ -412,6 +442,7 @@ export class FormControlElement extends ShadowComponentElement {
   formResetCallback() {
     this.#dirtyValue = null;
     this.#touched = false;
+    this.#forced = false;
     this.#formatError = "";
     this.requestRender();
   }

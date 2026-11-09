@@ -1,0 +1,10 @@
+/* ui-spinner (Bootstrap 6 spinner): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+  color: inherit;
+}
+
+.ui-spinner-icon {
+  display: inline-flex;
+}

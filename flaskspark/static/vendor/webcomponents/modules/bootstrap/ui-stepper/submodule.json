@@ -1,0 +1,35 @@
+{
+  "name": "ui-stepper",
+  "description": "Bootstrap 6 stepper: numbered steps with track, vertical or horizontal (also by container width), active and themed steps, overflow scrolling, full width, alignment, link or clickable steps.",
+  "elements": [
+    "ui-stepper",
+    "ui-step"
+  ],
+  "entry": "ui-stepper.js",
+  "files": [
+    "ui-stepper.js",
+    "ui-stepper.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".stepper",
+        "prefix": "--bs-stepper-"
+      }
+    ],
+    "optional": [
+      "--bs-stepper-align-items"
+    ],
+    "descriptions": {
+      "--bs-stepper-size": "Size of the numbered circle.",
+      "--bs-stepper-gap": "Space between steps.",
+      "--bs-stepper-font-size": "Font size of the number.",
+      "--bs-stepper-text-gap": "Space between circle and content.",
+      "--bs-stepper-track-size": "Thickness of the connecting track.",
+      "--bs-stepper-bg": "Circle and track of open steps.",
+      "--bs-stepper-active-color": "Number colour of active steps (theme: its contrast).",
+      "--bs-stepper-active-bg": "Circle and track of active steps (theme: its bg).",
+      "--bs-stepper-align-items": "Vertical alignment of circle and content (unset: center)."
+    }
+  }
+}
