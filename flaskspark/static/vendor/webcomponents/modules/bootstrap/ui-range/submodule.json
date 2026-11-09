@@ -1,0 +1,48 @@
+{
+  "name": "ui-range",
+  "description": "Bootstrap 6 range: filled track, value bubble, tick marks with labels, theme colours; form-associated; data API for .form-range.",
+  "elements": [
+    "ui-range"
+  ],
+  "entry": "ui-range.js",
+  "files": [
+    "ui-range.js",
+    "range-controller.js",
+    "ui-range.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".form-range",
+        "prefix": "--bs-range-"
+      }
+    ],
+    "optional": [
+      "--bs-range-track-box-shadow"
+    ],
+    "descriptions": {
+      "--bs-range-track-width": "Width of the track.",
+      "--bs-range-track-height": "Height of the track.",
+      "--bs-range-track-cursor": "Cursor over the track.",
+      "--bs-range-track-bg": "Background of the empty track.",
+      "--bs-range-track-border-radius": "Corner radius of the track.",
+      "--bs-range-track-fill-bg": "Colour of the filled part (theme: its bg).",
+      "--bs-range-track-disabled-bg": "Track colour when disabled.",
+      "--bs-range-track-box-shadow": "Shadow of the track (unset: none).",
+      "--bs-range-thumb-width": "Width of the thumb.",
+      "--bs-range-thumb-height": "Height of the thumb.",
+      "--bs-range-thumb-bg": "Colour of the thumb (theme: its bg).",
+      "--bs-range-thumb-border": "Border of the thumb.",
+      "--bs-range-thumb-border-radius": "Corner radius of the thumb.",
+      "--bs-range-thumb-box-shadow": "Shadow of the thumb.",
+      "--bs-range-thumb-active-bg": "Colour of the thumb while dragged.",
+      "--bs-range-thumb-disabled-bg": "Colour of the thumb when disabled.",
+      "--bs-range-thumb-transition-property": "Properties of the thumb's transition.",
+      "--bs-range-thumb-transition-duration": "Duration of that transition.",
+      "--bs-range-thumb-transition-timing": "Timing function of that transition.",
+      "--bs-range-tick-width": "Width of a tick mark.",
+      "--bs-range-tick-height": "Height of a tick mark.",
+      "--bs-range-tick-bg": "Colour of the tick marks."
+    }
+  }
+}

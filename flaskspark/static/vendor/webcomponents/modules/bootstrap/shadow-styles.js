@@ -21,6 +21,7 @@ export const TOKEN_HOISTS = Object.freeze([
   { selector: ".carousel", prefix: "--bs-carousel-", host: "ui-carousel" },
   { selector: ".chip", prefix: "--bs-chip-", host: ":is(ui-chip, ui-chip-input)" },
   { selector: ".chip-input", prefix: "--bs-chip-input-", host: "ui-chip-input" },
+  { selector: ".collapse", prefix: "--bs-transition-collapse-", host: "ui-collapse" },
   { selector: ".card", prefix: "--bs-card-", host: "ui-card" },
   { selector: ".table", prefix: "--bs-table-", host: "ui-table" },
   { selector: ".list-group", prefix: "--bs-list-group-", host: ":is(ui-list-group, ui-tabs)" },
@@ -41,7 +42,11 @@ export const TOKEN_HOISTS = Object.freeze([
   { selector: ".input-group", prefix: "--bs-input-group-", host: FIELD_HOSTS },
   { selector: ".form-floating", prefix: "--bs-form-floating-", host: FIELD_HOSTS },
   { selector: ".form-adorn", prefix: "--bs-form-adorn-", host: FIELD_HOSTS },
-  { selector: ".form-text", prefix: "--bs-form-text-", host: ":is(ui-input, ui-select, ui-textarea, ui-check)" },
+  { selector: ".strength", prefix: "--bs-strength-", host: "ui-input" },
+  { selector: ".strength-bar", prefix: "--bs-strength-", host: "ui-input" },
+  { selector: ".otp", prefix: "--bs-otp-", host: "ui-otp" },
+  { selector: ".form-range", prefix: "--bs-range-", host: "ui-range" },
+  { selector: ".form-text", prefix: "--bs-form-text-", host: ":is(ui-input, ui-select, ui-textarea, ui-check, ui-range, ui-otp)" },
 ].map((entry) => Object.freeze(entry)));
 
 export function prepareBootstrapSheet(sheet) {

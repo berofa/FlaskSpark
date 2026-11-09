@@ -8,5 +8,18 @@
   "files": [
     "ui-collapse.js",
     "ui-collapse.css"
-  ]
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".collapse",
+        "prefix": "--bs-transition-collapse-"
+      }
+    ],
+    "descriptions": {
+      "--bs-transition-collapse-property": "Animated properties (horizontal: inline-size).",
+      "--bs-transition-collapse-duration": "Duration of the animation.",
+      "--bs-transition-collapse-timing": "Timing function of the animation."
+    }
+  }
 }

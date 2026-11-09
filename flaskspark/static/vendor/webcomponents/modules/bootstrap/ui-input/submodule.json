@@ -30,6 +30,10 @@
       {
         "selector": ".form-text",
         "prefix": "--bs-form-text-"
+      },
+      {
+        "selector": ".strength",
+        "prefix": "--bs-strength-"
       }
     ],
     "descriptions": {
@@ -84,7 +88,17 @@
       "--bs-form-adorn-icon-color": "Adornments: colour of icons and texts.",
       "--bs-form-text-margin-top": "Help text: space above it.",
       "--bs-form-text-font-size": "Help text: font size.",
-      "--bs-form-text-color": "Help text: colour."
+      "--bs-form-text-color": "Help text: colour.",
+      "--bs-strength-height": "Password strength: height of the meter.",
+      "--bs-strength-gap": "Password strength: space between the segments.",
+      "--bs-strength-margin-top": "Password strength: space above the meter and the message.",
+      "--bs-strength-border-radius": "Password strength: corner radius.",
+      "--bs-strength-bg": "Password strength: empty segments / track.",
+      "--bs-strength-color": "Password strength: colour of the current level (set by the level).",
+      "--bs-strength-weak-color": "Password strength: colour of weak.",
+      "--bs-strength-fair-color": "Password strength: colour of fair.",
+      "--bs-strength-good-color": "Password strength: colour of good.",
+      "--bs-strength-strong-color": "Password strength: colour of strong."
     }
   }
 }

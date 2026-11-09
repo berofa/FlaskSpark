@@ -266,6 +266,11 @@ export class FormControlElement extends ShadowComponentElement {
     return "";
   }
 
+  /** The element that carries is-valid / is-invalid: the one Bootstrap colours (the field, or the adorned wrapper). */
+  get validationTarget() {
+    return this.shadowRoot.querySelector('[part="adorn"]') || this.control;
+  }
+
   /** Size modifier for Bootstrap control classes, e.g. sizeClass("form-control") -> " form-control-sm". */
   sizeClass(base) {
     const size = this.getAttribute("size");
@@ -386,8 +391,7 @@ export class FormControlElement extends ShadowComponentElement {
     const show = (this.#touched || this.#serverError) && Boolean(message);
     const validText = this.getAttribute("valid-feedback");
     const showValid = this.#touched && !message && validText !== null;
-    // The marker of the state sits on the element Bootstrap colours: the field, or the adorned wrapper.
-    const marked = this.shadowRoot.querySelector('[part="adorn"]') || control;
+    const marked = this.validationTarget || control;
     marked.classList.toggle("is-invalid", show);
     marked.classList.toggle("is-valid", showValid);
     this.toggleAttribute("invalid", show);

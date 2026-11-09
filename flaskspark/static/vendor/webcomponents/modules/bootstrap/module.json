@@ -9,6 +9,8 @@
     "grouped.css",
     "form-field.css",
     "theme.js",
+    "toggler.js",
+    "strength.js",
     "ui-tokens.css"
   ],
   "vendor": [

@@ -27,13 +27,17 @@ import { UiGridEditor } from "./ui-grid-editor/ui-grid-editor.js";
 import { UiInput } from "./ui-input/ui-input.js";
 import { UiListGroup, UiListGroupItem } from "./ui-list-group/ui-list-group.js";
 import { MenuController, UiMenu } from "./ui-menu/ui-menu.js";
+import { UiOtp } from "./ui-otp/ui-otp.js";
 import { UiPopover } from "./ui-popover/ui-popover.js";
+import { UiRange } from "./ui-range/ui-range.js";
 import { UiSelect } from "./ui-select/ui-select.js";
 import { UiTable } from "./ui-table/ui-table.js";
 import { UiTabs, UiTabPanel } from "./ui-tabs/ui-tabs.js";
 import { UiRichtext } from "./ui-richtext/ui-richtext.js";
 import { UiTextarea } from "./ui-textarea/ui-textarea.js";
 import { UiToast, UiToastContainer, showToast } from "./ui-toast/ui-toast.js";
+import "./toggler.js";
+import "./strength.js";
 import { UiTooltip } from "./ui-tooltip/ui-tooltip.js";
 import { setupThemeSwitcher } from "./theme.js";
 
@@ -73,7 +77,9 @@ export {
   UiListGroupItem,
   MenuController,
   UiMenu,
+  UiOtp,
   UiPopover,
+  UiRange,
   UiSelect,
   UiTable,
   UiTabs,
@@ -92,4 +98,5 @@ export { computePlacement } from "../../core/placement.js";
 export { SharedShadowStyles } from "../../core/shared-shadow-styles.js";
 export { escapeHtml } from "../../core/escape.js";
 export { applyTheme, setupThemeSwitcher } from "./theme.js";
+export { toggle as toggleToggler } from "./toggler.js";
 export { normalizeGridLayout, defaultLayout, buildUnitAreas } from "./ui-grid/grid-layout.js";

@@ -1,5 +1,6 @@
 import { registerComponent } from "../../../core/registry.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
+import { HOST_TOKENS_CLASS } from "../../../core/shadow-sheet-transforms.js";
 import { afterTransition } from "../../../core/transitions.js";
 import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
 
@@ -41,7 +42,7 @@ export class UiCollapse extends ShadowComponentElement {
   }
 
   render() {
-    const classes = ["collapse", this.hasAttribute("horizontal") ? "collapse-horizontal" : "", this.shown ? "show" : ""];
+    const classes = ["collapse", HOST_TOKENS_CLASS, this.hasAttribute("horizontal") ? "collapse-horizontal" : "", this.shown ? "show" : ""];
     return `<div class="${classes.filter(Boolean).join(" ")}" part="collapse"><slot></slot></div>`;
   }
 
