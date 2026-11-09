@@ -1,0 +1,12 @@
+{
+  "name": "ui-popover",
+  "description": "Bootstrap popover (title and rich body) around its trigger content, without Bootstrap's JS.",
+  "elements": [
+    "ui-popover"
+  ],
+  "entry": "ui-popover.js",
+  "files": [
+    "ui-popover.js",
+    "ui-popover.css"
+  ]
+}

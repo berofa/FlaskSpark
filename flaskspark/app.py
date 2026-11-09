@@ -3,7 +3,7 @@ Flask application factory class with configurable login providers.
 """
 
 from dotenv import load_dotenv
-from flask import current_app, Flask, jsonify, request, send_from_directory, session
+from flask import current_app, Flask, jsonify, request, send_from_directory, session, url_for
 from flask_assets import Bundle, Environment
 from flask_babel import Babel, gettext
 from flask_login import LoginManager
@@ -190,6 +190,9 @@ class FlaskSpark:
 
             # Register user layout context processor
             self._register_user_layout()
+
+            # Opt-in web components with Bootstrap 6 (VENDOR_INCLUDE_WEBCOMPONENTS)
+            self._register_webcomponents()
 
             # Return errors as JSON to clients that requested JSON
             self._register_error_handlers()
@@ -464,6 +467,34 @@ class FlaskSpark:
 
     # Get the layout from the session
     # @todo: Implement this functionality. Currently it is static...
+    def _register_webcomponents(self):
+        """
+        Opt-in web components with Bootstrap 6 (``VENDOR_INCLUDE_WEBCOMPONENTS``).
+
+        When enabled, ``layouts/framework.html`` loads the Bootstrap 6 CSS for the page and the ``bootstrap`` module of
+        the web components. The files come from the ``webcomponents`` blueprint when the app registers one (the package
+        is installed), otherwise from the snapshot FlaskSpark ships under ``static/vendor/webcomponents``. Templates
+        get ``vendor_include_webcomponents`` and ``webcomponents_url(filename)``.
+
+        Raises:
+            ValueError: If ``VENDOR_INCLUDE_BOOTSTRAP`` (Bootstrap 5) is enabled as well.
+        """
+        enabled = bool(self.app.config.get("VENDOR_INCLUDE_WEBCOMPONENTS", False))
+        if enabled and self.app.config.get("VENDOR_INCLUDE_BOOTSTRAP", False):
+            raise ValueError(
+                "VENDOR_INCLUDE_WEBCOMPONENTS and VENDOR_INCLUDE_BOOTSTRAP exclude each other: "
+                "the web components bring Bootstrap 6."
+            )
+
+        def webcomponents_url(filename):
+            if "webcomponents.static" in self.app.view_functions:
+                return url_for("webcomponents.static", filename=filename)
+            return url_for("static", filename=f"vendor/webcomponents/{filename}")
+
+        @self.app.context_processor
+        def inject_webcomponents():
+            return {"vendor_include_webcomponents": enabled, "webcomponents_url": webcomponents_url}
+
     def _register_user_layout(self):
         """
         Registers a context processor to inject the user's chosen layout into templates.

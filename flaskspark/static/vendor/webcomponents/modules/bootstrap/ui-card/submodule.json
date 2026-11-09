@@ -1,0 +1,12 @@
+{
+  "name": "ui-card",
+  "description": "Bootstrap card with header, body and footer slots.",
+  "elements": [
+    "ui-card"
+  ],
+  "entry": "ui-card.js",
+  "files": [
+    "ui-card.js",
+    "ui-card.css"
+  ]
+}

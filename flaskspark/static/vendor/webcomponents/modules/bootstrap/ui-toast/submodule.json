@@ -1,0 +1,13 @@
+{
+  "name": "ui-toast",
+  "description": "Bootstrap toasts: <ui-toast> (a short message that goes away by itself, pausing on hover) in a <ui-toast-container> fixed at a corner; showToast(message, {variant, delay, heading, placement}).",
+  "elements": [
+    "ui-toast",
+    "ui-toast-container"
+  ],
+  "entry": "ui-toast.js",
+  "files": [
+    "ui-toast.js",
+    "ui-toast.css"
+  ]
+}

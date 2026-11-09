@@ -1,0 +1,14 @@
+/* ui-alert (Bootstrap 6): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+.ui-alert-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Heading content is slotted; recreate .alert-heading for the slot. */
+::slotted([slot="heading"]) {
+  margin-top: 0;
+  color: inherit;
+}
+
+/* Links in the body keep using the page's .alert-link class: the rule lives in the
+   page's Bootstrap CSS, and --bs-alert-link-color (set on .alert here) inherits through the slot. */

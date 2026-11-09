@@ -1,0 +1,12 @@
+{
+  "name": "ui-check",
+  "description": "Bootstrap checkbox, radio or switch as a form-associated custom element.",
+  "elements": [
+    "ui-check"
+  ],
+  "entry": "ui-check.js",
+  "files": [
+    "ui-check.js",
+    "ui-check.css"
+  ]
+}

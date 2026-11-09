@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "modules": {
+    "bootstrap": [
+      "ui-accordion",
+      "ui-alert",
+      "ui-badge",
+      "ui-breadcrumb",
+      "ui-button",
+      "ui-button-group",
+      "ui-card",
+      "ui-carousel",
+      "ui-check",
+      "ui-chip",
+      "ui-collapse",
+      "ui-dropdown",
+      "ui-dropzone",
+      "ui-gallery",
+      "ui-grid",
+      "ui-grid-editor",
+      "ui-input",
+      "ui-list-group",
+      "ui-modal",
+      "ui-navbar",
+      "ui-offcanvas",
+      "ui-popover",
+      "ui-richtext",
+      "ui-select",
+      "ui-table",
+      "ui-tabs",
+      "ui-textarea",
+      "ui-toast",
+      "ui-tooltip"
+    ]
+  },
+  "vendor": [
+    "bootstrap",
+    "bootstrap6"
+  ]
+}

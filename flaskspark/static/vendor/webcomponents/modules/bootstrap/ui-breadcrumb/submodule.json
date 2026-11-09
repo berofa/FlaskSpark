@@ -1,0 +1,13 @@
+{
+  "name": "ui-breadcrumb",
+  "description": "Bootstrap breadcrumb with ui-breadcrumb-item entries.",
+  "elements": [
+    "ui-breadcrumb",
+    "ui-breadcrumb-item"
+  ],
+  "entry": "ui-breadcrumb.js",
+  "files": [
+    "ui-breadcrumb.js",
+    "ui-breadcrumb.css"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ui-grid",
+  "description": "Responsive grid layout of named items (layout normalized like grid_layout.py).",
+  "elements": [
+    "ui-grid"
+  ],
+  "entry": "ui-grid.js",
+  "files": [
+    "grid-layout.js",
+    "ui-grid.js",
+    "ui-grid.css"
+  ]
+}

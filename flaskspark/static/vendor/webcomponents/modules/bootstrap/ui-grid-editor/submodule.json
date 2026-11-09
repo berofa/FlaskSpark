@@ -1,0 +1,15 @@
+{
+  "name": "ui-grid-editor",
+  "description": "Editor for ui-grid layouts (drag, resize, persist).",
+  "elements": [
+    "ui-grid-editor"
+  ],
+  "entry": "ui-grid-editor.js",
+  "files": [
+    "ui-grid-editor.js",
+    "ui-grid-editor.css"
+  ],
+  "requires": [
+    "ui-grid"
+  ]
+}

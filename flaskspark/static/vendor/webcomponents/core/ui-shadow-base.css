@@ -1,0 +1,24 @@
+/*
+ * Shared :host baseline for every shadow DOM component (Bootstrap 6, plain CSS).
+ * Adopted after the shared Bootstrap copy and before the component's own sheet;
+ * a component sets its own `:host { display: … }` there.
+ */
+:host([hidden]) {
+  display: none !important;
+}
+
+:host {
+  display: block;
+  box-sizing: border-box;
+  color: var(--bs-fg-body);
+}
+
+:host *,
+:host *::before,
+:host *::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}

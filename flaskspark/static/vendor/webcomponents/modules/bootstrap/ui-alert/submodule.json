@@ -1,0 +1,12 @@
+{
+  "name": "ui-alert",
+  "description": "Bootstrap alert, optionally dismissible.",
+  "elements": [
+    "ui-alert"
+  ],
+  "entry": "ui-alert.js",
+  "files": [
+    "ui-alert.js",
+    "ui-alert.css"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "ui-gallery",
+  "description": "Images and videos as thumbnail tiles with a lightbox (previous/next, video player); optionally editable and sortable.",
+  "elements": [
+    "ui-gallery"
+  ],
+  "entry": "ui-gallery.js",
+  "files": [
+    "ui-gallery.js",
+    "ui-gallery.css"
+  ]
+}

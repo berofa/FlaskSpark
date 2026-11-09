@@ -1,0 +1,12 @@
+{
+  "name": "ui-dropzone",
+  "description": "Area to drop files on or pick them with the file dialog; hands the files to the host (upload is the host's job).",
+  "elements": [
+    "ui-dropzone"
+  ],
+  "entry": "ui-dropzone.js",
+  "files": [
+    "ui-dropzone.js",
+    "ui-dropzone.css"
+  ]
+}

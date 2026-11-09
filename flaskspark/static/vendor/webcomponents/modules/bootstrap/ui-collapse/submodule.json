@@ -1,0 +1,12 @@
+{
+  "name": "ui-collapse",
+  "description": "Bootstrap collapse (animated show/hide region).",
+  "elements": [
+    "ui-collapse"
+  ],
+  "entry": "ui-collapse.js",
+  "files": [
+    "ui-collapse.js",
+    "ui-collapse.css"
+  ]
+}

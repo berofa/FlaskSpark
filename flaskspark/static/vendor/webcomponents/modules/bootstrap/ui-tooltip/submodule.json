@@ -1,0 +1,12 @@
+{
+  "name": "ui-tooltip",
+  "description": "Bootstrap tooltip around its trigger content, without Bootstrap's JS.",
+  "elements": [
+    "ui-tooltip"
+  ],
+  "entry": "ui-tooltip.js",
+  "files": [
+    "ui-tooltip.js",
+    "ui-tooltip.css"
+  ]
+}

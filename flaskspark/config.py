@@ -129,6 +129,8 @@ class Config:
     ASSETS_SCSS_INCLUDE_PATHS = _split_csv(os.environ.get("ASSETS_SCSS_INCLUDE_PATHS"))
     ASSETS_BUNDLES = []
     VENDOR_INCLUDE_BOOTSTRAP = os.environ.get("VENDOR_INCLUDE_BOOTSTRAP", "False").lower() == "true"
+    # Web components with Bootstrap 6 (page CSS + "bootstrap" module); excludes VENDOR_INCLUDE_BOOTSTRAP.
+    VENDOR_INCLUDE_WEBCOMPONENTS = os.environ.get("VENDOR_INCLUDE_WEBCOMPONENTS", "False").lower() == "true"
     APP_LAYOUT_TEMPLATE = os.environ.get("APP_LAYOUT_TEMPLATE", "layouts/framework.html")
 
     """Server configuration."""

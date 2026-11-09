@@ -5,6 +5,11 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added
+- `VENDOR_INCLUDE_WEBCOMPONENTS` config (opt-in, default off): `layouts/framework.html` loads the Bootstrap 6 page CSS
+  and the `bootstrap` module of the web components (new blocks `flaskspark_vendor_styles` and
+  `flaskspark_vendor_scripts`). FlaskSpark ships a snapshot of the web components under `static/vendor/webcomponents`
+  (`python -m webcomponents.export`); an installed `webcomponents` blueprint takes precedence. Templates get
+  `webcomponents_url(filename)`.
 - Module packages: `FlaskSpark(modules=[...])` registers the views and models of further packages and serves their
   templates and static files after the app's (`FlaskSpark.static_dirs`).
 - `STRICT_IMPORTS` config: a view or model module that fails to import stops the start (default: skipped with a

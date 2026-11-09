@@ -1,0 +1,12 @@
+{
+  "name": "ui-textarea",
+  "description": "Multi-line Bootstrap .form-control as a form-associated custom element.",
+  "elements": [
+    "ui-textarea"
+  ],
+  "entry": "ui-textarea.js",
+  "files": [
+    "ui-textarea.js",
+    "ui-textarea.css"
+  ]
+}

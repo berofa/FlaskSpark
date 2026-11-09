@@ -1,0 +1,13 @@
+{
+  "name": "ui-tabs",
+  "description": "Bootstrap tabs with ui-tab-panel panels.",
+  "elements": [
+    "ui-tabs",
+    "ui-tab-panel"
+  ],
+  "entry": "ui-tabs.js",
+  "files": [
+    "ui-tabs.js",
+    "ui-tabs.css"
+  ]
+}

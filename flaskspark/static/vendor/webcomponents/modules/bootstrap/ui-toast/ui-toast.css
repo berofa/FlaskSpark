@@ -1,0 +1,315 @@
+.fade {
+  transition: opacity 0.15s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade {
+    transition: none;
+  }
+}
+
+.fade:not(.show) {
+  opacity: 0;
+}
+
+.collapse:not(.show) {
+  display: none;
+}
+
+.collapsing {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapsing {
+    transition: none;
+  }
+}
+
+.collapsing.collapse-horizontal {
+  width: 0;
+  height: auto;
+  transition: width 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapsing.collapse-horizontal {
+    transition: none;
+  }
+}
+
+.btn-close {
+  --bs-btn-close-color: #000;
+  --bs-btn-close-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+  --bs-btn-close-opacity: 0.5;
+  --bs-btn-close-hover-opacity: 0.75;
+  --bs-btn-close-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --bs-btn-close-focus-opacity: 1;
+  --bs-btn-close-disabled-opacity: 0.25;
+  --bs-btn-close-white-filter: invert(1) grayscale(100%) brightness(200%);
+  box-sizing: content-box;
+  width: 1em;
+  height: 1em;
+  padding: 0.25em 0.25em;
+  color: var(--bs-btn-close-color);
+  background: transparent var(--bs-btn-close-bg) center/1em auto no-repeat;
+  border: 0;
+  border-radius: 0.375rem;
+  opacity: var(--bs-btn-close-opacity);
+}
+
+.btn-close:hover {
+  color: var(--bs-btn-close-color);
+  text-decoration: none;
+  opacity: var(--bs-btn-close-hover-opacity);
+}
+
+.btn-close:focus {
+  outline: 0;
+  box-shadow: var(--bs-btn-close-focus-shadow);
+  opacity: var(--bs-btn-close-focus-opacity);
+}
+
+.btn-close:disabled, .btn-close.disabled {
+  pointer-events: none;
+  user-select: none;
+  opacity: var(--bs-btn-close-disabled-opacity);
+}
+
+.btn-close-white {
+  filter: var(--bs-btn-close-white-filter);
+}
+
+[data-bs-theme="dark"] .btn-close {
+  filter: var(--bs-btn-close-white-filter);
+}
+
+.toast {
+  --bs-toast-zindex: 1090;
+  --bs-toast-padding-x: 0.75rem;
+  --bs-toast-padding-y: 0.5rem;
+  --bs-toast-spacing: 1.5rem;
+  --bs-toast-max-width: 350px;
+  --bs-toast-font-size: 0.875rem;
+  --bs-toast-color: ;
+  --bs-toast-bg: rgba(var(--bs-body-bg-rgb), 0.85);
+  --bs-toast-border-width: var(--bs-border-width);
+  --bs-toast-border-color: var(--bs-border-color-translucent);
+  --bs-toast-border-radius: var(--bs-border-radius);
+  --bs-toast-box-shadow: var(--bs-box-shadow);
+  --bs-toast-header-color: var(--bs-secondary-color);
+  --bs-toast-header-bg: rgba(var(--bs-body-bg-rgb), 0.85);
+  --bs-toast-header-border-color: var(--bs-border-color-translucent);
+  width: var(--bs-toast-max-width);
+  max-width: 100%;
+  font-size: var(--bs-toast-font-size);
+  color: var(--bs-toast-color);
+  pointer-events: auto;
+  background-color: var(--bs-toast-bg);
+  background-clip: padding-box;
+  border: var(--bs-toast-border-width) solid var(--bs-toast-border-color);
+  box-shadow: var(--bs-toast-box-shadow);
+  border-radius: var(--bs-toast-border-radius);
+}
+
+.toast.showing {
+  opacity: 0;
+}
+
+.toast:not(.show) {
+  display: none;
+}
+
+.toast-container {
+  --bs-toast-zindex: 1090;
+  position: absolute;
+  z-index: var(--bs-toast-zindex);
+  width: max-content;
+  max-width: 100%;
+  pointer-events: none;
+}
+
+.toast-container > :not(:last-child) {
+  margin-bottom: var(--bs-toast-spacing);
+}
+
+.toast-header {
+  display: flex;
+  align-items: center;
+  padding: var(--bs-toast-padding-y) var(--bs-toast-padding-x);
+  color: var(--bs-toast-header-color);
+  background-color: var(--bs-toast-header-bg);
+  background-clip: padding-box;
+  border-bottom: var(--bs-toast-border-width) solid var(--bs-toast-header-border-color);
+  border-top-left-radius: calc(var(--bs-toast-border-radius) - var(--bs-toast-border-width));
+  border-top-right-radius: calc(var(--bs-toast-border-radius) - var(--bs-toast-border-width));
+}
+
+.toast-header .btn-close {
+  margin-right: calc(-.5 * var(--bs-toast-padding-x));
+  margin-left: var(--bs-toast-padding-x);
+}
+
+.toast-body {
+  padding: var(--bs-toast-padding-x);
+  word-wrap: break-word;
+}
+
+:host([hidden]) {
+  display: none !important;
+}
+
+:host {
+  display: block;
+  box-sizing: border-box;
+  color: var(--bs-body-color);
+}
+
+:host *,
+:host *::before,
+:host *::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.btn-close {
+  color: inherit;
+  background-image: none;
+  background-color: currentColor;
+  -webkit-mask-image: var(--bs-btn-close-bg);
+  mask-image: var(--bs-btn-close-bg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 1em auto;
+  mask-size: 1em auto;
+  filter: none;
+}
+
+.ui-toast-stack {
+  position: fixed;
+  z-index: var(--ui-toast-z-index, 1090);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: calc(100vw - 2rem);
+  padding: 1rem;
+  pointer-events: none;
+}
+
+.ui-toast-stack ::slotted(*) {
+  pointer-events: auto;
+}
+
+.ui-toast-top-start {
+  top: 0;
+  left: 0;
+}
+
+.ui-toast-top-center {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ui-toast-top-end {
+  top: 0;
+  right: 0;
+}
+
+.ui-toast-bottom-start {
+  bottom: 0;
+  left: 0;
+}
+
+.ui-toast-bottom-center {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ui-toast-bottom-end {
+  bottom: 0;
+  right: 0;
+}
+
+.toast-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.toast-body .btn-close {
+  flex: none;
+  margin-left: auto;
+}
+
+.ui-toast-primary {
+  --bs-toast-bg: var(--bs-primary-bg-subtle);
+  --bs-toast-color: var(--bs-primary-text-emphasis);
+  --bs-toast-border-color: var(--bs-primary-border-subtle);
+  --bs-toast-header-bg: var(--bs-primary-bg-subtle);
+  --bs-toast-header-color: var(--bs-primary-text-emphasis);
+}
+
+.ui-toast-secondary {
+  --bs-toast-bg: var(--bs-secondary-bg-subtle);
+  --bs-toast-color: var(--bs-secondary-text-emphasis);
+  --bs-toast-border-color: var(--bs-secondary-border-subtle);
+  --bs-toast-header-bg: var(--bs-secondary-bg-subtle);
+  --bs-toast-header-color: var(--bs-secondary-text-emphasis);
+}
+
+.ui-toast-success {
+  --bs-toast-bg: var(--bs-success-bg-subtle);
+  --bs-toast-color: var(--bs-success-text-emphasis);
+  --bs-toast-border-color: var(--bs-success-border-subtle);
+  --bs-toast-header-bg: var(--bs-success-bg-subtle);
+  --bs-toast-header-color: var(--bs-success-text-emphasis);
+}
+
+.ui-toast-danger {
+  --bs-toast-bg: var(--bs-danger-bg-subtle);
+  --bs-toast-color: var(--bs-danger-text-emphasis);
+  --bs-toast-border-color: var(--bs-danger-border-subtle);
+  --bs-toast-header-bg: var(--bs-danger-bg-subtle);
+  --bs-toast-header-color: var(--bs-danger-text-emphasis);
+}
+
+.ui-toast-warning {
+  --bs-toast-bg: var(--bs-warning-bg-subtle);
+  --bs-toast-color: var(--bs-warning-text-emphasis);
+  --bs-toast-border-color: var(--bs-warning-border-subtle);
+  --bs-toast-header-bg: var(--bs-warning-bg-subtle);
+  --bs-toast-header-color: var(--bs-warning-text-emphasis);
+}
+
+.ui-toast-info {
+  --bs-toast-bg: var(--bs-info-bg-subtle);
+  --bs-toast-color: var(--bs-info-text-emphasis);
+  --bs-toast-border-color: var(--bs-info-border-subtle);
+  --bs-toast-header-bg: var(--bs-info-bg-subtle);
+  --bs-toast-header-color: var(--bs-info-text-emphasis);
+}
+
+.ui-toast-light {
+  --bs-toast-bg: var(--bs-light-bg-subtle);
+  --bs-toast-color: var(--bs-light-text-emphasis);
+  --bs-toast-border-color: var(--bs-light-border-subtle);
+  --bs-toast-header-bg: var(--bs-light-bg-subtle);
+  --bs-toast-header-color: var(--bs-light-text-emphasis);
+}
+
+.ui-toast-dark {
+  --bs-toast-bg: var(--bs-dark-bg-subtle);
+  --bs-toast-color: var(--bs-dark-text-emphasis);
+  --bs-toast-border-color: var(--bs-dark-border-subtle);
+  --bs-toast-header-bg: var(--bs-dark-bg-subtle);
+  --bs-toast-header-color: var(--bs-dark-text-emphasis);
+}

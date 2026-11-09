@@ -1,0 +1,13 @@
+{
+  "name": "ui-carousel",
+  "description": "Bootstrap carousel with ui-carousel-item slides.",
+  "elements": [
+    "ui-carousel",
+    "ui-carousel-item"
+  ],
+  "entry": "ui-carousel.js",
+  "files": [
+    "ui-carousel.js",
+    "ui-carousel.css"
+  ]
+}

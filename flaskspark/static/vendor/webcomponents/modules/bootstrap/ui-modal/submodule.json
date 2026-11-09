@@ -1,0 +1,12 @@
+{
+  "name": "ui-modal",
+  "description": "Bootstrap modal dialog.",
+  "elements": [
+    "ui-modal"
+  ],
+  "entry": "ui-modal.js",
+  "files": [
+    "ui-modal.js",
+    "ui-modal.css"
+  ]
+}

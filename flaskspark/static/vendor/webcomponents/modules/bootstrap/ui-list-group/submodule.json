@@ -1,0 +1,13 @@
+{
+  "name": "ui-list-group",
+  "description": "Bootstrap list group with ui-list-group-item entries.",
+  "elements": [
+    "ui-list-group",
+    "ui-list-group-item"
+  ],
+  "entry": "ui-list-group.js",
+  "files": [
+    "ui-list-group.js",
+    "ui-list-group.css"
+  ]
+}

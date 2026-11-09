@@ -1,0 +1,12 @@
+{
+  "name": "ui-chip",
+  "description": "Pill for toggles, filters and tags with optional colour dot, remove button and form value.",
+  "elements": [
+    "ui-chip"
+  ],
+  "entry": "ui-chip.js",
+  "files": [
+    "ui-chip.js",
+    "ui-chip.css"
+  ]
+}

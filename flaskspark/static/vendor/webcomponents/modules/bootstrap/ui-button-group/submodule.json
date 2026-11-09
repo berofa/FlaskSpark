@@ -1,0 +1,12 @@
+{
+  "name": "ui-button-group",
+  "description": "Bootstrap button group around ui-button children.",
+  "elements": [
+    "ui-button-group"
+  ],
+  "entry": "ui-button-group.js",
+  "files": [
+    "ui-button-group.js",
+    "ui-button-group.css"
+  ]
+}

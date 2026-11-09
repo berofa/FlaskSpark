@@ -1,0 +1,112 @@
+.form-label {
+  margin-bottom: 0.5rem;
+}
+
+.col-form-label {
+  padding-top: calc(0.375rem + var(--bs-border-width));
+  padding-bottom: calc(0.375rem + var(--bs-border-width));
+  margin-bottom: 0;
+  font-size: inherit;
+  line-height: 1.5;
+}
+
+.col-form-label-lg {
+  padding-top: calc(0.5rem + var(--bs-border-width));
+  padding-bottom: calc(0.5rem + var(--bs-border-width));
+  font-size: 1.25rem;
+}
+
+.col-form-label-sm {
+  padding-top: calc(0.25rem + var(--bs-border-width));
+  padding-bottom: calc(0.25rem + var(--bs-border-width));
+  font-size: 0.875rem;
+}
+
+:host([hidden]) {
+  display: none !important;
+}
+
+:host {
+  display: block;
+  box-sizing: border-box;
+  color: var(--bs-body-color);
+}
+
+:host *,
+:host *::before,
+:host *::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.ui-richtext {
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  background: var(--bs-body-bg);
+}
+
+.ui-richtext:focus-within {
+  border-color: var(--ui-focus-border-color, #86b7fe);
+  box-shadow: var(--ui-focus-box-shadow, 0 0 0 0.25rem rgba(13, 110, 253, 0.25));
+}
+
+.ui-richtext-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  padding: 0.25rem 0.375rem;
+  border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+  background: var(--bs-tertiary-bg);
+  border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+}
+
+.ui-richtext-group {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.ui-richtext-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--bs-border-radius-sm);
+  background: none;
+  color: var(--bs-body-color);
+  cursor: pointer;
+}
+
+.ui-richtext-tool:hover:not(:disabled) {
+  background: var(--bs-secondary-bg);
+}
+
+.ui-richtext-tool:focus-visible {
+  outline: 2px solid var(--bs-primary);
+}
+
+.ui-richtext-tool:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+::slotted(.ui-richtext-editor) {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  overflow-wrap: anywhere;
+  outline: none;
+  color: var(--bs-body-color);
+  font-size: var(--bs-body-font-size, 1rem);
+  line-height: 1.5;
+}
+
+::slotted(.ui-richtext-editor.is-empty)::before {
+  content: attr(data-placeholder);
+  color: var(--bs-secondary-color);
+  pointer-events: none;
+}

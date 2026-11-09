@@ -1,0 +1,12 @@
+{
+  "name": "ui-select",
+  "description": "Bootstrap .form-select as a form-associated custom element.",
+  "elements": [
+    "ui-select"
+  ],
+  "entry": "ui-select.js",
+  "files": [
+    "ui-select.js",
+    "ui-select.css"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "ui-badge",
+  "description": "Bootstrap badge.",
+  "elements": [
+    "ui-badge"
+  ],
+  "entry": "ui-badge.js",
+  "files": [
+    "ui-badge.js",
+    "ui-badge.css"
+  ]
+}

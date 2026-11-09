@@ -1,0 +1,12 @@
+{
+  "name": "ui-button",
+  "description": "Bootstrap button or link button.",
+  "elements": [
+    "ui-button"
+  ],
+  "entry": "ui-button.js",
+  "files": [
+    "ui-button.js",
+    "ui-button.css"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "ui-table",
+  "description": "Bootstrap .table for an author-provided light-DOM <table>.",
+  "elements": [
+    "ui-table"
+  ],
+  "entry": "ui-table.js",
+  "files": [
+    "ui-table.js",
+    "ui-table.css"
+  ]
+}

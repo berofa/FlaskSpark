@@ -1,0 +1,13 @@
+{
+  "name": "ui-navbar",
+  "description": "Bootstrap navbar with ui-nav-item entries.",
+  "elements": [
+    "ui-navbar",
+    "ui-nav-item"
+  ],
+  "entry": "ui-navbar.js",
+  "files": [
+    "ui-navbar.js",
+    "ui-navbar.css"
+  ]
+}

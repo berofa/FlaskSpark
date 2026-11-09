@@ -1,0 +1,13 @@
+{
+  "name": "ui-accordion",
+  "description": "Bootstrap accordion with ui-accordion-item panels.",
+  "elements": [
+    "ui-accordion",
+    "ui-accordion-item"
+  ],
+  "entry": "ui-accordion.js",
+  "files": [
+    "ui-accordion.js",
+    "ui-accordion.css"
+  ]
+}

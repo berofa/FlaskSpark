@@ -1,0 +1,12 @@
+{
+  "name": "ui-input",
+  "description": "Bootstrap .form-control as a form-associated custom element.",
+  "elements": [
+    "ui-input"
+  ],
+  "entry": "ui-input.js",
+  "files": [
+    "ui-input.js",
+    "ui-input.css"
+  ]
+}

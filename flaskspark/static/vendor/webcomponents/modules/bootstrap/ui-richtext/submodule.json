@@ -1,0 +1,12 @@
+{
+  "name": "ui-richtext",
+  "description": "Formatted text (bold, italic, underline, strikethrough, lists, quote, links) as a form-associated custom element; the value is HTML, pasted HTML is cleaned.",
+  "elements": [
+    "ui-richtext"
+  ],
+  "entry": "ui-richtext.js",
+  "files": [
+    "ui-richtext.js",
+    "ui-richtext.css"
+  ]
+}

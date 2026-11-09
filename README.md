@@ -404,6 +404,7 @@ Why not just `app.run()`?
 | `ASSETS_SCSS_INCLUDE_PATHS` | `[]` | Extra SCSS include paths (CSV env input). |
 | `ASSETS_BUNDLES` | `[]` | Extra bundles list (config dict only, not env string). |
 | `VENDOR_INCLUDE_BOOTSTRAP` | `false` | If `true`, FlaskSpark prepends vendored Bootstrap SCSS/JS into app bundles. |
+| `VENDOR_INCLUDE_WEBCOMPONENTS` | `false` | If `true`, `layouts/framework.html` loads the Bootstrap 6 CSS and the `bootstrap` module of the web components (from an installed `webcomponents` blueprint, else from the snapshot in `static/vendor/webcomponents`). Excludes `VENDOR_INCLUDE_BOOTSTRAP`. |
 | `APP_LAYOUT_TEMPLATE` | `layouts/framework.html` | Default layout injected into template context as `layout`. |
 | `APP_HOST` | `0.0.0.0` | Optional app host value for app-level logic. |
 | `APP_BIND_HOST` | `0.0.0.0` | Socket bind address used by `app.run(...)`. |
