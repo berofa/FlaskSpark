@@ -4,6 +4,7 @@ import { escapeHtml } from "../../../core/escape.js";
 import { registerToggle } from "../../../core/triggers.js";
 import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
 import { UiDialog } from "../ui-dialog/ui-dialog.js";
+import { PlainDialog } from "../ui-dialog/plain-dialog.js";
 
 const PLACEMENTS = new Set(["start", "end", "top", "bottom", "fullscreen"]);
 const BREAKPOINTS = new Map([["sm", 576], ["md", 768], ["lg", 1024], ["xl", 1280], ["2xl", 1536]]);
@@ -23,7 +24,8 @@ const SWIPE_DISTANCE = 50;
  * - animation="instant": no slide. translucent: blurred, translucent panel. sheet: flush to the edge.
  * - data-bs-theme="dark": a dark drawer.
  *
- * Swipe towards its edge to close it. Only one drawer opens at a time through triggers
+ * Swipe towards its edge to close it. Triggers also open Bootstrap's plain <dialog class="drawer">
+ * markup (e.g. a navbar's drawer). Only one drawer opens at a time through triggers
  * (data-bs-toggle="drawer" data-bs-target="#id", options data-bs-backdrop / -keyboard / -scroll).
  * Slots: default (body), heading, footer. Elements inside with data-bs-dismiss="drawer" close it.
  * Methods: show(options), hide(), toggle(options) as on <ui-dialog>. Events (bubble): ui-drawer:show and
@@ -202,10 +204,15 @@ export class UiDrawer extends UiDialog {
 registerComponent("ui-drawer", UiDrawer);
 
 registerToggle("drawer", (target, trigger, options) => {
-  if (!(target instanceof UiDrawer)) {
-    return;
-  }
   // Only one drawer at a time.
   document.querySelectorAll("ui-drawer[open]").forEach((other) => other !== target && other.hide());
-  target.toggle(options);
+  document.querySelectorAll('dialog[open][class*="drawer"]').forEach((other) => other !== target && PlainDialog.for(other).hide());
+  if (target.localName === "dialog") {
+    // Bootstrap's plain <dialog class="drawer"> markup, e.g. in a navbar.
+    PlainDialog.for(target).toggle(options, trigger);
+    return;
+  }
+  if (target instanceof UiDrawer) {
+    target.toggle(options);
+  }
 });

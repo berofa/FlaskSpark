@@ -7,6 +7,7 @@ import { observeItems } from "../../../core/slotted-items.js";
 import { afterTransition } from "../../../core/transitions.js";
 import { registerToggle } from "../../../core/triggers.js";
 import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
+import { PlainDialog } from "./plain-dialog.js";
 
 const SIZES = new Set(["sm", "lg", "xl"]);
 const BREAKPOINTS = new Set(["sm", "md", "lg", "xl", "2xl"]);
@@ -36,7 +37,8 @@ const wired = new WeakSet();
  * Slots: default (body), heading, footer. Elements inside with data-bs-dismiss="dialog" close it.
  * Triggers anywhere: data-bs-toggle="dialog" data-bs-target="#id" (options as data-bs-backdrop,
  * data-bs-keyboard, data-bs-modal); a trigger inside an open dialog swaps the dialogs. Invoker commands
- * (commandfor + command="show-modal" / "close") work too.
+ * (commandfor + command="show-modal" / "close") work too. Triggers also open Bootstrap's plain
+ * <dialog class="dialog"> markup (PlainDialog).
  *
  * Methods: show(options), hide(), toggle(options) — promises that resolve once shown / hidden (false if
  * cancelled). Events (bubble): ui-dialog:show and ui-dialog:hide (cancelable), ui-dialog:shown,
@@ -316,6 +318,10 @@ export class UiDialog extends ShadowComponentElement {
 registerComponent("ui-dialog", UiDialog);
 
 registerToggle("dialog", (target, trigger, options) => {
+  if (target.localName === "dialog") {
+    PlainDialog.for(target).toggle(options, trigger);
+    return;
+  }
   if (!(target instanceof UiDialog)) {
     return;
   }

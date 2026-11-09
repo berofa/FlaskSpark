@@ -1,6 +1,6 @@
 {
   "name": "ui-collapse",
-  "description": "Bootstrap collapse (animated show/hide region).",
+  "description": "Bootstrap collapse: animated show and hide (vertical or horizontal), multiple triggers and targets, data API.",
   "elements": [
     "ui-collapse"
   ],

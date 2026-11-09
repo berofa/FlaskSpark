@@ -26,7 +26,6 @@ import { UiGridEditor } from "./ui-grid-editor/ui-grid-editor.js";
 import { UiInput } from "./ui-input/ui-input.js";
 import { UiListGroup, UiListGroupItem } from "./ui-list-group/ui-list-group.js";
 import { MenuController, UiMenu } from "./ui-menu/ui-menu.js";
-import { UiNavbar, UiNavItem } from "./ui-navbar/ui-navbar.js";
 import { UiPopover } from "./ui-popover/ui-popover.js";
 import { UiSelect } from "./ui-select/ui-select.js";
 import { UiTable } from "./ui-table/ui-table.js";
@@ -71,8 +70,6 @@ export {
   UiListGroupItem,
   MenuController,
   UiMenu,
-  UiNavbar,
-  UiNavItem,
   UiPopover,
   UiSelect,
   UiTable,

@@ -7,11 +7,16 @@
   "entry": "ui-dialog.js",
   "files": [
     "ui-dialog.js",
-    "ui-dialog.css"
+    "ui-dialog.css",
+    "plain-dialog.js",
+    "plain-dialog.document.css"
   ],
   "tokens": {
     "sources": [
-      {"selector": ".dialog", "prefix": "--bs-dialog-"}
+      {
+        "selector": ".dialog",
+        "prefix": "--bs-dialog-"
+      }
     ],
     "descriptions": {
       "--bs-dialog-padding": "Padding of the body.",

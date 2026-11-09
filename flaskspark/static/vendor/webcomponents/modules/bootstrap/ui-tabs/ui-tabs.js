@@ -1,270 +1,186 @@
 import { registerComponent } from "../../../core/registry.js";
+import { HOST_TOKENS_CLASS } from "../../../core/shadow-sheet-transforms.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
 import { escapeHtml } from "../../../core/escape.js";
-import { afterTransition } from "../../../core/transitions.js";
+import { morph } from "../../../core/morph.js";
+import { assignItemSlots, observeItems } from "../../../core/slotted-items.js";
+import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
 
-const PERSIST_STORAGE_PREFIX = "ui-tabs.";
+const VARIANTS = new Set(["tabs", "pills", "underline", "list"]);
+const STEPS = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+const PANEL_ATTRIBUTES = ["heading", "name", "active", "disabled"];
 
 /**
- * <ui-tabs> container.
+ * <ui-tabs> (Bootstrap 6 nav with the tab plugin) with <ui-tab-panel> children.
  *
- * Renders the tab navigation in its shadow root from the headings of its
- * <ui-tab-panel> children and switches panels with Bootstrap's fade
- * transition. Supports the WAI-ARIA tabs keyboard pattern (arrow keys,
- * Home/End) with automatic activation.
+ * Renders the navigation from the panels' headings and one .tab-pane per panel (each panel slotted into
+ * it), so Bootstrap's .tab-content > .tab-pane rules (fade on show) apply. WAI-ARIA tabs keyboard pattern
+ * (arrow keys, Home / End) with automatic activation.
  *
  * Attributes:
- * - variant: "tabs" (default), "pills", or "underline".
- * - fill / justified: Bootstrap nav-fill / nav-justified behavior.
- * - persist-key: restores the last active tab from localStorage.
- * - card: Bootstrap card with the tabs in its header (.card-header-tabs) and the panels in its
- *   body, so the tabs close cleanly with the content below.
+ * - variant: tabs (default), pills, underline, or list (a list group beside the panes).
+ * - vertical: the navigation in a column beside the panes (pills, list).
+ * - fill / justified: nav-fill / nav-justified. instant: no fade (.tab-pane-instant).
+ * - card: a card with the tabs in its header (.card-header-tabs / -pills) and the panes in its body.
+ * - persist-key: remembers the active tab in localStorage under this key.
+ * - label: accessible name of the tab list.
  *
- * Slots: the panels; "actions" for content right of the tabs (e.g. filters), on the same line.
+ * <ui-tab-panel>: heading (tab label), name (stable id for persistence and events), active, disabled.
+ * Slots: the panels; "actions" for content beside the tabs, on the same line.
+ * Parts: nav, tab, content, pane, actions; with card also card, header, body.
  *
- * CSS parts: nav (the .nav list), tab (each .nav-link), content (.tab-content), actions; with card
- * also card, header and body (style them like ui-card's parts).
+ * Methods: show(indexOrName). Events (bubble): ui-tabs:show (cancelable) before, ui-tabs:change and
+ * ui-tabs:shown after a switch, detail { index, name, panel, previous }.
  *
- * Events:
- * - ui-tabs:change (bubbles) with detail { index, name, panel } after a
- *   panel became active.
+ * Bootstrap's data API works on plain markup too: data-bs-toggle="tab" (also "pill", "list") on nav links or
+ * list group items, data-bs-target / href pointing at a .tab-pane in a .tab-content.
  */
 export class UiTabs extends ShadowComponentElement {
-  static stylesheet = new URL("./ui-tabs.css", import.meta.url).href;
-  static observedAttributes = ["variant", "fill", "justified", "persist-key", "card"];
+  static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-tabs.css", import.meta.url).href];
+  static observedAttributes = ["variant", "vertical", "fill", "justified", "instant", "card", "label"];
 
-  #persistRestored = false;
-  #switching = false;
-  #renderedActiveIndex = -1;
-  #knownPanels = [];
+  #stopObserving = null;
+  #panels = [];
+  #restored = false;
 
-  render() {
-    const panels = this.getPanels();
-    // Resolve once per render pass; afterRender syncs the panel attributes
-    // to the same index (persist restoration is only consulted once).
-    const activeIndex = this.#resolveActiveIndex(panels);
-    this.#renderedActiveIndex = activeIndex;
-    const buttons = panels.map((panel, index) => {
-      const heading = panel.getAttribute("heading") || `Tab ${index + 1}`;
-      const active = index === activeIndex;
-      const disabled = panel.hasAttribute("disabled");
-      return `
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link${active ? " active" : ""}${disabled ? " disabled" : ""}"
-            part="tab${active ? " tab-active" : ""}"
-            type="button"
-            role="tab"
-            data-index="${index}"
-            aria-selected="${active ? "true" : "false"}"
-            ${disabled ? "disabled" : ""}
-          >${escapeHtml(heading)}</button>
-        </li>
-      `;
-    }).join("");
-
-    if (this.hasAttribute("card")) {
-      return `
-        <div class="ui-tabs card" part="card">
-          <div class="card-header ui-tabs__header" part="header">
-            <ul class="${this.#navClass()} card-header-${this.getAttribute("variant") === "pills" ? "pills" : "tabs"}" role="tablist" part="nav">
-              ${buttons}
-            </ul>
-            <div class="ui-tabs__actions" part="actions"><slot name="actions"></slot></div>
-          </div>
-          <div class="card-body tab-content" part="body content">
-            <slot></slot>
-          </div>
-        </div>
-      `;
-    }
-    return `
-      <div class="ui-tabs">
-        <div class="ui-tabs__header">
-          <ul class="${this.#navClass()}" role="tablist" part="nav">
-            ${buttons}
-          </ul>
-          <div class="ui-tabs__actions" part="actions"><slot name="actions"></slot></div>
-        </div>
-        <div class="tab-content" part="content">
-          <slot></slot>
-        </div>
-      </div>
-    `;
-  }
-
-  afterRender() {
-    const tablist = this.shadowRoot.querySelector("[role='tablist']");
-    tablist.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-index]");
-      if (button && !button.disabled) {
-        this.select(Number.parseInt(button.dataset.index, 10));
+  constructor() {
+    super();
+    this.shadowRoot.addEventListener("click", (event) => {
+      const tab = event.target instanceof Element ? event.target.closest("[data-index]") : null;
+      if (tab) {
+        this.show(Number(tab.dataset.index), true);
       }
     });
-    tablist.addEventListener("keydown", (event) => this.#onKeydown(event));
-    // Re-rendering recreates the slot, which fires slotchange again — only
-    // re-render when the panel set actually changed, or this would loop.
-    this.#knownPanels = this.getPanels();
-    this.shadowRoot.querySelector("slot:not([name])").addEventListener("slotchange", () => {
-      if (this.#panelsChanged()) {
-        this.requestRender();
-      }
-    });
-    this.#syncPanelAttributes();
+    this.shadowRoot.addEventListener("keydown", (event) => this.#onKeydown(event));
   }
 
-  #panelsChanged() {
-    const panels = this.getPanels();
-    const unchanged = panels.length === this.#knownPanels.length
-      && panels.every((panel, index) => panel === this.#knownPanels[index]);
-    if (unchanged) {
-      return false;
-    }
-    this.#knownPanels = panels;
-    return true;
+  connectedCallback() {
+    super.connectedCallback();
+    this.#stopObserving ??= observeItems(this, PANEL_ATTRIBUTES, () => this.requestRender());
   }
 
-  getPanels() {
-    return Array.from(this.querySelectorAll(":scope > ui-tab-panel"));
+  disconnectedCallback() {
+    this.#stopObserving?.();
+    this.#stopObserving = null;
   }
 
-  getActiveIndex() {
-    return this.getPanels().findIndex((panel) => panel.hasAttribute("active"));
+  renderShadow() {
+    morph(this.shadowRoot, this.render());
   }
 
-  async select(index, { focus = false } = {}) {
-    const panels = this.getPanels();
-    const target = panels[index];
-    if (!target || target.hasAttribute("disabled") || this.#switching) {
-      return;
-    }
-    const currentIndex = this.getActiveIndex();
-    if (index === currentIndex) {
-      return;
-    }
+  get panels() {
+    return [...this.#panels];
+  }
 
-    this.#switching = true;
-    this.#syncNavState(index, { focus });
-    const current = panels[currentIndex];
-    if (current) {
-      await current.deactivate();
-    }
-    target.activate();
-    this.#switching = false;
+  get activeIndex() {
+    return this.#panels.findIndex((panel) => panel.hasAttribute("active"));
+  }
 
-    this.#persistActive(target, index);
-    this.dispatchEvent(new CustomEvent("ui-tabs:change", {
-      bubbles: true,
-      detail: { index, name: target.getAttribute("name") || null, panel: target },
-    }));
+  get variant() {
+    const raw = (this.getAttribute("variant") || "tabs").trim().toLowerCase();
+    return VARIANTS.has(raw) ? raw : "tabs";
   }
 
   #navClass() {
-    const variant = this.getAttribute("variant");
-    const classes = ["nav"];
-    if (variant === "pills") {
-      classes.push("nav-pills");
-    } else if (variant === "underline") {
-      classes.push("nav-underline");
-    } else {
-      classes.push("nav-tabs");
+    if (this.variant === "list") {
+      return `list-group ${HOST_TOKENS_CLASS}`;
     }
-    if (this.hasAttribute("fill")) {
-      classes.push("nav-fill");
-    }
-    if (this.hasAttribute("justified")) {
-      classes.push("nav-justified");
-    }
-    return classes.join(" ");
+    return ["nav", HOST_TOKENS_CLASS, `nav-${this.variant}`, this.hasAttribute("vertical") ? "flex-column" : "",
+      this.hasAttribute("fill") ? "nav-fill" : "", this.hasAttribute("justified") ? "nav-justified" : "",
+      this.hasAttribute("card") ? `card-header-${this.variant === "pills" ? "pills" : "tabs"}` : ""].filter(Boolean).join(" ");
   }
 
-  #resolveActiveIndex(panels) {
-    if (!panels.length) {
-      return -1;
+  #tabMarkup(panel, index, active) {
+    const disabled = panel.hasAttribute("disabled");
+    const label = escapeHtml(panel.getAttribute("heading") || `Tab ${index + 1}`);
+    const common = `id="tab-${index}" type="button" role="tab" data-index="${index}" aria-controls="pane-${index}" `
+      + `aria-selected="${active}" tabindex="${active ? 0 : -1}"${disabled ? " disabled" : ""}`;
+    if (this.variant === "list") {
+      const classes = `list-group-item list-group-item-action${active ? " active" : ""}`;
+      return `<button class="${classes}" part="tab" ${common}>${label}</button>`;
     }
-    const enabled = (index) => index >= 0 && !panels[index].hasAttribute("disabled");
-
-    if (!this.#persistRestored) {
-      this.#persistRestored = true;
-      const storedIndex = this.#restorePersisted(panels);
-      if (enabled(storedIndex)) {
-        return storedIndex;
-      }
-    }
-
-    const markupIndex = panels.findIndex(
-      (panel) => panel.hasAttribute("active") && !panel.hasAttribute("disabled"),
-    );
-    if (markupIndex !== -1) {
-      return markupIndex;
-    }
-    return panels.findIndex((panel) => !panel.hasAttribute("disabled"));
+    return `<li class="nav-item" role="presentation"><button class="nav-link${active ? " active" : ""}" part="tab" ${common}>${label}</button></li>`;
   }
 
-  // The nav lives in this component's shadow root; the panels reflect the
-  // active state as attributes so both stay in sync after a switch.
-  #syncNavState(activeIndex, { focus = false } = {}) {
-    this.shadowRoot.querySelectorAll("[data-index]").forEach((button) => {
-      const active = Number.parseInt(button.dataset.index, 10) === activeIndex;
-      button.classList.toggle("active", active);
-      button.setAttribute("part", active ? "tab tab-active" : "tab");
-      button.setAttribute("aria-selected", active ? "true" : "false");
-      if (active && focus) {
-        button.focus();
-      }
-    });
+  render() {
+    this.#panels = assignItemSlots(this, "ui-tab-panel", "panel");
+    this.#restore();
+    if (this.activeIndex < 0) {
+      const first = this.#panels.findIndex((panel) => !panel.hasAttribute("disabled"));
+      this.#panels[first]?.toggleAttribute("active", true);
+    }
+    const active = this.activeIndex;
+    const label = this.getAttribute("label");
+    const tabs = this.#panels.map((panel, index) => this.#tabMarkup(panel, index, index === active)).join("");
+    const listTag = this.variant === "list" ? "div" : "ul";
+    const nav = `<${listTag} class="${this.#navClass()}" role="tablist" part="nav"${this.hasAttribute("vertical") ? ' aria-orientation="vertical"' : ""}`
+      + `${label ? ` aria-label="${escapeHtml(label)}"` : ""}>${tabs}</${listTag}>`;
+    const paneClass = `tab-pane ${HOST_TOKENS_CLASS}${this.hasAttribute("instant") ? " tab-pane-instant" : ""}`;
+    const panes = this.#panels.map((panel, index) => `<div class="${paneClass}${index === active ? " active show" : ""}" `
+      + `id="pane-${index}" role="tabpanel" aria-labelledby="tab-${index}" tabindex="0" part="pane"><slot name="panel-${index}"></slot></div>`).join("");
+    const actions = '<div class="ui-tabs-actions" part="actions"><slot name="actions"></slot></div>';
+    if (this.hasAttribute("card")) {
+      return `<div class="card ui-tabs ui-tabs-card" part="card"><div class="card-header ui-tabs-header" part="header">${nav}${actions}</div>`
+        + `<div class="card-body tab-content" part="body content">${panes}</div></div>`;
+    }
+    const side = this.hasAttribute("vertical") || this.variant === "list";
+    return `<div class="ui-tabs${side ? " ui-tabs-side" : ""}"><div class="ui-tabs-header">${nav}${actions}</div>`
+      + `<div class="tab-content" part="content">${panes}</div></div>`;
   }
 
-  #syncPanelAttributes() {
-    const panels = this.getPanels();
-    const activeIndex = this.#renderedActiveIndex;
-    panels.forEach((panel, index) => {
-      if (index === activeIndex && !panel.hasAttribute("active")) {
-        panel.setAttribute("active", "");
-      } else if (index !== activeIndex && panel.hasAttribute("active")) {
-        panel.removeAttribute("active");
+  /** Activates a tab by index or name; `focus` moves the focus to it (keyboard, click). */
+  show(target, focus = false) {
+    const index = typeof target === "number" ? target : this.#panels.findIndex((panel) => panel.getAttribute("name") === target);
+    const panel = this.#panels[index];
+    const previous = this.activeIndex;
+    if (!panel || panel.hasAttribute("disabled") || index === previous) {
+      return false;
+    }
+    const detail = { index, name: panel.getAttribute("name") || "", panel, previous: this.#panels[previous] || null };
+    if (!this.dispatchEvent(new CustomEvent("ui-tabs:show", { bubbles: true, cancelable: true, detail }))) {
+      return false;
+    }
+    this.#panels.forEach((other, i) => other.toggleAttribute("active", i === index));
+    this.#persist(panel, index);
+    // The new render (attribute observer) shows the pane; focus and events after it.
+    queueMicrotask(() => queueMicrotask(() => {
+      if (focus) {
+        this.shadowRoot.querySelector(`[data-index="${index}"]`)?.focus();
       }
-    });
+      this.dispatchEvent(new CustomEvent("ui-tabs:change", { bubbles: true, detail }));
+      this.dispatchEvent(new CustomEvent("ui-tabs:shown", { bubbles: true, detail }));
+    }));
+    return true;
   }
 
   #onKeydown(event) {
-    const steps = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
-    const panels = this.getPanels();
-    const enabledIndexes = panels
-      .map((panel, index) => (panel.hasAttribute("disabled") ? null : index))
-      .filter((index) => index !== null);
-    if (!enabledIndexes.length) {
+    const tab = event.target instanceof Element ? event.target.closest("[data-index]") : null;
+    if (!tab) {
       return;
     }
-
-    let targetIndex = null;
-    if (event.key === "Home") {
-      targetIndex = enabledIndexes[0];
+    const enabled = this.#panels.map((panel, index) => (panel.hasAttribute("disabled") ? -1 : index)).filter((i) => i >= 0);
+    const position = enabled.indexOf(Number(tab.dataset.index));
+    let next = null;
+    if (event.key in STEPS) {
+      next = enabled[(position + STEPS[event.key] + enabled.length) % enabled.length];
+    } else if (event.key === "Home") {
+      next = enabled[0];
     } else if (event.key === "End") {
-      targetIndex = enabledIndexes[enabledIndexes.length - 1];
-    } else if (event.key in steps) {
-      const current = this.getActiveIndex();
-      const position = Math.max(enabledIndexes.indexOf(current), 0);
-      const nextPosition = (position + steps[event.key] + enabledIndexes.length) % enabledIndexes.length;
-      targetIndex = enabledIndexes[nextPosition];
-    } else {
-      return;
+      next = enabled.at(-1);
     }
-
-    event.preventDefault();
-    this.select(targetIndex, { focus: true });
+    if (next !== null && next !== undefined) {
+      event.preventDefault();
+      this.show(next, true);
+    }
   }
 
-  #persistKey() {
-    const key = (this.getAttribute("persist-key") || "").trim();
-    return key ? `${PERSIST_STORAGE_PREFIX}${key}` : null;
+  #storageKey() {
+    return (this.getAttribute("persist-key") || "").trim();
   }
 
-  #persistActive(panel, index) {
-    const key = this.#persistKey();
-    if (!key) {
-      return;
-    }
+  #persist(panel, index) {
+    const key = this.#storageKey();
+    if (!key) return;
     try {
       window.localStorage.setItem(key, panel.getAttribute("name") || String(index));
     } catch {
@@ -272,102 +188,82 @@ export class UiTabs extends ShadowComponentElement {
     }
   }
 
-  #restorePersisted(panels) {
-    const key = this.#persistKey();
-    if (!key) {
-      return -1;
-    }
+  #restore() {
+    if (this.#restored || !this.#panels.length) return;
+    this.#restored = true;
+    const key = this.#storageKey();
     let stored = null;
     try {
-      stored = window.localStorage.getItem(key);
+      stored = key ? window.localStorage.getItem(key) : null;
     } catch {
-      return -1;
+      stored = null;
     }
-    if (stored === null) {
-      return -1;
+    if (stored === null) return;
+    const index = this.#panels.findIndex((panel, i) => (panel.getAttribute("name") || String(i)) === stored);
+    if (index >= 0 && !this.#panels[index].hasAttribute("disabled")) {
+      this.#panels.forEach((panel, i) => panel.toggleAttribute("active", i === index));
     }
-    const namedIndex = panels.findIndex((panel) => panel.getAttribute("name") === stored);
-    if (namedIndex !== -1) {
-      return namedIndex;
-    }
-    const numeric = Number.parseInt(stored, 10);
-    return Number.isInteger(numeric) && numeric >= 0 && numeric < panels.length ? numeric : -1;
   }
 }
 
-/**
- * <ui-tab-panel> content pane.
- *
- * Attributes:
- * - heading: plain-text label rendered in the parent's tab navigation.
- * - name: stable identifier, used for persistence and the change event.
- * - active: current state; reflected when the user switches tabs.
- * - disabled: excludes the tab from selection.
- */
-export class UiTabPanel extends ShadowComponentElement {
-  static stylesheet = new URL("./ui-tabs.css", import.meta.url).href;
-  static observedAttributes = ["heading", "name", "active", "disabled"];
-
-  #suppressActiveAttribute = false;
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    // Internal switches animate the pane directly and only reflect the
-    // state; re-rendering here would cut the fade transition short.
-    if (name === "active" && this.#suppressActiveAttribute) {
-      return;
-    }
-    super.attributeChangedCallback(name, oldValue, newValue);
-    if (oldValue !== newValue && (name === "heading" || name === "disabled" || name === "active")) {
-      // The tab navigation lives in the parent's shadow root.
-      this.closest("ui-tabs")?.requestRender();
-    }
-  }
-
-  get active() {
-    return this.hasAttribute("active");
-  }
-
-  render() {
-    const active = this.active;
-    return `
-      <div class="tab-pane fade${active ? " show active" : ""}" role="tabpanel">
-        <slot></slot>
-      </div>
-    `;
-  }
-
-  activate() {
-    this.#reflectActive(true);
-    const pane = this.shadowRoot?.querySelector(".tab-pane");
-    if (!pane) {
-      return;
-    }
-    pane.classList.add("active");
-    pane.offsetHeight; // force reflow so the fade-in transition runs
-    pane.classList.add("show");
-  }
-
-  deactivate() {
-    this.#reflectActive(false);
-    const pane = this.shadowRoot?.querySelector(".tab-pane");
-    if (!pane) {
-      return Promise.resolve();
-    }
-    return new Promise((resolve) => {
-      pane.classList.remove("show");
-      afterTransition(pane, () => {
-        pane.classList.remove("active");
-        resolve();
-      });
-    });
-  }
-
-  #reflectActive(active) {
-    this.#suppressActiveAttribute = true;
-    this.toggleAttribute("active", active);
-    this.#suppressActiveAttribute = false;
-  }
-}
+/** One pane of a <ui-tabs>; its content is slotted into the rendered .tab-pane. */
+export class UiTabPanel extends HTMLElement {}
 
 registerComponent("ui-tabs", UiTabs);
 registerComponent("ui-tab-panel", UiTabPanel);
+
+// Bootstrap's tab plugin for plain markup: data-bs-toggle="tab" | "pill" | "list".
+const TOGGLES = '[data-bs-toggle="tab"], [data-bs-toggle="pill"], [data-bs-toggle="list"]';
+
+function paneOf(toggle) {
+  const selector = toggle.getAttribute("data-bs-target") || toggle.getAttribute("href");
+  try {
+    return selector && selector !== "#" ? document.querySelector(selector) : null;
+  } catch {
+    return null;
+  }
+}
+
+function showPlainTab(toggle) {
+  if (toggle.classList.contains("active") || toggle.matches(".disabled, :disabled")) return;
+  const list = toggle.closest('.nav, .list-group, [role="tablist"]');
+  const previous = list ? [...list.querySelectorAll(TOGGLES)].find((other) => other.classList.contains("active")) : null;
+  const fire = (target, name, related) => target?.dispatchEvent(new CustomEvent(`ui-tab:${name}`, { bubbles: true, cancelable: name === "show", detail: { relatedTarget: related } }));
+  if (fire(toggle, "show", previous) === false) return;
+  fire(previous, "hide", toggle);
+  previous?.classList.remove("active");
+  previous?.setAttribute("aria-selected", "false");
+  previous?.setAttribute("tabindex", "-1");
+  toggle.classList.add("active");
+  toggle.setAttribute("aria-selected", "true");
+  toggle.removeAttribute("tabindex");
+  const pane = paneOf(toggle);
+  const oldPane = previous ? paneOf(previous) : null;
+  oldPane?.classList.remove("active", "show");
+  pane?.classList.add("active", "show");
+  fire(previous, "hidden", toggle);
+  fire(toggle, "shown", previous);
+}
+
+document.addEventListener("click", (event) => {
+  const toggle = event.target instanceof Element ? event.target.closest(TOGGLES) : null;
+  if (toggle) {
+    event.preventDefault();
+    showPlainTab(toggle);
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  const toggle = event.target instanceof Element ? event.target.closest(TOGGLES) : null;
+  if (!toggle || !(event.key in STEPS || event.key === "Home" || event.key === "End")) return;
+  const list = toggle.closest('.nav, .list-group, [role="tablist"]');
+  const toggles = list ? [...list.querySelectorAll(TOGGLES)].filter((t) => !t.matches(".disabled, :disabled")) : [];
+  const index = toggles.indexOf(toggle);
+  const next = event.key === "Home" ? toggles[0] : event.key === "End" ? toggles.at(-1)
+    : toggles[(index + STEPS[event.key] + toggles.length) % toggles.length];
+  if (next) {
+    event.preventDefault();
+    next.focus();
+    showPlainTab(next);
+  }
+});
