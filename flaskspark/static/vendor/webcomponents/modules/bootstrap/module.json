@@ -11,9 +11,11 @@
     "theme.js",
     "toggler.js",
     "strength.js",
+    "nav-overflow.js",
     "ui-tokens.css"
   ],
   "vendor": [
-    "bootstrap6"
+    "bootstrap6",
+    "vanilla-calendar-pro"
   ]
 }

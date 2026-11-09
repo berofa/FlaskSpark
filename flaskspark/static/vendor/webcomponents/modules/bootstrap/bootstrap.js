@@ -18,6 +18,8 @@ import { UiChip } from "./ui-chip/ui-chip.js";
 import { UiChipInput } from "./ui-chip/ui-chip-input.js";
 import { UiCloseButton } from "./ui-close-button/ui-close-button.js";
 import { UiCollapse } from "./ui-collapse/ui-collapse.js";
+import { UiCombobox, UiOption } from "./ui-combobox/ui-combobox.js";
+import { UiDatepicker } from "./ui-datepicker/ui-datepicker.js";
 import { UiDialog } from "./ui-dialog/ui-dialog.js";
 import { UiDrawer } from "./ui-drawer/ui-drawer.js";
 import { UiDropzone } from "./ui-dropzone/ui-dropzone.js";
@@ -38,6 +40,7 @@ import { UiTextarea } from "./ui-textarea/ui-textarea.js";
 import { UiToast, UiToastContainer, showToast } from "./ui-toast/ui-toast.js";
 import "./toggler.js";
 import "./strength.js";
+import "./nav-overflow.js";
 import { UiTooltip } from "./ui-tooltip/ui-tooltip.js";
 import { setupThemeSwitcher } from "./theme.js";
 
@@ -65,6 +68,9 @@ export {
   UiChipInput,
   UiCloseButton,
   UiCollapse,
+  UiCombobox,
+  UiOption,
+  UiDatepicker,
   UiDialog,
   UiDrawer,
   UiDropzone,
@@ -99,4 +105,5 @@ export { SharedShadowStyles } from "../../core/shared-shadow-styles.js";
 export { escapeHtml } from "../../core/escape.js";
 export { applyTheme, setupThemeSwitcher } from "./theme.js";
 export { toggle as toggleToggler } from "./toggler.js";
+export { NavOverflowController, plainNavOverflow } from "./nav-overflow.js";
 export { normalizeGridLayout, defaultLayout, buildUnitAreas } from "./ui-grid/grid-layout.js";

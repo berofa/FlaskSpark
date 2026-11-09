@@ -11,6 +11,7 @@ const STACK_BELOW = 576; // submenus stack inside their menu on narrow screens, 
 const HOVER_DELAY = 120;
 const ITEM = ".menu-item:not(.disabled, :disabled)";
 const controllers = new WeakMap();
+const wiredSubmenus = new WeakSet();
 const open = new Set();
 
 /** The menu items of one menu level (not those of its submenus). */
@@ -75,6 +76,7 @@ export class MenuController {
     if (this.isOpen || this.toggle.hasAttribute("disabled") || !this.#emit("show", true)) {
       return;
     }
+    this.#wireSubmenus();
     // One menu at a time (outside the one that contains this one).
     open.forEach((other) => other !== this && !other.menu.contains(this.toggle) && other.hide());
     this.menu.classList.add("show");
@@ -232,10 +234,12 @@ export class MenuController {
     }
   }
 
+  /** Submenus get their hover behaviour once (also those added later, e.g. by nav overflow: done on every show). */
   #wireSubmenus() {
     this.menu.querySelectorAll(".submenu").forEach((submenu) => {
       const trigger = submenu.querySelector(":scope > .menu-item");
-      if (!trigger) return;
+      if (!trigger || wiredSubmenus.has(submenu)) return;
+      wiredSubmenus.add(submenu);
       trigger.setAttribute("aria-haspopup", "true");
       trigger.setAttribute("aria-expanded", "false");
       submenu.addEventListener("pointerenter", (event) => {
@@ -288,6 +292,11 @@ export class MenuController {
       afterTransition(panel, () => !panel.classList.contains("show") && hideLayer(panel));
     }
   }
+}
+
+/** The controller of a menu toggle, if one was created (plain markup creates it on the first click). */
+export function menuControllerOf(toggle) {
+  return controllers.get(toggle) || null;
 }
 
 /** The option of a menu: the toggle's data-bs-* attribute, else the <ui-menu> attribute. */

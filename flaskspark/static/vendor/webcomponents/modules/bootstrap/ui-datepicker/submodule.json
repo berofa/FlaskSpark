@@ -1,0 +1,41 @@
+{
+  "name": "ui-datepicker",
+  "description": "Bootstrap 6 datepicker (Vanilla Calendar Pro, loaded on first use): popup or inline, single / multiple / range, several months, min / max, locale and formats; form field with ISO value; data API.",
+  "elements": [
+    "ui-datepicker"
+  ],
+  "entry": "ui-datepicker.js",
+  "files": [
+    "ui-datepicker.js",
+    "datepicker-controller.js",
+    "ui-datepicker.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": "[data-vc=calendar]",
+        "prefix": "--bs-datepicker-"
+      }
+    ],
+    "descriptions": {
+      "--bs-datepicker-padding": "Padding of the calendar.",
+      "--bs-datepicker-bg": "Background.",
+      "--bs-datepicker-color": "Text colour.",
+      "--bs-datepicker-border-color": "Border colour.",
+      "--bs-datepicker-border-width": "Border width.",
+      "--bs-datepicker-border-radius": "Corner radius.",
+      "--bs-datepicker-box-shadow": "Shadow of the popup.",
+      "--bs-datepicker-font-size": "Font size.",
+      "--bs-datepicker-min-width": "Minimum width.",
+      "--bs-datepicker-zindex": "Stack level of the popup.",
+      "--bs-datepicker-header-font-weight": "Font weight of month and year.",
+      "--bs-datepicker-weekday-color": "Colour of the weekday names.",
+      "--bs-datepicker-day-hover-bg": "Background of a hovered day.",
+      "--bs-datepicker-day-selected-bg": "Background of a selected day.",
+      "--bs-datepicker-day-selected-color": "Text colour of a selected day.",
+      "--bs-datepicker-day-today-bg": "Background of today.",
+      "--bs-datepicker-day-today-color": "Text colour of today.",
+      "--bs-datepicker-day-disabled-color": "Text colour of a day outside min / max."
+    }
+  }
+}

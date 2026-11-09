@@ -1,0 +1,100 @@
+{
+  "name": "ui-combobox",
+  "description": "Bootstrap 6 combobox: select-like field with your own option markup, search, check marks, multiple selection, groups; form field; data API for [data-bs-toggle=combobox].",
+  "elements": [
+    "ui-combobox",
+    "ui-option"
+  ],
+  "entry": "ui-combobox.js",
+  "files": [
+    "ui-combobox.js",
+    "combobox-controller.js",
+    "search.js",
+    "ui-combobox.css"
+  ],
+  "requires": [
+    "ui-menu"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".form-control",
+        "prefix": "--bs-control-"
+      },
+      {
+        "selector": ".menu",
+        "prefix": "--bs-menu-"
+      }
+    ],
+    "optional": [
+      "--bs-menu-max-height",
+      "--bs-menu-overflow-y",
+      "--bs-menu-border-width",
+      "--bs-menu-border-color",
+      "--bs-menu-border-radius"
+    ],
+    "descriptions": {
+      "--bs-control-min-height": "Minimum height of the field.",
+      "--bs-control-padding-y": "Vertical padding.",
+      "--bs-control-padding-x": "Horizontal padding.",
+      "--bs-control-font-size": "Font size.",
+      "--bs-control-line-height": "Line height.",
+      "--bs-control-fg": "Text colour.",
+      "--bs-control-bg": "Background.",
+      "--bs-control-border-width": "Border width.",
+      "--bs-control-border-color": "Border colour.",
+      "--bs-control-border-radius": "Corner radius.",
+      "--bs-control-box-shadow": "Inner shadow.",
+      "--bs-control-action-bg": "Background of the file input's button.",
+      "--bs-control-action-hover-bg": "Background of the file input's button on hover.",
+      "--bs-control-transition-property": "Properties animated on focus.",
+      "--bs-control-transition-duration": "Duration of the focus transition.",
+      "--bs-control-transition-timing": "Timing function of the focus transition.",
+      "--bs-control-placeholder-color": "Colour of the placeholder.",
+      "--bs-control-disabled-color": "Text colour while disabled.",
+      "--bs-control-disabled-bg": "Background while disabled.",
+      "--bs-control-disabled-border-color": "Border colour while disabled.",
+      "--bs-control-select-bg": "Bootstrap's caret image (here the caret is an SVG in currentColor instead).",
+      "--bs-control-select-bg-position": "Position of Bootstrap's caret image.",
+      "--bs-control-select-bg-size": "Size of Bootstrap's caret image.",
+      "--bs-control-select-bg-dark": "Bootstrap's caret image in dark mode (unused here, see above).",
+      "--bs-menu-zindex": "Stacking order (without the top layer).",
+      "--bs-menu-gap": "Space between the items.",
+      "--bs-menu-min-width": "Minimum width.",
+      "--bs-menu-padding-x": "Horizontal padding.",
+      "--bs-menu-padding-y": "Vertical padding.",
+      "--bs-menu-spacer": "Distance to the toggle.",
+      "--bs-menu-font-size": "Font size.",
+      "--bs-menu-color": "Text colour.",
+      "--bs-menu-bg": "Background.",
+      "--bs-menu-box-shadow": "Shadow.",
+      "--bs-menu-divider-bg": "Colour of dividers.",
+      "--bs-menu-divider-margin-y": "Vertical space around dividers.",
+      "--bs-menu-divider-margin-x": "Horizontal inset of dividers.",
+      "--bs-menu-item-color": "Text colour of items.",
+      "--bs-menu-item-hover-color": "Text colour of a hovered or focused item.",
+      "--bs-menu-item-hover-bg": "Background of a hovered or focused item.",
+      "--bs-menu-item-active-color": "Text colour of the active item.",
+      "--bs-menu-item-active-bg": "Background of the active item.",
+      "--bs-menu-item-disabled-color": "Text colour of disabled items.",
+      "--bs-menu-item-gap": "Space between an item's icon and text.",
+      "--bs-menu-item-padding-x": "Horizontal padding of items.",
+      "--bs-menu-item-padding-y": "Vertical padding of items.",
+      "--bs-menu-item-border-radius": "Corner radius of items.",
+      "--bs-menu-icon-size": "Size of .menu-item-icon.",
+      "--bs-menu-description-font-size": "Font size of .menu-item-description.",
+      "--bs-menu-check-color": "Colour of the check mark of .selected items.",
+      "--bs-menu-header-color": "Text colour of .menu-header.",
+      "--bs-menu-header-padding-x": "Horizontal padding of .menu-header.",
+      "--bs-menu-header-padding-y": "Vertical padding of .menu-header.",
+      "--bs-menu-transition-property": "Properties animated on open and close.",
+      "--bs-menu-transition-duration": "Duration of the animation.",
+      "--bs-menu-transition-timing": "Timing function of the animation.",
+      "--bs-menu-max-height": "Maximum height (scrollable menus; unset: none).",
+      "--bs-menu-overflow-y": "Vertical overflow (scrollable menus; unset: initial).",
+      "--bs-menu-border-width": "Border width (unset: the global border width).",
+      "--bs-menu-border-color": "Border colour (unset: the translucent border colour).",
+      "--bs-menu-border-radius": "Corner radius (unset: radius 7)."
+    }
+  }
+}

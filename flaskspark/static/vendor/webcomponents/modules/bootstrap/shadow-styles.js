@@ -1,7 +1,7 @@
 import { hoistComponentTokens, stripRootTokenRules } from "../../core/shadow-sheet-transforms.js";
 
 // Text fields share Bootstrap's .form-control (and input group, floating label) tokens.
-const FIELD_HOSTS = ":is(ui-input, ui-select, ui-textarea)";
+const FIELD_HOSTS = ":is(ui-input, ui-select, ui-textarea, ui-datepicker, ui-combobox)";
 
 /**
  * Component token defaults moved from the Bootstrap class to the host element,
@@ -44,9 +44,11 @@ export const TOKEN_HOISTS = Object.freeze([
   { selector: ".form-adorn", prefix: "--bs-form-adorn-", host: FIELD_HOSTS },
   { selector: ".strength", prefix: "--bs-strength-", host: "ui-input" },
   { selector: ".strength-bar", prefix: "--bs-strength-", host: "ui-input" },
+  { selector: "[data-vc=calendar]", prefix: "--bs-datepicker-", host: "ui-datepicker" },
+  { selector: ".menu", prefix: "--bs-menu-", host: "ui-combobox" },
   { selector: ".otp", prefix: "--bs-otp-", host: "ui-otp" },
   { selector: ".form-range", prefix: "--bs-range-", host: "ui-range" },
-  { selector: ".form-text", prefix: "--bs-form-text-", host: ":is(ui-input, ui-select, ui-textarea, ui-check, ui-range, ui-otp)" },
+  { selector: ".form-text", prefix: "--bs-form-text-", host: ":is(ui-input, ui-select, ui-textarea, ui-check, ui-range, ui-otp, ui-datepicker, ui-combobox)" },
 ].map((entry) => Object.freeze(entry)));
 
 export function prepareBootstrapSheet(sheet) {

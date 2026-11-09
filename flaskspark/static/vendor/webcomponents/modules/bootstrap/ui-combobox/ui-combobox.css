@@ -1,0 +1,15 @@
+/* ui-combobox (Bootstrap 6 combobox): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}
+
+/* The open menu sits in the top layer (popover); its position is set by the menu plugin in viewport pixels. */
+.menu[popover] {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+}
+
+.ui-combobox-label {
+  flex: 1 1 auto;
+}

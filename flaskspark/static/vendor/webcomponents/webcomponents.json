@@ -14,6 +14,8 @@
       "ui-chip",
       "ui-close-button",
       "ui-collapse",
+      "ui-combobox",
+      "ui-datepicker",
       "ui-dialog",
       "ui-drawer",
       "ui-dropzone",
@@ -36,6 +38,7 @@
     ]
   },
   "vendor": [
-    "bootstrap6"
+    "bootstrap6",
+    "vanilla-calendar-pro"
   ]
 }

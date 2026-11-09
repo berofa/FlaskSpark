@@ -1,0 +1,4 @@
+/* ui-datepicker (Bootstrap 6 datepicker): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}

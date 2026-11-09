@@ -14,6 +14,12 @@ function selectorsOf(rule) {
   return typeof rule?.selectorText === "string" ? rule.selectorText.split(",").map((s) => s.trim()) : [];
 }
 
+/** A selector compared as written in the CSS: the CSSOM quotes attribute values ([data-vc="calendar"]). */
+function sameSelector(a, b) {
+  const plain = (selector) => selector.replace(/=\s*"([^"]*)"\s*\]/g, "=$1]").replace(/\s+/g, " ").trim();
+  return plain(a) === plain(b);
+}
+
 export function isRootTokenRule(rule) {
   const selectors = selectorsOf(rule);
   return selectors.length > 0 && selectors.every((selector) => ROOT_SELECTORS.has(selector));
@@ -90,7 +96,7 @@ export function hoistComponentTokens(container, hoists) {
       continue;
     }
     const first = selectorsOf(rule)[0];
-    const hoist = first && hoists.find((entry) => entry.selector === first);
+    const hoist = first && hoists.find((entry) => sameSelector(entry.selector, first));
     if (!hoist || !rule.style) {
       continue;
     }
