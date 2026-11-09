@@ -29,10 +29,17 @@ const SIZES = new Set(["xs", "sm", "lg"]);
  * - label: accessible name (icon-only buttons). current: aria-current (links).
  * - button-class: further Bootstrap classes for the inner control.
  *
+ * In a <ui-button-group> the group sets grouped, group-first, group-last and
+ * group-divider (styled by ../grouped.css).
+ *
  * Methods: toggle(), focus(), click(). Part: button.
  */
 export class UiButton extends ShadowComponentElement {
-  static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-button.css", import.meta.url).href];
+  static stylesheets = [
+    ...BOOTSTRAP_SHADOW_STYLES,
+    new URL("../grouped.css", import.meta.url).href,
+    new URL("./ui-button.css", import.meta.url).href,
+  ];
   static formAssociated = true;
   static observedAttributes = [
     "href",

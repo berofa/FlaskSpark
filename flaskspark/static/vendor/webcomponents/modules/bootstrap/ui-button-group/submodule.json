@@ -1,6 +1,6 @@
 {
   "name": "ui-button-group",
-  "description": "Bootstrap button group around ui-button children.",
+  "description": "Bootstrap button group: horizontal or vertical, dividers, sizes, nesting, toggle buttons.",
   "elements": [
     "ui-button-group"
   ],

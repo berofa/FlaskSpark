@@ -1,0 +1,98 @@
+/*
+ * Text fields (ui-input, ui-select, ui-textarea; FormControlElement): plain CSS on top of the shared Bootstrap copy.
+ * Bootstrap's own .form-field, .form-control, .input-group, .form-floating, .form-adorn rules do the rest.
+ */
+:host {
+  display: block;
+}
+
+/* Adornment icons (slots start / end) sized like Bootstrap's .form-adorn-icon > svg. */
+.form-adorn-icon > slot::slotted(*) {
+  width: var(--bs-form-adorn-icon-size);
+  height: var(--bs-form-adorn-icon-size);
+}
+
+/* Prefix / suffix slots: buttons (or a select) that belong to the field, in the group's height. */
+.ui-addon {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: stretch;
+}
+
+.ui-addon-prefix > slot::slotted(:not(ui-button)) {
+  flex-shrink: 0;
+}
+
+/* The mark of a required field after its prefix text. */
+:host([required]) [part="prefix-text"]::after {
+  content: " *";
+  color: var(--bs-danger-fg);
+}
+
+/*
+ * The caret of selects and of inputs with a datalist: Bootstrap draws it as a background image and switches its
+ * colour with [data-bs-theme=dark], which never matches inside a shadow tree. An SVG in currentColor follows the
+ * colour mode instead.
+ */
+.ui-caret-wrap {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* A floating label wrapper that holds the caret keeps Bootstrap's own layout. */
+.form-floating.ui-caret-wrap {
+  display: block;
+}
+
+.ui-caret-wrap > :is(select.form-control, .form-control-caret) {
+  background-image: none;
+  padding-inline-end: calc(var(--bs-control-padding-x) * 3);
+}
+
+.ui-caret-wrap > select.form-control:is([multiple], [size]:not([size="1"])) {
+  padding-inline-end: var(--bs-control-padding-x);
+}
+
+.ui-caret {
+  position: absolute;
+  inset-inline-end: 0.75rem;
+  top: 50%;
+  width: 16px;
+  height: 12px;
+  color: var(--bs-fg-3);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.ui-caret-wrap > select.form-control:is([multiple], [size]:not([size="1"])) ~ .ui-caret {
+  display: none;
+}
+
+.ui-caret-wrap > :disabled ~ .ui-caret {
+  opacity: 0.5;
+}
+
+/* In an input group, the wrapper takes the field's place (Bootstrap's .input-group > .form-control). */
+.input-group > .ui-caret-wrap,
+.input-group > .ui-input-clearable {
+  flex: 1 1 auto;
+  width: 1%;
+  min-width: 0;
+}
+
+.input-group > :is(.ui-caret-wrap, .ui-input-clearable):not(:first-child) > .form-control {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+.input-group > :is(.ui-caret-wrap, .ui-input-clearable):not(:last-child) > .form-control {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+/* Tooltip feedback: Bootstrap positions .invalid-tooltip below the field it belongs to. */
+.form-field:has(> .tooltip:not([hidden])) {
+  position: relative;
+}

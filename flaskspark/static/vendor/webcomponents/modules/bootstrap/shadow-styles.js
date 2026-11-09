@@ -1,5 +1,8 @@
 import { hoistComponentTokens, stripRootTokenRules } from "../../core/shadow-sheet-transforms.js";
 
+// Text fields share Bootstrap's .form-control (and input group, floating label) tokens.
+const FIELD_HOSTS = ":is(ui-input, ui-select, ui-textarea)";
+
 /**
  * Component token defaults moved from the Bootstrap class to the host element,
  * so a page themes a component with `ui-x { --bs-x-…: … }` (see
@@ -16,6 +19,14 @@ export const TOKEN_HOISTS = Object.freeze([
   { selector: ".breadcrumb", prefix: "--bs-breadcrumb-", host: "ui-breadcrumb" },
   { selector: ".card", prefix: "--bs-card-", host: "ui-card" },
   { selector: ".list-group", prefix: "--bs-list-group-", host: "ui-list-group" },
+  { selector: ".check", prefix: "--bs-check-", host: "ui-check" },
+  { selector: ".radio", prefix: "--bs-radio-", host: "ui-check" },
+  { selector: ".switch", prefix: "--bs-switch-", host: "ui-check" },
+  { selector: ".form-control", prefix: "--bs-control-", host: FIELD_HOSTS },
+  { selector: ".input-group", prefix: "--bs-input-group-", host: FIELD_HOSTS },
+  { selector: ".form-floating", prefix: "--bs-form-floating-", host: FIELD_HOSTS },
+  { selector: ".form-adorn", prefix: "--bs-form-adorn-", host: FIELD_HOSTS },
+  { selector: ".form-text", prefix: "--bs-form-text-", host: ":is(ui-input, ui-select, ui-textarea, ui-check)" },
 ].map((entry) => Object.freeze(entry)));
 
 export function prepareBootstrapSheet(sheet) {

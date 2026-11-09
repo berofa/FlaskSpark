@@ -5,6 +5,8 @@
   "files": [
     "bootstrap.js",
     "shadow-styles.js",
+    "grouped.css",
+    "form-field.css",
     "theme.js",
     "ui-tokens.css"
   ],

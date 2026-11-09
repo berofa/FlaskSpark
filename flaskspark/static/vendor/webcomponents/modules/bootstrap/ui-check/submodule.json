@@ -1,6 +1,6 @@
 {
   "name": "ui-check",
-  "description": "Bootstrap checkbox, radio or switch as a form-associated custom element.",
+  "description": "Bootstrap checkbox, radio, switch and toggle button: theme colours, sizes, label and description, indeterminate, validation.",
   "elements": [
     "ui-check"
   ],
@@ -8,5 +8,70 @@
   "files": [
     "ui-check.js",
     "ui-check.css"
-  ]
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".check",
+        "prefix": "--bs-check-"
+      },
+      {
+        "selector": ".radio",
+        "prefix": "--bs-radio-"
+      },
+      {
+        "selector": ".switch",
+        "prefix": "--bs-switch-"
+      },
+      {
+        "selector": ".form-text",
+        "prefix": "--bs-form-text-"
+      }
+    ],
+    "descriptions": {
+      "--bs-check-size": "Checkbox: width and height.",
+      "--bs-check-margin-block": "Checkbox: vertical margin (aligns it with the first text line).",
+      "--bs-check-bg": "Checkbox: background while unchecked.",
+      "--bs-check-border-color": "Checkbox: border colour while unchecked.",
+      "--bs-check-border-radius": "Checkbox: corner radius.",
+      "--bs-check-icon-checked": "Checkbox: mask image of the check mark.",
+      "--bs-check-icon-indeterminate": "Checkbox: mask image of the indeterminate dash.",
+      "--bs-check-checked-bg": "Checkbox: background while checked (without a theme colour).",
+      "--bs-check-checked-border-color": "Checkbox: border colour while checked.",
+      "--bs-check-indeterminate-bg": "Checkbox: background while indeterminate.",
+      "--bs-check-indeterminate-border-color": "Checkbox: border colour while indeterminate.",
+      "--bs-check-active-bg": "Checkbox: background while pressed.",
+      "--bs-check-active-border-color": "Checkbox: border colour while pressed.",
+      "--bs-check-disabled-bg": "Checkbox: background while disabled.",
+      "--bs-check-disabled-opacity": "Checkbox: opacity while disabled.",
+      "--bs-radio-size": "Radio: width and height.",
+      "--bs-radio-margin-block": "Radio: vertical margin.",
+      "--bs-radio-bg": "Radio: background while unchecked.",
+      "--bs-radio-border-color": "Radio: border colour while unchecked.",
+      "--bs-radio-checked-bg": "Radio: background while checked (without a theme colour).",
+      "--bs-radio-checked-border-color": "Radio: border colour while checked.",
+      "--bs-radio-disabled-bg": "Radio: background while disabled.",
+      "--bs-radio-disabled-opacity": "Radio: opacity while disabled.",
+      "--bs-switch-height": "Switch: height.",
+      "--bs-switch-width": "Switch: width.",
+      "--bs-switch-padding": "Switch: space around the indicator.",
+      "--bs-switch-margin-block": "Switch: vertical margin.",
+      "--bs-switch-transition-duration": "Switch: duration of the indicator's movement.",
+      "--bs-switch-transition-timing": "Switch: timing function of that movement.",
+      "--bs-switch-bg": "Switch: track background while off.",
+      "--bs-switch-border-width": "Switch: border width.",
+      "--bs-switch-border-color": "Switch: border colour.",
+      "--bs-switch-indicator-bg": "Switch: indicator colour while off.",
+      "--bs-switch-indicator-width": "Switch: indicator width.",
+      "--bs-switch-indicator-height": "Switch: indicator height.",
+      "--bs-switch-checked-bg": "Switch: track background while on (without a theme colour).",
+      "--bs-switch-checked-border-color": "Switch: border colour while on.",
+      "--bs-switch-checked-indicator-bg": "Switch: indicator colour while on.",
+      "--bs-switch-disabled-bg": "Switch: track background while disabled.",
+      "--bs-switch-disabled-indicator-bg": "Switch: indicator colour while disabled.",
+      "--bs-form-text-margin-top": "Description: space above it.",
+      "--bs-form-text-font-size": "Description: font size.",
+      "--bs-form-text-color": "Description: text colour."
+    }
+  }
 }

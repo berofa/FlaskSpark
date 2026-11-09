@@ -1,6 +1,6 @@
 {
   "name": "ui-input",
-  "description": "Bootstrap .form-control as a form-associated custom element.",
+  "description": "Bootstrap form control: every input type, sizes, floating label, input group, adornments, plaintext, datalist, file, clearable, validation.",
   "elements": [
     "ui-input"
   ],
@@ -8,5 +8,83 @@
   "files": [
     "ui-input.js",
     "ui-input.css"
-  ]
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".form-control",
+        "prefix": "--bs-control-"
+      },
+      {
+        "selector": ".input-group",
+        "prefix": "--bs-input-group-"
+      },
+      {
+        "selector": ".form-floating",
+        "prefix": "--bs-form-floating-"
+      },
+      {
+        "selector": ".form-adorn",
+        "prefix": "--bs-form-adorn-"
+      },
+      {
+        "selector": ".form-text",
+        "prefix": "--bs-form-text-"
+      }
+    ],
+    "descriptions": {
+      "--bs-control-min-height": "Minimum height of the field.",
+      "--bs-control-padding-y": "Vertical padding.",
+      "--bs-control-padding-x": "Horizontal padding.",
+      "--bs-control-font-size": "Font size.",
+      "--bs-control-line-height": "Line height.",
+      "--bs-control-fg": "Text colour.",
+      "--bs-control-bg": "Background.",
+      "--bs-control-border-width": "Border width.",
+      "--bs-control-border-color": "Border colour.",
+      "--bs-control-border-radius": "Corner radius.",
+      "--bs-control-box-shadow": "Inner shadow.",
+      "--bs-control-action-bg": "Background of the file input's button.",
+      "--bs-control-action-hover-bg": "Background of the file input's button on hover.",
+      "--bs-control-transition-property": "Properties animated on focus.",
+      "--bs-control-transition-duration": "Duration of the focus transition.",
+      "--bs-control-transition-timing": "Timing function of the focus transition.",
+      "--bs-control-placeholder-color": "Colour of the placeholder.",
+      "--bs-control-disabled-color": "Text colour while disabled.",
+      "--bs-control-disabled-bg": "Background while disabled.",
+      "--bs-control-disabled-border-color": "Border colour while disabled.",
+      "--bs-control-select-bg": "Bootstrap's caret image (here the caret is an SVG in currentColor instead).",
+      "--bs-control-select-bg-position": "Position of Bootstrap's caret image.",
+      "--bs-control-select-bg-size": "Size of Bootstrap's caret image.",
+      "--bs-control-select-bg-dark": "Bootstrap's caret image in dark mode (unused here, see above).",
+      "--bs-input-group-addon-padding-y": "Input group: vertical padding of prefix/suffix texts.",
+      "--bs-input-group-addon-padding-x": "Input group: horizontal padding of prefix/suffix texts.",
+      "--bs-input-group-addon-font-size": "Input group: font size of prefix/suffix texts.",
+      "--bs-input-group-addon-line-height": "Input group: line height of prefix/suffix texts.",
+      "--bs-input-group-addon-color": "Input group: text colour of prefix/suffix texts.",
+      "--bs-input-group-addon-bg": "Input group: background of prefix/suffix texts.",
+      "--bs-input-group-addon-border-color": "Input group: border colour of prefix/suffix texts.",
+      "--bs-form-floating-height": "Floating label: height of the field.",
+      "--bs-form-floating-line-height": "Floating label: line height.",
+      "--bs-form-floating-padding-x": "Floating label: horizontal padding.",
+      "--bs-form-floating-padding-y": "Floating label: vertical padding.",
+      "--bs-form-floating-input-padding-t": "Floating label: top padding of the field (room for the label).",
+      "--bs-form-floating-input-padding-b": "Floating label: bottom padding of the field.",
+      "--bs-form-floating-label-height": "Floating label: height of the label.",
+      "--bs-form-floating-label-bg": "Floating label: background of the floated label (textareas).",
+      "--bs-form-floating-label-disabled-bg": "Floating label: that background while disabled.",
+      "--bs-form-floating-label-opacity": "Floating label: opacity of the floated label.",
+      "--bs-form-floating-label-transform": "Floating label: transform of the floated label.",
+      "--bs-form-floating-label-disabled-color": "Floating label: colour while disabled.",
+      "--bs-form-floating-transition-property": "Floating label: properties animated when it floats.",
+      "--bs-form-floating-transition-duration": "Floating label: duration of that animation.",
+      "--bs-form-floating-transition-timing": "Floating label: timing function of that animation.",
+      "--bs-form-adorn-gap": "Adornments: space between icon/text and the value.",
+      "--bs-form-adorn-icon-size": "Adornments: size of icons.",
+      "--bs-form-adorn-icon-color": "Adornments: colour of icons and texts.",
+      "--bs-form-text-margin-top": "Help text: space above it.",
+      "--bs-form-text-font-size": "Help text: font size.",
+      "--bs-form-text-color": "Help text: colour."
+    }
+  }
 }

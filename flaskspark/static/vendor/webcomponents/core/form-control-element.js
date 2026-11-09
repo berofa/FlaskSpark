@@ -1,5 +1,6 @@
 import { ShadowComponentElement } from "./shadow-component-element.js";
 import { escapeHtml } from "./escape.js";
+import { HOST_TOKENS_CLASS } from "./shadow-sheet-transforms.js";
 import { validationMessage } from "./validation.js";
 
 /** Attributes forwarded 1:1 from the host to the native control. */
@@ -30,15 +31,24 @@ const SHARED_PASSTHROUGH = ["placeholder", "readonly", "required", "autocomplete
  * Promise<string|null>: applied after a pause in typing and on leaving the field (null: not readable,
  * shown as invalid with formatterMessage).
  *
- * Subclasses implement renderControl(attrs) and may override
- * passthroughAttributes and controlSelector.
+ * Bootstrap 6 layout (.form-field): label, control, help text and feedback in a column.
+ * - floating: floating label (.form-floating); "always" keeps it floated and shows the placeholder.
+ * - start / end (attributes for text, slots for icons): adornments inside the field (.form-adorn), e.g. a
+ *   search icon or a unit. ui-buttons in the prefix / suffix slots join the input group's corners.
+ * - plaintext: readonly value as plain text (.form-control-plaintext); ghost: no field styling (.form-ghost).
+ * - error: a message from the server: shown as invalid at once (until the value changes).
+ * - valid-feedback: message for a valid value once left (green, .is-valid).
+ * - tooltip: feedback as a tooltip under the field (.invalid-tooltip / .valid-tooltip).
+ *
+ * Subclasses implement renderControl(attrs, classes) and may override passthroughAttributes.
  */
 
 const FORMAT_PAUSE = 700;
 export class FormControlElement extends ShadowComponentElement {
   static formAssociated = true;
   static sharedAttributes = [
-    "name", "value", "label", "help", "size", "disabled", "aria-label", "prefix", "suffix", ...SHARED_PASSTHROUGH,
+    "name", "value", "label", "help", "size", "disabled", "aria-label", "prefix", "suffix", "floating", "start", "end",
+    "plaintext", "ghost", "error", "valid-feedback", "tooltip", ...SHARED_PASSTHROUGH,
   ];
 
   #internals;
@@ -48,6 +58,7 @@ export class FormControlElement extends ShadowComponentElement {
   #touched = false; // left once (or validate()): its feedback shows from now on
   #formatTimer = 0;
   #formatError = "";
+  #serverError = false; // the error attribute applies until the user changes the value
   /** (value) -> message, "" when valid: a check of the page on top of the native one. */
   validator = null;
   /** (value) -> Promise<string|null>: the value formatted (e.g. a phone number), null if it can't be read. */
@@ -135,6 +146,11 @@ export class FormControlElement extends ShadowComponentElement {
         return;
       }
     }
+    if (name === "error" && this.hasRendered) {
+      this.#serverError = newValue !== null;
+      this.syncFormState();
+      return;
+    }
     // Like native fields: the value attribute is the default value and only
     // applies while the value was not changed yet.
     if (name === "value" && this.hasRendered) {
@@ -152,14 +168,52 @@ export class FormControlElement extends ShadowComponentElement {
     return this.#dirtyValue ?? this.defaultValue;
   }
 
+  /** Classes of the native control: .form-control (or plaintext / ghost), size, the host-token marker. */
+  controlClasses() {
+    if (this.hasAttribute("plaintext")) {
+      return `form-control-plaintext${this.sizeClass("form-control")}`;
+    }
+    if (this.hasAttribute("ghost") || this.hasAdornments) {
+      return "form-ghost";
+    }
+    return `form-control ${HOST_TOKENS_CLASS}${this.sizeClass("form-control")}`;
+  }
+
+  #slotted(name) {
+    return [...this.children].some((child) => child.getAttribute("slot") === name);
+  }
+
+  get hasAdornments() {
+    return ["start", "end"].some((side) => this.hasAttribute(side) || this.#slotted(side));
+  }
+
+  /** An adornment inside the field: an icon (slot) or a text (attribute). */
+  #adornment(side) {
+    if (this.#slotted(side)) {
+      return `<div class="form-adorn-icon" part="${side}" aria-hidden="true"><slot name="${side}"></slot></div>`;
+    }
+    if (this.hasAttribute(side)) {
+      return `<span class="form-adorn-text" part="${side}" aria-hidden="true">${escapeHtml(this.getAttribute(side))}</span>`;
+    }
+    return "";
+  }
+
   render() {
     const label = this.getAttribute("label") || "";
     const help = this.getAttribute("help") || "";
+    const floating = this.hasAttribute("floating") && label;
     const attrs = [];
     for (const name of [...SHARED_PASSTHROUGH, ...this.passthroughAttributes]) {
       if (this.hasAttribute(name)) {
         attrs.push(`${name}="${escapeHtml(this.getAttribute(name))}"`);
       }
+    }
+    if (floating && !this.hasAttribute("placeholder")) {
+      // Bootstrap's floating label needs a placeholder (it reads :placeholder-shown).
+      attrs.push(`placeholder="${escapeHtml(label)}"`);
+    }
+    if (this.hasAttribute("plaintext") && !this.hasAttribute("readonly")) {
+      attrs.push("readonly");
     }
     if (this.hasAttribute("disabled") || this.#formDisabled) {
       attrs.push("disabled");
@@ -170,26 +224,41 @@ export class FormControlElement extends ShadowComponentElement {
     if (help) {
       attrs.push('aria-describedby="help"');
     }
+    let control = this.renderControl(attrs.join(" "), this.controlClasses());
+    if (this.hasAdornments) {
+      const end = !this.hasAttribute("start") && !this.#slotted("start");
+      control = `<label class="form-control form-adorn ${HOST_TOKENS_CLASS}${end ? " form-adorn-end" : ""}${this.sizeClass("form-control")}"`
+        + ` part="adorn">${this.#adornment("start")}${end ? this.#adornment("end") : ""}${control}`
+        + `${end ? "" : this.#adornment("end")}</label>`;
+    }
+    if (floating) {
+      const always = this.getAttribute("floating") === "always" ? " form-floating-always" : "";
+      control = `<div class="form-floating ${HOST_TOKENS_CLASS}${always}${this.floatingClass ? ` ${this.floatingClass}` : ""}" part="floating">`
+        + `<label for="control" part="label">${escapeHtml(label)}</label>${control}</div>`;
+    }
     const prefix = this.getAttribute("prefix");
     const suffix = this.getAttribute("suffix");
-    const slotted = (name) => [...this.children].some((c) => c.getAttribute("slot") === name);
-    const prefixSlot = slotted("prefix");
-    const suffixSlot = slotted("suffix");
-    let control = this.renderControl(attrs.join(" "));
+    const prefixSlot = this.#slotted("prefix");
+    const suffixSlot = this.#slotted("suffix");
     if (prefix || suffix || prefixSlot || suffixSlot) {
       control = `
-        <div class="input-group${this.sizeClass("input-group")}" part="group">
-          ${prefix || prefixSlot ? `<label class="input-group-text" for="control" part="prefix"><slot name="prefix"></slot><span part="prefix-text">${escapeHtml(prefix || "")}</span></label>` : ""}
+        <div class="input-group ${HOST_TOKENS_CLASS}${this.sizeClass("input-group")}" part="group">
+          ${prefix ? `<label class="input-group-text" for="control" part="prefix"><span part="prefix-text">${escapeHtml(prefix)}</span></label>` : ""}
+          ${prefixSlot ? '<span class="ui-addon ui-addon-prefix" part="prefix-slot"><slot name="prefix"></slot></span>' : ""}
           ${control}
           ${suffix ? `<span class="input-group-text" part="suffix">${escapeHtml(suffix)}</span>` : ""}
-          ${suffixSlot ? '<span class="ui-suffix" part="suffix-slot"><slot name="suffix"></slot></span>' : ""}
+          ${suffixSlot ? '<span class="ui-addon ui-addon-suffix" part="suffix-slot"><slot name="suffix"></slot></span>' : ""}
         </div>`;
     }
+    const tooltip = this.hasAttribute("tooltip");
     return `
-      ${label ? `<label class="form-label" for="control" part="label">${escapeHtml(label)}</label>` : ""}
-      ${control}
-      <div class="invalid-feedback" part="feedback" hidden></div>
-      ${help ? `<div class="form-text" id="help" part="help">${escapeHtml(help)}</div>` : ""}
+      <div class="form-field" part="field">
+        ${label && !floating ? `<label class="form-label" for="control" part="label">${escapeHtml(label)}</label>` : ""}
+        ${control}
+        <div class="${tooltip ? "tooltip invalid-tooltip" : "invalid-feedback"}" part="feedback" hidden></div>
+        <div class="${tooltip ? "tooltip valid-tooltip" : "valid-feedback"}" part="valid-feedback" hidden></div>
+        ${help ? `<div class="form-text ${HOST_TOKENS_CLASS}" id="help" part="help">${escapeHtml(help)}</div>` : ""}
+      </div>
     `;
   }
 
@@ -208,12 +277,15 @@ export class FormControlElement extends ShadowComponentElement {
     if (!control) {
       return;
     }
-    if (this.renderValue !== null) {
+    if (this.renderValue !== null && control.type !== "file") {
       control.value = this.renderValue;
     }
+    this.#serverError = this.hasAttribute("error");
+    this.#joinAddonButtons();
     control.addEventListener("input", () => {
       this.#dirtyValue = control.value;
       this.#formatError = "";
+      this.#serverError = false;
       this.syncFormState();
       if (this.formatter) {
         clearTimeout(this.#formatTimer);
@@ -267,8 +339,36 @@ export class FormControlElement extends ShadowComponentElement {
 
   /** The message of an invalid value ("" when valid): native checks, the email rule, the page's own. */
   #message(control) {
-    return validationMessage(control.validity, control.type, control.value)
+    return (this.#serverError ? this.getAttribute("error") || "" : "")
+      || validationMessage(control.validity, control.type, control.value)
       || this.#formatError || (this.validator ? this.validator(control.value) || "" : "");
+  }
+
+  /** Extra class of the floating label wrapper (ui-select: it holds the caret, so the select stays the label's sibling). */
+  get floatingClass() {
+    return "";
+  }
+
+  /** What the form submits: the value (subclasses: files, several selected options). */
+  formValue(control) {
+    return control.value;
+  }
+
+  /** ui-buttons in the prefix / suffix slots get the input group's corners (like members of a button group). */
+  #joinAddonButtons() {
+    const prefix = [...this.children].filter((child) => child.slot === "prefix" && child.localName === "ui-button");
+    const suffix = [...this.children].filter((child) => child.slot === "suffix" && child.localName === "ui-button");
+    const hasText = (name) => this.hasAttribute(name);
+    prefix.forEach((button, index) => {
+      button.setAttribute("grouped", "horizontal");
+      button.toggleAttribute("group-first", index === 0);
+      button.toggleAttribute("group-last", false);
+    });
+    suffix.forEach((button, index) => {
+      button.setAttribute("grouped", "horizontal");
+      button.toggleAttribute("group-first", false);
+      button.toggleAttribute("group-last", index === suffix.length - 1 && !hasText("suffix"));
+    });
   }
 
   syncFormState() {
@@ -276,21 +376,32 @@ export class FormControlElement extends ShadowComponentElement {
     if (!control) {
       return;
     }
-    this.#internals.setFormValue(control.value);
+    this.#internals.setFormValue(this.formValue(control));
     const message = this.#message(control);
     if (!message) {
       this.#internals.setValidity({});
     } else {
       this.#internals.setValidity(control.validity.valid ? { customError: true } : control.validity, message, control);
     }
-    const show = this.#touched && Boolean(message);
-    control.classList.toggle("is-invalid", show);
+    const show = (this.#touched || this.#serverError) && Boolean(message);
+    const validText = this.getAttribute("valid-feedback");
+    const showValid = this.#touched && !message && validText !== null;
+    // The marker of the state sits on the element Bootstrap colours: the field, or the adorned wrapper.
+    const marked = this.shadowRoot.querySelector('[part="adorn"]') || control;
+    marked.classList.toggle("is-invalid", show);
+    marked.classList.toggle("is-valid", showValid);
     this.toggleAttribute("invalid", show);
     const feedback = this.shadowRoot.querySelector('[part="feedback"]');
     if (feedback) {
       feedback.hidden = !show;
       feedback.textContent = show ? message : "";
       feedback.classList.toggle("d-block", show);
+    }
+    const valid = this.shadowRoot.querySelector('[part="valid-feedback"]');
+    if (valid) {
+      valid.hidden = !(showValid && validText);
+      valid.textContent = showValid ? validText : "";
+      valid.classList.toggle("d-block", showValid && Boolean(validText));
     }
   }
 

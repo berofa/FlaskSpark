@@ -1,31 +1,35 @@
 import { registerComponent } from "../../../core/registry.js";
 import { FormControlElement } from "../../../core/form-control-element.js";
+import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
 
 const PASSTHROUGH = ["rows", "minlength", "maxlength", "wrap"];
 
 /**
- * <ui-textarea>: multi-line Bootstrap .form-control as a form-associated custom element.
+ * <ui-textarea> (Bootstrap 6: multi-line .form-control), form-associated.
  *
- * Attributes:
- * - name, value (initial text), label, help, size ("sm" | "lg"), rows.
- * - placeholder, disabled, readonly, required, autocomplete, spellcheck,
- *   minlength, maxlength, wrap: forwarded.
+ * Attributes (besides those of every text field, see FormControlElement: label, help, size, floating,
+ * prefix/suffix, plaintext, error, valid-feedback, tooltip, …):
+ * - value: initial text. rows, minlength, maxlength, wrap: forwarded.
  *
  * Properties and events as ui-input (Enter inserts a line break).
  */
 export class UiTextarea extends FormControlElement {
-  static stylesheet = new URL("./ui-textarea.css", import.meta.url).href;
+  static stylesheets = [
+    ...BOOTSTRAP_SHADOW_STYLES,
+    new URL("../grouped.css", import.meta.url).href,
+    new URL("../form-field.css", import.meta.url).href,
+  ];
   static observedAttributes = [...FormControlElement.sharedAttributes, ...PASSTHROUGH];
 
   get passthroughAttributes() {
     return PASSTHROUGH;
   }
 
-  renderControl(attrs) {
+  renderControl(attrs, classes) {
     // The value is assigned in afterRender(), so no text content is interpolated here.
     return `
       <textarea
-        class="form-control${this.sizeClass("form-control")}"
+        class="${classes}"
         id="control"
         part="control"
         data-control

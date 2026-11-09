@@ -1,31 +1,19 @@
-:host([hidden]) {
-  display: none !important;
-}
-
+/* ui-button-group (Bootstrap 6 .btn-group): plain CSS on top of the shared Bootstrap copy (shadow-styles.js).
+   The members style their place themselves (../grouped.css). */
 :host {
-  display: inline-block;
-  box-sizing: border-box;
-  color: var(--bs-body-color);
-}
-
-:host *,
-:host *::before,
-:host *::after {
-  box-sizing: border-box;
-}
-
-[hidden] {
-  display: none !important;
-}
-
-.btn-group,
-.btn-group-vertical {
-  position: relative;
   display: inline-flex;
   vertical-align: middle;
 }
 
-.btn-group-vertical {
-  flex-direction: column;
-  align-items: stretch;
+/* Nested in another group: the inner group is one member (Bootstrap's .btn-group > .btn-group). */
+:host([grouped="horizontal"]:not([group-first])) {
+  margin-inline-start: calc(-1 * var(--bs-border-width));
+}
+
+:host([grouped="vertical"]) {
+  width: 100%;
+}
+
+.btn-group-vertical > slot::slotted(*) {
+  width: 100%;
 }

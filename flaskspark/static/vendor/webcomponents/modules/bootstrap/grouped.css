@@ -1,0 +1,88 @@
+/*
+ * A control inside a <ui-button-group> (ui-button, ui-check as a toggle button).
+ * Bootstrap's .btn-group > [class*=btn-] rules cannot reach into the children's
+ * shadow trees, so the group tells each child its place (grouped, group-first,
+ * group-last, group-divider) and these rules mirror Bootstrap's. [part~="button"]
+ * is the child's inner .btn element.
+ */
+:host([grouped]) {
+  position: relative;
+  flex: 1 1 auto;
+}
+
+:host([grouped]) [part~="button"] {
+  width: 100%;
+}
+
+:host([grouped]:hover) {
+  z-index: 1;
+}
+
+:host([grouped]:is([active], [checked], :active)) {
+  z-index: 2;
+}
+
+:host([grouped]:focus-within) {
+  z-index: 3;
+}
+
+/* Horizontal: overlapping borders, square inner corners. */
+:host([grouped="horizontal"]:not([group-first])) {
+  margin-inline-start: calc(-1 * var(--bs-btn-border-width, var(--bs-border-width)));
+}
+
+:host([grouped="horizontal"]:not([group-last])) [part~="button"] {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+:host([grouped="horizontal"]:not([group-first])) [part~="button"] {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+/* Vertical. */
+:host([grouped="vertical"]) {
+  width: 100%;
+}
+
+:host([grouped="vertical"]:not([group-first])) {
+  margin-top: calc(-1 * var(--bs-btn-border-width, var(--bs-border-width)));
+}
+
+:host([grouped="vertical"]:not([group-last])) [part~="button"] {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+:host([grouped="vertical"]:not([group-first])) [part~="button"] {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+/* .btn-group-divider: a line between the buttons, in the button's text colour. */
+:host([group-divider]:not([group-first])) [part~="button"] {
+  position: relative;
+}
+
+:host([group-divider]:not([group-first])) [part~="button"]::before {
+  position: absolute;
+  z-index: 3;
+  content: "";
+  background-color: var(--bs-btn-color);
+  opacity: 0.25;
+}
+
+:host([grouped="horizontal"][group-divider]:not([group-first])) [part~="button"]::before {
+  inset-inline-start: calc(var(--bs-btn-border-width) * -1);
+  top: 25%;
+  bottom: 25%;
+  width: var(--bs-btn-border-width);
+}
+
+:host([grouped="vertical"][group-divider]:not([group-first])) [part~="button"]::before {
+  top: calc(var(--bs-btn-border-width) * -1);
+  right: var(--bs-btn-padding-x);
+  left: var(--bs-btn-padding-x);
+  height: var(--bs-btn-border-width);
+}

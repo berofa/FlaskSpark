@@ -1,25 +1,34 @@
 import { registerComponent } from "../../../core/registry.js";
 import { FormControlElement } from "../../../core/form-control-element.js";
+import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
+
+const CARET = '<svg class="ui-caret" part="caret" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" '
+  + 'stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 5 6 6 6-6"/></svg>';
 
 /**
- * <ui-select>: Bootstrap .form-select as a form-associated custom element.
+ * <ui-select> (Bootstrap 6: a <select> styled with .form-control), form-associated.
  *
- * Options are declared as light-DOM <option> / <optgroup> children and
- * mirrored into the shadow <select>; changes to the children re-render it.
+ * Options are declared as light-DOM <option> / <optgroup> children and mirrored into the shadow <select>;
+ * changes to the children re-render it.
  *
- * Attributes:
- * - name, value (initial value; otherwise the option marked "selected"),
- *   label, help, size ("sm" | "lg"), disabled, required, autocomplete.
+ * Attributes (besides those of every text field, see FormControlElement: label, help, size, floating,
+ * prefix/suffix, error, valid-feedback, tooltip, …):
+ * - value: initial value; otherwise the option marked "selected".
+ * - multiple: several options (the form gets each selected value under the name).
+ * - rows: the visible rows of a list box (the <select>'s own size attribute; "size" sets sm / lg here).
  *
- * Properties and events as ui-input.
+ * Properties: value, selectedValues, options, form, validity, … as ui-input. Events: input, change.
  *
- * The dropdown caret is an inline SVG in currentColor instead of Bootstrap's
- * background image, whose dark-mode variant is selected via
- * [data-bs-theme] and cannot match inside the shadow tree.
+ * The caret is an inline SVG in currentColor instead of Bootstrap's background image, whose dark variant is
+ * chosen with [data-bs-theme], which cannot match inside the shadow tree.
  */
 export class UiSelect extends FormControlElement {
-  static stylesheet = new URL("./ui-select.css", import.meta.url).href;
-  static observedAttributes = FormControlElement.sharedAttributes;
+  static stylesheets = [
+    ...BOOTSTRAP_SHADOW_STYLES,
+    new URL("../grouped.css", import.meta.url).href,
+    new URL("../form-field.css", import.meta.url).href,
+  ];
+  static observedAttributes = [...FormControlElement.sharedAttributes, "multiple", "rows"];
 
   #observer = null;
 
@@ -44,27 +53,36 @@ export class UiSelect extends FormControlElement {
     return Array.from(this.control?.options ?? []);
   }
 
-  renderControl(attrs) {
+  get selectedValues() {
+    return this.options.filter((option) => option.selected).map((option) => option.value);
+  }
+
+  formValue(control) {
+    if (!control.multiple) {
+      return control.value;
+    }
+    const data = new FormData();
+    this.selectedValues.forEach((value) => data.append(this.name, value));
+    return data;
+  }
+
+  renderControl(attrs, classes) {
     // Options come from the author's light-DOM markup; outerHTML re-serializes
     // parsed nodes (escaped by the serializer), so no raw string is injected.
     const options = Array.from(this.children)
       .filter((child) => child.localName === "option" || child.localName === "optgroup")
       .map((child) => child.outerHTML)
       .join("");
-    return `
-      <div class="ui-select">
-        <select
-          class="form-select${this.sizeClass("form-select")}"
-          id="control"
-          part="control"
-          data-control
-          ${attrs}
-        >${options}</select>
-        <svg class="ui-select__caret" part="caret" viewBox="0 0 16 16" aria-hidden="true">
-          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 5 6 6 6-6"/>
-        </svg>
-      </div>
-    `;
+    const multiple = this.hasAttribute("multiple") ? " multiple" : "";
+    const rows = Number.parseInt(this.getAttribute("rows") || "", 10);
+    const select = `<select class="${classes}" id="control" part="control" data-control${multiple}`
+      + `${rows > 1 ? ` size="${rows}"` : ""} ${attrs}>${options}</select>${CARET}`;
+    // With a floating label the .form-floating wrapper holds the caret (Bootstrap reads label:has(~ select)).
+    return this.floatingClass ? select : `<div class="ui-caret-wrap">${select}</div>`;
+  }
+
+  get floatingClass() {
+    return this.hasAttribute("floating") && this.getAttribute("label") ? "ui-caret-wrap" : "";
   }
 }
 
