@@ -11,10 +11,11 @@ import { UiBadge } from "./ui-badge/ui-badge.js";
 import { UiBreadcrumb, UiBreadcrumbItem } from "./ui-breadcrumb/ui-breadcrumb.js";
 import { UiButton } from "./ui-button/ui-button.js";
 import { UiButtonGroup } from "./ui-button-group/ui-button-group.js";
-import { UiCard } from "./ui-card/ui-card.js";
+import { UiCard, UiCardGroup } from "./ui-card/ui-card.js";
 import { UiCarousel, UiCarouselItem } from "./ui-carousel/ui-carousel.js";
 import { UiCheck } from "./ui-check/ui-check.js";
 import { UiChip } from "./ui-chip/ui-chip.js";
+import { UiCloseButton } from "./ui-close-button/ui-close-button.js";
 import { UiCollapse } from "./ui-collapse/ui-collapse.js";
 import { UiDropdown, UiDropdownItem } from "./ui-dropdown/ui-dropdown.js";
 import { UiDropzone } from "./ui-dropzone/ui-dropzone.js";
@@ -52,10 +53,12 @@ export {
   UiButton,
   UiButtonGroup,
   UiCard,
+  UiCardGroup,
   UiCarousel,
   UiCarouselItem,
   UiCheck,
   UiChip,
+  UiCloseButton,
   UiCollapse,
   UiDropdown,
   UiDropdownItem,

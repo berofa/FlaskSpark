@@ -1,89 +1,104 @@
 import { registerComponent } from "../../../core/registry.js";
+import { HOST_TOKENS_CLASS } from "../../../core/shadow-sheet-transforms.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
 import { escapeHtml } from "../../../core/escape.js";
 import { afterTransition } from "../../../core/transitions.js";
-import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
-
-// Bootstrap 6 colours an alert with a .theme-* class; without one it is neutral.
-const VARIANTS = new Set([
-  "primary",
-  "accent",
-  "secondary",
-  "success",
-  "danger",
-  "warning",
-  "info",
-  "inverse",
-]);
-// Bootstrap 5 variant names that have a Bootstrap 6 counterpart.
-const LEGACY_VARIANTS = new Map([["dark", "inverse"]]);
+import { BOOTSTRAP_SHADOW_STYLES, themeColor } from "../shadow-styles.js";
 
 /**
- * <ui-alert> (Bootstrap 6).
+ * <ui-alert> (Bootstrap 6 alert).
  *
  * Attributes:
- * - variant: primary (default), accent, secondary, success, danger, warning,
- *   info, inverse, or "neutral" for no colour. "dark" maps to inverse.
- * - dismissible: renders a close button and fades out on dismiss.
+ * - variant: theme colour (primary, accent, success, danger, warning, info,
+ *   inverse, secondary); without one the alert is neutral. "dark" maps to inverse.
+ * - dismissible: renders a close button.
+ * - close-label: accessible name of the close button (default "Close").
+ * - instant: close at once instead of fading out (.alert-instant).
  *
- * Slots: default (body), "heading" (styled like .alert-heading).
- * Parts: alert, content, close.
+ * Slots: default (body), "heading" (styled like .alert-heading), "icon"
+ * (before the content, e.g. an SVG). Light-DOM elements with
+ * data-bs-dismiss="alert" close the alert too.
+ * Parts: alert, icon, content, close.
  *
  * Methods / events:
- * - close(): fades the alert out and hides the host element.
- * - ui-alert:closed (bubbles) after the alert is hidden.
+ * - close(): fires ui-alert:close (cancelable), fades out, fires
+ *   ui-alert:closed and removes the element. Returns a promise that resolves
+ *   once it is removed (false if a listener cancelled it).
  */
 export class UiAlert extends ShadowComponentElement {
   static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-alert.css", import.meta.url).href];
-  static observedAttributes = ["variant", "dismissible"];
+  static documentStylesheet = new URL("./ui-alert.document.css", import.meta.url).href;
+  static observedAttributes = ["variant", "dismissible", "close-label", "instant"];
 
-  #closing = false;
+  #closing = null;
+
+  constructor() {
+    super();
+    this.addEventListener("click", (event) => {
+      if (event.target instanceof Element && event.target.closest('[data-bs-dismiss="alert"]')) {
+        event.preventDefault();
+        this.close();
+      }
+    });
+  }
 
   get variant() {
-    const raw = (this.getAttribute("variant") || "primary").trim().toLowerCase();
-    const mapped = LEGACY_VARIANTS.get(raw) || raw;
-    if (mapped === "neutral") {
-      return "";
-    }
-    return VARIANTS.has(mapped) ? mapped : "primary";
+    return themeColor(this.getAttribute("variant"));
   }
 
   render() {
     const variant = this.variant;
-    const dismissible = this.hasAttribute("dismissible");
+    const classes = ["alert", HOST_TOKENS_CLASS, variant ? `theme-${variant}` : "", this.hasAttribute("instant") ? "alert-instant" : ""];
+    const closeLabel = this.getAttribute("close-label") || "Close";
     return `
-      <div class="alert${variant ? ` theme-${escapeHtml(variant)}` : ""}" role="alert" part="alert">
+      <div class="${classes.filter(Boolean).join(" ")}" role="alert" part="alert">
+        <span class="ui-alert-icon" part="icon"><slot name="icon"></slot></span>
         <div class="ui-alert-content" part="content">
           <slot name="heading"></slot>
           <slot></slot>
         </div>
-        ${dismissible ? '<button type="button" class="btn-close" aria-label="Close" part="close"></button>' : ""}
+        ${this.hasAttribute("dismissible")
+          ? `<button type="button" class="btn-close" aria-label="${escapeHtml(closeLabel)}" part="close"></button>`
+          : ""}
       </div>
     `;
   }
 
   afterRender() {
     this.shadowRoot.querySelector(".btn-close")?.addEventListener("click", () => this.close());
+    const iconSlot = this.shadowRoot.querySelector('slot[name="icon"]');
+    const syncIcon = () => {
+      iconSlot.parentElement.hidden = iconSlot.assignedNodes().length === 0;
+    };
+    iconSlot.addEventListener("slotchange", syncIcon);
+    syncIcon();
   }
 
   close() {
-    if (this.#closing || this.hidden) {
-      return;
+    if (this.#closing) {
+      return this.#closing;
     }
-    const alertNode = this.shadowRoot?.querySelector(".alert");
-    if (!alertNode) {
-      this.hidden = true;
-      return;
+    const proceed = this.dispatchEvent(new CustomEvent("ui-alert:close", { bubbles: true, cancelable: true }));
+    if (!proceed) {
+      return Promise.resolve(false);
     }
-    this.#closing = true;
-    // Bootstrap 6 animates the exit with .hiding (opacity transition).
-    alertNode.classList.add("hiding");
-    afterTransition(alertNode, () => {
-      this.hidden = true;
-      this.#closing = false;
-      alertNode.classList.remove("hiding");
-      this.dispatchEvent(new CustomEvent("ui-alert:closed", { bubbles: true }));
+    this.#closing = new Promise((resolve) => {
+      const finish = () => {
+        // Before removing, so listeners on ancestors (event delegation) still get it.
+        this.dispatchEvent(new CustomEvent("ui-alert:closed", { bubbles: true }));
+        this.remove();
+        resolve(true);
+      };
+      const alertNode = this.shadowRoot?.querySelector(".alert");
+      if (!alertNode || this.hasAttribute("instant")) {
+        finish();
+        return;
+      }
+      // Bootstrap 6 animates the exit with .hiding (opacity transition).
+      alertNode.classList.add("hiding");
+      afterTransition(alertNode, finish);
     });
+    return this.#closing;
   }
 }
 

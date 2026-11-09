@@ -1,39 +1,53 @@
 import { registerComponent } from "../../../core/registry.js";
+import { HOST_TOKENS_CLASS } from "../../../core/shadow-sheet-transforms.js";
 import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
 import { escapeHtml } from "../../../core/escape.js";
+import { BOOTSTRAP_SHADOW_STYLES, themeColor } from "../shadow-styles.js";
 
-const VARIANTS = new Set([
-  "primary",
-  "secondary",
-  "success",
-  "danger",
-  "warning",
-  "info",
-  "light",
-  "dark",
-]);
+const APPEARANCES = new Set(["solid", "subtle", "outline"]);
 
 /**
- * <ui-badge>.
+ * <ui-badge> (Bootstrap 6 badge).
  *
  * Attributes:
- * - variant: Bootstrap variant (default "primary"), rendered as text-bg-*
- *   so the text contrast is handled automatically.
- * - pill: rounded pill shape.
+ * - variant: theme colour (primary, accent, success, danger, warning, info,
+ *   inverse, secondary); without one the badge is neutral.
+ * - appearance: solid (default), subtle or outline.
+ * - pill: fully rounded (rounded-pill).
+ * - href (+ target, rel): renders the badge as a link.
+ * - badge-class: further Bootstrap classes for the badge itself (utilities
+ *   such as "border border-bg"); classes on <ui-badge> style the host
+ *   (e.g. position-absolute top-0 start-100 translate-middle).
+ *
+ * Scales with the font size of its parent (em units). Empty badges are hidden.
+ * Part: badge.
  */
 export class UiBadge extends ShadowComponentElement {
-  static stylesheet = new URL("./ui-badge.css", import.meta.url).href;
-  static observedAttributes = ["variant", "pill"];
+  static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-badge.css", import.meta.url).href];
+  static observedAttributes = ["variant", "appearance", "pill", "href", "target", "rel", "badge-class"];
+
+  classNames() {
+    const variant = themeColor(this.getAttribute("variant"));
+    const appearance = (this.getAttribute("appearance") || "solid").trim().toLowerCase();
+    return [
+      "badge",
+      HOST_TOKENS_CLASS,
+      APPEARANCES.has(appearance) && appearance !== "solid" ? `badge-${appearance}` : "",
+      variant ? `theme-${variant}` : "",
+      this.hasAttribute("pill") ? "rounded-pill" : "",
+      this.getAttribute("badge-class") || "",
+    ].filter(Boolean).join(" ");
+  }
 
   render() {
-    const rawVariant = this.getAttribute("variant") || "primary";
-    const variant = VARIANTS.has(rawVariant) ? rawVariant : "primary";
-    const pill = this.hasAttribute("pill");
-    return `
-      <span class="badge text-bg-${escapeHtml(variant)}${pill ? " rounded-pill" : ""}">
-        <slot></slot>
-      </span>
-    `;
+    const classes = escapeHtml(this.classNames());
+    const href = this.getAttribute("href");
+    if (href) {
+      const target = this.hasAttribute("target") ? ` target="${escapeHtml(this.getAttribute("target"))}"` : "";
+      const rel = this.hasAttribute("rel") ? ` rel="${escapeHtml(this.getAttribute("rel"))}"` : "";
+      return `<a class="${classes}" part="badge" href="${escapeHtml(href)}"${target}${rel}><slot></slot></a>`;
+    }
+    return `<span class="${classes}" part="badge"><slot></slot></span>`;
   }
 }
 

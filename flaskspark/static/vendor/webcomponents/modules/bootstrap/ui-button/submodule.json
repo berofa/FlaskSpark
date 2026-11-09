@@ -1,6 +1,6 @@
 {
   "name": "ui-button",
-  "description": "Bootstrap button or link button.",
+  "description": "Bootstrap button: solid, outline, subtle, text and link in every theme colour, styled, sizes, icon buttons, toggle, links, form submit/reset.",
   "elements": [
     "ui-button"
   ],
@@ -8,5 +8,44 @@
   "files": [
     "ui-button.js",
     "ui-button.css"
-  ]
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".btn",
+        "prefix": "--bs-btn-"
+      },
+      {
+        "selector": ".btn-styled",
+        "prefix": "--bs-btn-"
+      }
+    ],
+    "descriptions": {
+      "--bs-btn-gap": "Space between icon and text.",
+      "--bs-btn-min-height": "Minimum height (icon buttons are as wide as high).",
+      "--bs-btn-padding-x": "Horizontal padding.",
+      "--bs-btn-padding-y": "Vertical padding.",
+      "--bs-btn-font-size": "Font size.",
+      "--bs-btn-font-weight": "Font weight.",
+      "--bs-btn-line-height": "Line height.",
+      "--bs-btn-color": "Text colour of the base button (appearances set it from the theme colour).",
+      "--bs-btn-white-space": "Wrapping of the label (nowrap by default).",
+      "--bs-btn-border-width": "Border width.",
+      "--bs-btn-border-color": "Border colour of the base button.",
+      "--bs-btn-border-radius": "Corner radius.",
+      "--bs-btn-hover-border-color": "Border colour on hover.",
+      "--bs-btn-disabled-opacity": "Opacity while disabled.",
+      "--bs-btn-transition-property": "Properties animated on hover and press.",
+      "--bs-btn-transition-duration": "Duration of the transition.",
+      "--bs-btn-transition-timing": "Timing function of the transition.",
+      "--bs-btn-gradient-start": "styled: top of the gradient.",
+      "--bs-btn-gradient-end": "styled: bottom of the gradient.",
+      "--bs-btn-border-mix-color": "styled: colour mixed into the border.",
+      "--bs-btn-border-mix-amount": "styled: amount of that colour at rest.",
+      "--bs-btn-border-hover-mix-amount": "styled: amount of that colour on hover.",
+      "--bs-btn-border-active-mix-amount": "styled: amount of that colour while pressed.",
+      "--bs-btn-shadow": "styled: shadow at rest.",
+      "--bs-btn-active-shadow": "styled: shadow while pressed or active."
+    }
+  }
 }

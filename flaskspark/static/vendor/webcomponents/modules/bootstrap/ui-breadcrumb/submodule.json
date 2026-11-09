@@ -1,6 +1,6 @@
 {
   "name": "ui-breadcrumb",
-  "description": "Bootstrap breadcrumb with ui-breadcrumb-item entries.",
+  "description": "Bootstrap breadcrumb with links, the current page and chevron, text or SVG dividers.",
   "elements": [
     "ui-breadcrumb",
     "ui-breadcrumb-item"
@@ -9,5 +9,35 @@
   "files": [
     "ui-breadcrumb.js",
     "ui-breadcrumb.css"
-  ]
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".breadcrumb",
+        "prefix": "--bs-breadcrumb-"
+      }
+    ],
+    "optional": [
+      "--bs-breadcrumb-padding-x",
+      "--bs-breadcrumb-padding-y"
+    ],
+    "descriptions": {
+      "--bs-breadcrumb-font-size": "Font size of the breadcrumb.",
+      "--bs-breadcrumb-bg": "Background of the list.",
+      "--bs-breadcrumb-border-radius": "Corner radius of the list.",
+      "--bs-breadcrumb-divider-color": "Colour of the dividers.",
+      "--bs-breadcrumb-divider-icon": "Mask image of the default divider (chevron).",
+      "--bs-breadcrumb-divider-width": "Width of the default divider.",
+      "--bs-breadcrumb-divider-height": "Height of the default divider.",
+      "--bs-breadcrumb-link-padding-x": "Horizontal padding of the links (also sets the divider margin).",
+      "--bs-breadcrumb-link-padding-y": "Vertical padding of the links.",
+      "--bs-breadcrumb-link-color": "Colour of the links.",
+      "--bs-breadcrumb-link-hover-color": "Colour of a hovered link.",
+      "--bs-breadcrumb-link-hover-bg": "Background of a hovered link.",
+      "--bs-breadcrumb-link-active-color": "Colour of the current page.",
+      "--bs-breadcrumb-link-border-radius": "Corner radius of the links' hover background.",
+      "--bs-breadcrumb-padding-x": "Horizontal padding of the list (unset: 0).",
+      "--bs-breadcrumb-padding-y": "Vertical padding of the list (unset: 0)."
+    }
+  }
 }

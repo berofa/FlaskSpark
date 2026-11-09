@@ -21,6 +21,13 @@ export class ShadowComponentElement extends HTMLElement {
    * `stylesheet`.
    */
   static stylesheets = null;
+  /**
+   * Stylesheet adopted into the document once (URL), for the component's
+   * slotted content: Bootstrap styles direct children (`.alert > p`,
+   * `.card-body > *`), which only a page-level rule like `ui-alert > p` can
+   * mirror. Wrap the rules in `@layer components` so they rank like Bootstrap's.
+   */
+  static documentStylesheet = "";
 
   #renderScheduled = false;
   #mountToken = 0;
@@ -32,6 +39,7 @@ export class ShadowComponentElement extends HTMLElement {
   }
 
   connectedCallback() {
+    SharedShadowStyles.applyToDocument(this.constructor.documentStylesheet);
     this.requestRender();
   }
 

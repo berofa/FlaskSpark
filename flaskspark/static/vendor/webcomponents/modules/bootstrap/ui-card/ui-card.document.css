@@ -1,0 +1,19 @@
+/* ui-card: rules for the slotted content, adopted into the page once
+   (Bootstrap's .card-body > *, .card-body > [class*=btn-] and the image caps). */
+@layer components {
+  ui-card > :is(:not([slot]), [slot="eyebrow"], [slot="title"], [slot="subtitle"], [slot="text"], [slot="link"],
+    [slot="header"], [slot="footer"]) {
+    margin-block: 0;
+  }
+
+  ui-card > :is([class*="btn-"], ui-button):is(:not([slot]), [slot="link"]) {
+    align-self: start;
+  }
+
+  ui-card > :is([slot="image-top"], [slot="image-bottom"], [slot="image-start"], [slot="image-end"], [slot="image"]) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}

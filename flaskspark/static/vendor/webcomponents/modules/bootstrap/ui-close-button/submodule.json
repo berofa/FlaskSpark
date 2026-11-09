@@ -1,0 +1,26 @@
+{
+  "name": "ui-close-button",
+  "description": "Bootstrap close button for dismissing content like alerts and dialogs.",
+  "elements": [
+    "ui-close-button"
+  ],
+  "entry": "ui-close-button.js",
+  "files": [
+    "ui-close-button.js",
+    "ui-close-button.css"
+  ],
+  "tokens": {
+    "sources": [
+      {"selector": ".btn-close", "prefix": "--bs-btn-close-"}
+    ],
+    "descriptions": {
+      "--bs-btn-close-size": "Minimum width and height of the button.",
+      "--bs-btn-close-color": "Colour of the icon (it is drawn in currentColor).",
+      "--bs-btn-close-icon": "Mask image of the icon (an SVG data URI).",
+      "--bs-btn-close-opacity": "Opacity at rest.",
+      "--bs-btn-close-hover-opacity": "Opacity on hover.",
+      "--bs-btn-close-focus-opacity": "Opacity while focused (keyboard).",
+      "--bs-btn-close-disabled-opacity": "Opacity while disabled."
+    }
+  }
+}

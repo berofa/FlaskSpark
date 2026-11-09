@@ -1,0 +1,8 @@
+/* ui-list-group: rules for the items, adopted into the page once. */
+@layer components {
+  /* The rendered .list-group-item carries the item's classes; the element itself only passes its content on.
+     !important in this early layer also beats the display utilities (d-flex, d-block) it carries. */
+  ui-list-group > ui-list-group-item {
+    display: contents !important;
+  }
+}

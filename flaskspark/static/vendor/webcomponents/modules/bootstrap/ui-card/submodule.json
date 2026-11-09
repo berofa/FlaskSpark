@@ -1,12 +1,43 @@
 {
   "name": "ui-card",
-  "description": "Bootstrap card with header, body and footer slots.",
+  "description": "Bootstrap card: header, body, footer, image caps, overlay, horizontal row, list group, theme colours, subtle, translucent; ui-card-group attaches cards.",
   "elements": [
-    "ui-card"
+    "ui-card",
+    "ui-card-group"
   ],
   "entry": "ui-card.js",
   "files": [
     "ui-card.js",
-    "ui-card.css"
-  ]
+    "ui-card.css",
+    "ui-card-group.css",
+    "ui-card.document.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".card",
+        "prefix": "--bs-card-"
+      }
+    ],
+    "descriptions": {
+      "--bs-card-spacer-y": "Vertical padding of the body.",
+      "--bs-card-spacer-x": "Horizontal padding of the body.",
+      "--bs-card-subtitle-color": "Colour of .card-subtitle.",
+      "--bs-card-border-width": "Border width (also the dividers between parts).",
+      "--bs-card-border-color": "Border colour without a theme colour.",
+      "--bs-card-border-radius": "Corner radius.",
+      "--bs-card-box-shadow": "Box shadow.",
+      "--bs-card-inner-border-radius": "Radius of the parts at the edges (header, images, list).",
+      "--bs-card-cap-padding-y": "Vertical padding of header and footer.",
+      "--bs-card-cap-padding-x": "Horizontal padding of header and footer.",
+      "--bs-card-cap-bg": "Background of header and footer without a theme colour.",
+      "--bs-card-cap-color": "Text colour of header and footer.",
+      "--bs-card-height": "Height of the card.",
+      "--bs-card-color": "Text colour of the body.",
+      "--bs-card-bg": "Background of the card.",
+      "--bs-card-img-overlay-padding": "Padding of the overlay on an image.",
+      "--bs-card-group-margin": "Space between the cards of a <ui-card-group> while stacked.",
+      "--bs-card-body-gap": "Space between the elements in the body."
+    }
+  }
 }
