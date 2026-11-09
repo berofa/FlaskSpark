@@ -6,6 +6,8 @@ import { BOOTSTRAP_SHADOW_STYLES, themeColor } from "../shadow-styles.js";
 
 const APPEARANCES = new Set(["solid", "outline", "subtle", "text", "link"]);
 const SIZES = new Set(["xs", "sm", "lg"]);
+// State of a toggle for menus, dialogs, collapses (set on the host by them): kept on the inner control.
+const FORWARDED_ARIA = ["aria-expanded", "aria-haspopup", "aria-controls"];
 
 /**
  * <ui-button> (Bootstrap 6 button).
@@ -59,6 +61,7 @@ export class UiButton extends ShadowComponentElement {
     "current",
     "toggle",
     "button-class",
+    ...FORWARDED_ARIA,
   ];
 
   #internals;
@@ -98,6 +101,14 @@ export class UiButton extends ShadowComponentElement {
   attributeChangedCallback(name, oldValue, newValue) {
     // State changes of a toggle button: update in place instead of re-rendering, so it keeps the focus.
     const control = this.hasRendered && this.shadowRoot.querySelector('[part="button"]');
+    if (FORWARDED_ARIA.includes(name) && control) {
+      if (newValue === null) {
+        control.removeAttribute(name);
+      } else {
+        control.setAttribute(name, newValue);
+      }
+      return;
+    }
     if (name === "active" && control && oldValue !== newValue) {
       control.className = this.classNames();
       if (this.hasAttribute("toggle")) {
@@ -166,7 +177,9 @@ export class UiButton extends ShadowComponentElement {
     const disabled = this.disabled;
     const label = this.getAttribute("label");
     const aria = (label ? ` aria-label="${escapeHtml(label)}"` : "")
-      + (this.hasAttribute("toggle") ? ` aria-pressed="${this.active}"` : "");
+      + (this.hasAttribute("toggle") ? ` aria-pressed="${this.active}"` : "")
+      + FORWARDED_ARIA.filter((name) => this.hasAttribute(name))
+        .map((name) => ` ${name}="${escapeHtml(this.getAttribute(name))}"`).join("");
 
     const href = this.getAttribute("href");
     if (href) {

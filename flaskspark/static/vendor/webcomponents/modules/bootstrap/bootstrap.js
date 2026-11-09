@@ -17,16 +17,16 @@ import { UiCheck } from "./ui-check/ui-check.js";
 import { UiChip } from "./ui-chip/ui-chip.js";
 import { UiCloseButton } from "./ui-close-button/ui-close-button.js";
 import { UiCollapse } from "./ui-collapse/ui-collapse.js";
-import { UiDropdown, UiDropdownItem } from "./ui-dropdown/ui-dropdown.js";
+import { UiDialog } from "./ui-dialog/ui-dialog.js";
+import { UiDrawer } from "./ui-drawer/ui-drawer.js";
 import { UiDropzone } from "./ui-dropzone/ui-dropzone.js";
 import { UiGallery } from "./ui-gallery/ui-gallery.js";
 import { UiGrid } from "./ui-grid/ui-grid.js";
 import { UiGridEditor } from "./ui-grid-editor/ui-grid-editor.js";
 import { UiInput } from "./ui-input/ui-input.js";
 import { UiListGroup, UiListGroupItem } from "./ui-list-group/ui-list-group.js";
-import { UiModal } from "./ui-modal/ui-modal.js";
+import { MenuController, UiMenu } from "./ui-menu/ui-menu.js";
 import { UiNavbar, UiNavItem } from "./ui-navbar/ui-navbar.js";
-import { UiOffcanvas } from "./ui-offcanvas/ui-offcanvas.js";
 import { UiPopover } from "./ui-popover/ui-popover.js";
 import { UiSelect } from "./ui-select/ui-select.js";
 import { UiTable } from "./ui-table/ui-table.js";
@@ -60,8 +60,8 @@ export {
   UiChip,
   UiCloseButton,
   UiCollapse,
-  UiDropdown,
-  UiDropdownItem,
+  UiDialog,
+  UiDrawer,
   UiDropzone,
   UiGallery,
   UiGrid,
@@ -69,10 +69,10 @@ export {
   UiInput,
   UiListGroup,
   UiListGroupItem,
-  UiModal,
+  MenuController,
+  UiMenu,
   UiNavbar,
   UiNavItem,
-  UiOffcanvas,
   UiPopover,
   UiSelect,
   UiTable,

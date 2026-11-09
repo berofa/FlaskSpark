@@ -19,6 +19,8 @@ export const TOKEN_HOISTS = Object.freeze([
   { selector: ".breadcrumb", prefix: "--bs-breadcrumb-", host: "ui-breadcrumb" },
   { selector: ".card", prefix: "--bs-card-", host: "ui-card" },
   { selector: ".list-group", prefix: "--bs-list-group-", host: "ui-list-group" },
+  { selector: ".dialog", prefix: "--bs-dialog-", host: "ui-dialog" },
+  { selector: ".drawer", prefix: "--bs-drawer-", host: "ui-drawer" },
   { selector: ".check", prefix: "--bs-check-", host: "ui-check" },
   { selector: ".radio", prefix: "--bs-radio-", host: "ui-check" },
   { selector: ".switch", prefix: "--bs-switch-", host: "ui-check" },

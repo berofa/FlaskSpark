@@ -1,0 +1,52 @@
+/* ui-drawer (Bootstrap 6 drawer): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+:host {
+  display: contents;
+}
+
+/*
+ * Opening (.ui-opening, the first frame after showModal) and closing (.hiding, until the transition ended)
+ * show the panel at its off-screen position, so Bootstrap's transition slides it in and out.
+ */
+[part="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding) {
+  visibility: hidden;
+}
+
+[part="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-start) {
+  transform: translateX(calc(-100% - var(--bs-drawer-inset)));
+}
+
+[part="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-end) {
+  transform: translateX(calc(100% + var(--bs-drawer-inset)));
+}
+
+[part="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-top) {
+  transform: translateY(calc(-100% - var(--bs-drawer-inset)));
+}
+
+[part="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-bottom, .drawer-fullscreen) {
+  transform: translateY(calc(100% + var(--bs-drawer-inset)));
+}
+
+:host(:dir(rtl)) [part="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-start) {
+  transform: translateX(calc(100% + var(--bs-drawer-inset)));
+}
+
+:host(:dir(rtl)) [part="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-end) {
+  transform: translateX(calc(-100% - var(--bs-drawer-inset)));
+}
+
+/* The backdrop fades with it. */
+[part="drawer"][open]:is(.ui-opening, .hiding)::backdrop {
+  background-color: transparent;
+  backdrop-filter: blur(0);
+}
+
+[part="drawer"].ui-no-backdrop::backdrop {
+  background-color: transparent;
+  backdrop-filter: none;
+}
+
+.drawer-title > slot::slotted(*) {
+  margin: 0;
+  font-size: inherit;
+}

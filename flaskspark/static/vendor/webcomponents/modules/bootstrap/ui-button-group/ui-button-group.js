@@ -6,13 +6,13 @@ import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
 
 const SIZES = new Set(["xs", "sm", "lg"]);
 // Children that take part in the group; a button may also sit in a <ui-tooltip> or <ui-popover>.
-const MEMBERS = ["ui-button", "ui-check", "ui-button-group", "ui-dropdown"];
+const MEMBERS = ["ui-button", "ui-check", "ui-button-group"];
 
 /**
  * <ui-button-group> (Bootstrap 6 .btn-group).
  *
- * Groups <ui-button>, toggle buttons (<ui-check button>), nested
- * <ui-button-group>s and <ui-dropdown>s on one line or in a column, with
+ * Groups <ui-button>, toggle buttons (<ui-check button>) and nested
+ * <ui-button-group>s on one line or in a column (a .menu inside stays out), with
  * collapsed borders and radii. Bootstrap's .btn-group > [class*=btn-] rules
  * cannot reach into the children's shadow trees, so the group tells each child
  * its place (grouped, group-first, group-last, group-divider; see

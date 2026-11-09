@@ -1,0 +1,30 @@
+/* ui-dialog (Bootstrap 6 dialog): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+:host {
+  display: contents;
+}
+
+/* The first frame after showModal(): the closed look, so Bootstrap's transition runs into the open one. */
+.dialog:not(.dialog-instant)[open].ui-opening:not(.hiding) {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.dialog:not(.dialog-instant).dialog-slide-down[open].ui-opening:not(.hiding) {
+  transform: translateY(-3rem);
+}
+
+.dialog:not(.dialog-instant).dialog-slide-up[open].ui-opening:not(.hiding) {
+  transform: translateY(3rem);
+}
+
+/* backdrop="false". */
+.dialog.ui-no-backdrop::backdrop {
+  background-color: transparent;
+  backdrop-filter: none;
+}
+
+/* The heading slot's content keeps the title's look. */
+.dialog-title > slot::slotted(*) {
+  margin: 0;
+  font-size: inherit;
+}

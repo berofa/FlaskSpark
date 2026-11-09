@@ -1,0 +1,40 @@
+{
+  "name": "ui-dialog",
+  "description": "Bootstrap dialog on the native <dialog>: modal or not, static backdrop, sizes, fullscreen, scrollable, animations, swapping, triggers.",
+  "elements": [
+    "ui-dialog"
+  ],
+  "entry": "ui-dialog.js",
+  "files": [
+    "ui-dialog.js",
+    "ui-dialog.css"
+  ],
+  "tokens": {
+    "sources": [
+      {"selector": ".dialog", "prefix": "--bs-dialog-"}
+    ],
+    "descriptions": {
+      "--bs-dialog-padding": "Padding of the body.",
+      "--bs-dialog-width": "Width (sizes and fullscreen set it).",
+      "--bs-dialog-margin": "Space to the viewport edges.",
+      "--bs-dialog-color": "Text colour.",
+      "--bs-dialog-bg": "Background.",
+      "--bs-dialog-border-color": "Border colour.",
+      "--bs-dialog-border-width": "Border width.",
+      "--bs-dialog-border-radius": "Corner radius.",
+      "--bs-dialog-box-shadow": "Shadow.",
+      "--bs-dialog-transition-property": "Properties animated on open and close.",
+      "--bs-dialog-transition-duration": "Duration of the animation.",
+      "--bs-dialog-transition-timing": "Timing function of the animation.",
+      "--bs-dialog-backdrop-bg": "Colour of the backdrop.",
+      "--bs-dialog-backdrop-blur": "Blur of the page behind the backdrop.",
+      "--bs-dialog-header-padding": "Padding of the header.",
+      "--bs-dialog-header-border-color": "Colour of the line under the header.",
+      "--bs-dialog-header-border-width": "Width of the line under the header.",
+      "--bs-dialog-footer-padding": "Padding of the footer.",
+      "--bs-dialog-footer-border-color": "Colour of the line above the footer.",
+      "--bs-dialog-footer-border-width": "Width of the line above the footer.",
+      "--bs-dialog-footer-gap": "Space between the footer's buttons."
+    }
+  }
+}
