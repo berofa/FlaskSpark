@@ -23,6 +23,8 @@ const BREAKPOINTS = new Set(["sm", "md", "lg", "xl", "2xl"]);
  * - responsive: horizontal scrolling (.table-responsive), or below a breakpoint: sm | md | lg | xl | 2xl.
  * - stacked: rows as blocks with label–value pairs (.table-stacked), or below a container width:
  *   sm | md | lg | xl | 2xl. Cells without data-cell get the label of their column header.
+ * Icon column: class="table-icons" on a column header (or on single cells) makes a narrow, right-aligned column
+ * for icon buttons that never wraps; the body and footer cells of that column get the class too.
  * Parts: wrapper, table.
  */
 export class UiTable extends ShadowComponentElement {
@@ -102,25 +104,36 @@ export class UiTable extends ShadowComponentElement {
     // render() replaced the shadow content; (re-)insert the table node itself, which keeps its listeners and form state.
     this.shadowRoot.querySelector("[data-wrapper]").append(table);
     this.#rows?.disconnect();
-    if (this.hasAttribute("stacked")) {
-      this.#labelCells();
-      this.#rows = new MutationObserver(() => this.#labelCells());
-      this.#rows.observe(table, { childList: true, subtree: true });
-    }
+    this.#decorateCells();
+    this.#rows = new MutationObserver(() => this.#decorateCells());
+    this.#rows.observe(table, { childList: true, subtree: true });
   }
 
-  /** Stacked rows show each cell's data-cell as its label: fill it from the column headers where missing. */
-  #labelCells() {
-    const headers = [...(this.#table.tHead?.rows[0]?.cells || [])].map((cell) => cell.textContent.trim());
-    for (const body of this.#table.tBodies) {
-      for (const row of body.rows) {
-        let column = 0;
-        for (const cell of row.cells) {
-          if (!cell.hasAttribute("data-cell") && headers[column]) {
-            cell.setAttribute("data-cell", headers[column]);
-          }
-          column += cell.colSpan || 1;
+  /**
+   * Fills in what the column headers say for the cells below them: the table-icons class of an icon column and,
+   * for stacked rows, each cell's data-cell label where missing.
+   */
+  #decorateCells() {
+    const stacked = this.hasAttribute("stacked");
+    const headers = [];
+    for (const cell of this.#table.tHead?.rows[0]?.cells || []) {
+      const header = { label: cell.textContent.trim(), icons: cell.classList.contains("table-icons") };
+      for (let span = 0; span < (cell.colSpan || 1); span += 1) {
+        headers.push(header);
+      }
+    }
+    const rows = [...this.#table.tBodies].flatMap((body) => [...body.rows]).concat([...(this.#table.tFoot?.rows || [])]);
+    for (const row of rows) {
+      let column = 0;
+      for (const cell of row.cells) {
+        const header = headers[column];
+        if (header?.icons && (cell.colSpan || 1) === 1) {
+          cell.classList.add("table-icons");
         }
+        if (stacked && header?.label && !cell.hasAttribute("data-cell") && row.parentElement.tagName === "TBODY") {
+          cell.setAttribute("data-cell", header.label);
+        }
+        column += cell.colSpan || 1;
       }
     }
   }

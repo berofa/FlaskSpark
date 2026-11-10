@@ -2,3 +2,55 @@
 :host {
   display: block;
 }
+
+/* Icon column (.table-icons on the column header, copied to its cells): as narrow as its buttons, never wraps. */
+.table-icons {
+  width: 1%;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.table-icons > * {
+  vertical-align: middle;
+}
+
+/* Stacked rows: the cells are blocks, the icons line up with the other values (same container queries as Bootstrap). */
+.table-stacked .table-icons {
+  width: auto;
+  text-align: start;
+}
+
+@container (width < 576px) {
+  .sm\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
+
+@container (width < 768px) {
+  .md\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
+
+@container (width < 1024px) {
+  .lg\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
+
+@container (width < 1280px) {
+  .xl\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
+
+@container (width < 1536px) {
+  .\32 xl\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
