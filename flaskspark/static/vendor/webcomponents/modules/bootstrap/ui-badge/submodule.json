@@ -1,0 +1,32 @@
+{
+  "name": "ui-badge",
+  "description": "Bootstrap badge: solid, subtle or outline in every theme colour, pill, link.",
+  "elements": [
+    "ui-badge"
+  ],
+  "entry": "ui-badge.js",
+  "files": [
+    "ui-badge.js",
+    "ui-badge.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".badge",
+        "prefix": "--bs-badge-"
+      }
+    ],
+    "descriptions": {
+      "--bs-badge-gap": "Space between an icon and the text.",
+      "--bs-badge-padding-x": "Horizontal padding.",
+      "--bs-badge-padding-y": "Vertical padding.",
+      "--bs-badge-font-size": "Font size (relative to the parent, so badges scale with headings).",
+      "--bs-badge-font-weight": "Font weight.",
+      "--bs-badge-color": "Text colour without a theme colour (solid: the theme's contrast colour).",
+      "--bs-badge-bg": "Background without a theme colour (solid: the theme's background).",
+      "--bs-badge-border-width": "Border width (visible with appearance=\"outline\").",
+      "--bs-badge-border-color": "Border colour.",
+      "--bs-badge-border-radius": "Corner radius (pill: rounded-pill)."
+    }
+  }
+}

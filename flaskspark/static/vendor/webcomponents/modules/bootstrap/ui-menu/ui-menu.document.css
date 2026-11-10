@@ -1,0 +1,23 @@
+/* ui-menu: page rules for Bootstrap's menu markup (adopted into the document once). */
+@layer components {
+  ui-menu {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+  }
+
+  /* An open menu sits in the top layer (popover); its position is set by the script in viewport pixels. */
+  .menu[popover] {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+  }
+
+  /* Submenus on narrow screens (or display="static"): inside their menu, below the trigger. */
+  .submenu > .menu.ui-menu-stacked {
+    position: static;
+    margin: 0 0 0 var(--bs-menu-item-padding-x);
+    border: 0;
+    box-shadow: none;
+  }
+}

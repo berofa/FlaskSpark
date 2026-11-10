@@ -1,0 +1,8 @@
+/* ui-tooltip: the host wraps the trigger. */
+:host {
+  display: inline-block;
+}
+
+.ui-tip-trigger {
+  display: contents;
+}

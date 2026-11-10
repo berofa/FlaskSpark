@@ -1,0 +1,56 @@
+/* ui-card (Bootstrap 6): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+
+/* The card fills its host, so h-100 on <ui-card> gives equal heights in a grid (--bs-card-height still applies). */
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  flex: 1 1 auto;
+}
+
+/* Rules for the slotted content are in ui-card.document.css. */
+
+/* Image caps: the wrapper carries Bootstrap's radius and clips the slotted image to it. */
+.ui-card-media {
+  overflow: hidden;
+}
+
+.card-img-start,
+.card-img-end {
+  flex: 0 0 auto;
+  max-width: 40%;
+}
+
+/* A <ui-list-group flush> in the list slot: the wrapper clips it to the card's radius. */
+.ui-card-list {
+  overflow: hidden;
+}
+
+/* In a <ui-card-group> (Bootstrap's .card-group > .card rules, from 576px of the group on). */
+@container (width >= 576px) {
+  :host(:is([group-position="middle"], [group-position="last"])) .card {
+    border-inline-start-width: 0;
+  }
+
+  :host(:is([group-position="first"], [group-position="middle"])) .card,
+  :host(:is([group-position="first"], [group-position="middle"])) .card > :is(.card-img-top, .card-header, .list-group) {
+    border-start-end-radius: 0;
+  }
+
+  :host(:is([group-position="first"], [group-position="middle"])) .card,
+  :host(:is([group-position="first"], [group-position="middle"])) .card > :is(.card-img-bottom, .card-footer, .list-group) {
+    border-end-end-radius: 0;
+  }
+
+  :host(:is([group-position="middle"], [group-position="last"])) .card,
+  :host(:is([group-position="middle"], [group-position="last"])) .card > :is(.card-img-top, .card-header, .list-group) {
+    border-start-start-radius: 0;
+  }
+
+  :host(:is([group-position="middle"], [group-position="last"])) .card,
+  :host(:is([group-position="middle"], [group-position="last"])) .card > :is(.card-img-bottom, .card-footer, .list-group) {
+    border-end-start-radius: 0;
+  }
+}

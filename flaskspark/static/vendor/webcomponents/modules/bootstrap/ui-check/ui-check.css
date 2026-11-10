@@ -1,0 +1,22 @@
+/* ui-check (Bootstrap 6 check, radio, switch, toggle button): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}
+
+:host([inline]),
+:host([button]) {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+/* The lone control (no label) sits on the text line like a native one. */
+:host > .check,
+:host > .radio,
+:host > .switch {
+  margin-block: 0;
+}
+
+/* Bootstrap hides the feedback until a sibling is .is-invalid; here it is shown and hidden by the component. */
+[part="feedback"]:not([hidden]) {
+  grid-column: 1 / -1;
+}

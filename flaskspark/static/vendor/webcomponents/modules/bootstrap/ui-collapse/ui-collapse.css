@@ -1,0 +1,8 @@
+/* ui-collapse (Bootstrap 6 collapse): Bootstrap's .collapse rules animate the size. */
+:host {
+  display: block;
+}
+
+:host([horizontal]) {
+  display: inline-block;
+}

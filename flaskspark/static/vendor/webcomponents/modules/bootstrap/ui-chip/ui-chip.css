@@ -1,0 +1,29 @@
+/* ui-chip and ui-chip-input (Bootstrap 6 chips): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+:host(ui-chip-input) {
+  display: block;
+}
+
+.chip-dot {
+  width: var(--ui-chip-dot-size, 0.5rem);
+  height: var(--ui-chip-dot-size, 0.5rem);
+  background-color: var(--ui-chip-dot-color);
+  border-radius: 50%;
+}
+
+.chip-toggle:not(.active) .chip-dot {
+  opacity: var(--ui-chip-dot-inactive-opacity, 0.45);
+}
+
+.chip[role="button"]:focus-visible,
+.chip-input > .chip:focus-visible {
+  outline: var(--bs-focus-ring);
+}
+
+.chip-input-label {
+  color: var(--bs-fg-2);
+}

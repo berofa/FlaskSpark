@@ -1,0 +1,10 @@
+/* ui-alert: rules for the slotted content, adopted into the page once (Bootstrap's .alert > p). */
+@layer components {
+  ui-alert > p {
+    margin-bottom: 0;
+  }
+
+  ui-alert > [slot="heading"] {
+    margin-top: 0;
+  }
+}

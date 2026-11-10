@@ -1,0 +1,4 @@
+/* ui-progress (Bootstrap 6 progress): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}

@@ -1,0 +1,56 @@
+{
+  "name": "ui-chip",
+  "description": "Bootstrap 6 chips: themed, active, toggle, link, avatar, icon, dot, dismissible; chip input with Mail.app-style selection, form value and the data API.",
+  "elements": [
+    "ui-chip",
+    "ui-chip-input"
+  ],
+  "entry": "ui-chip.js",
+  "files": [
+    "ui-chip.js",
+    "ui-chip-input.js",
+    "chips-controller.js",
+    "ui-chip.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".chip",
+        "prefix": "--bs-chip-"
+      },
+      {
+        "selector": ".chip-input",
+        "prefix": "--bs-chip-input-"
+      }
+    ],
+    "optional": [
+      "--bs-chip-font-size",
+      "--bs-chip-font-weight",
+      "--bs-chip-line-height"
+    ],
+    "descriptions": {
+      "--bs-chip-height": "Height.",
+      "--bs-chip-padding-x": "Horizontal padding.",
+      "--bs-chip-gap": "Space between avatar / icon, text and remove button.",
+      "--bs-chip-border-radius": "Corner radius.",
+      "--bs-chip-img-size": "Size of the avatar.",
+      "--bs-chip-icon-size": "Size of the icon.",
+      "--bs-chip-dismiss-size": "Size of the remove button.",
+      "--bs-chip-dismiss-opacity": "Opacity of the remove button.",
+      "--bs-chip-dismiss-hover-opacity": "Opacity of the remove button on hover.",
+      "--bs-chip-color": "Text colour (theme: its fg).",
+      "--bs-chip-bg": "Background (theme: its subtle bg).",
+      "--bs-chip-border-color": "Border colour.",
+      "--bs-chip-selected-color": "Text colour when active.",
+      "--bs-chip-selected-bg": "Background when active.",
+      "--bs-chip-selected-border-color": "Border colour when active.",
+      "--bs-chip-font-size": "Font size (unset: small).",
+      "--bs-chip-font-weight": "Font weight (unset: base).",
+      "--bs-chip-line-height": "Line height (unset: 1.25rem).",
+      "--bs-chip-input-padding-y": "Vertical padding of the chip input.",
+      "--bs-chip-input-padding-x": "Horizontal padding of the chip input.",
+      "--bs-chip-input-gap": "Space between chips in the chip input.",
+      "--bs-chip-input-ghost-min-width": "Minimum width of the text field in the chip input."
+    }
+  }
+}

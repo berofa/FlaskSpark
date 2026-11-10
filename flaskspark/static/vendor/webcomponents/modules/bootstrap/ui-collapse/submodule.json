@@ -1,0 +1,25 @@
+{
+  "name": "ui-collapse",
+  "description": "Bootstrap collapse: animated show and hide (vertical or horizontal), multiple triggers and targets, data API.",
+  "elements": [
+    "ui-collapse"
+  ],
+  "entry": "ui-collapse.js",
+  "files": [
+    "ui-collapse.js",
+    "ui-collapse.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".collapse",
+        "prefix": "--bs-transition-collapse-"
+      }
+    ],
+    "descriptions": {
+      "--bs-transition-collapse-property": "Animated properties (horizontal: inline-size).",
+      "--bs-transition-collapse-duration": "Duration of the animation.",
+      "--bs-transition-collapse-timing": "Timing function of the animation."
+    }
+  }
+}

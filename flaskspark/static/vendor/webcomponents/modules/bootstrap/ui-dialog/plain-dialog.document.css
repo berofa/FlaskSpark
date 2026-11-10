@@ -1,0 +1,40 @@
+/* Plain <dialog class="dialog|drawer"> markup (PlainDialog): the states Bootstrap's JavaScript animates between. */
+@layer components {
+  .dialog:not(.dialog-instant)[open].ui-opening:not(.hiding) {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .dialog:not(.dialog-instant)[open].ui-opening.dialog-slide-down {
+    transform: translateY(-3rem);
+  }
+
+  .dialog:not(.dialog-instant)[open].ui-opening.dialog-slide-up {
+    transform: translateY(3rem);
+  }
+
+  [class*="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding) {
+    visibility: hidden;
+  }
+
+  [class*="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-start) {
+    transform: translateX(calc(-100% - var(--bs-drawer-inset)));
+  }
+
+  [class*="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-end) {
+    transform: translateX(calc(100% + var(--bs-drawer-inset)));
+  }
+
+  [class*="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-top) {
+    transform: translateY(calc(-100% - var(--bs-drawer-inset)));
+  }
+
+  [class*="drawer"]:not(.drawer-instant)[open]:is(.ui-opening, .hiding):where(.drawer-bottom, .drawer-fullscreen) {
+    transform: translateY(calc(100% + var(--bs-drawer-inset)));
+  }
+
+  [class*="drawer"][open]:is(.ui-opening, .hiding)::backdrop {
+    background-color: transparent;
+    backdrop-filter: blur(0);
+  }
+}

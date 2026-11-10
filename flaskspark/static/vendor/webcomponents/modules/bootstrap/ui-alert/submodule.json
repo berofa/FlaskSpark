@@ -1,0 +1,34 @@
+{
+  "name": "ui-alert",
+  "description": "Bootstrap alert: theme colours, icon, heading, dismissible with fade-out.",
+  "elements": [
+    "ui-alert"
+  ],
+  "entry": "ui-alert.js",
+  "files": [
+    "ui-alert.js",
+    "ui-alert.css",
+    "ui-alert.document.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".alert",
+        "prefix": "--bs-alert-"
+      }
+    ],
+    "descriptions": {
+      "--bs-alert-gap": "Space between icon, content and close button.",
+      "--bs-alert-bg": "Background without a theme colour (with one: the theme's subtle background).",
+      "--bs-alert-padding-x": "Horizontal padding.",
+      "--bs-alert-padding-y": "Vertical padding.",
+      "--bs-alert-color": "Text colour without a theme colour (with one: the theme's foreground).",
+      "--bs-alert-border-color": "Border colour without a theme colour (with one: the theme's border).",
+      "--bs-alert-border-radius": "Corner radius.",
+      "--bs-alert-link-color": "Colour of .alert-link links in the body.",
+      "--bs-alert-transition-property": "Properties animated when the alert closes.",
+      "--bs-alert-transition-duration": "Duration of the fade-out.",
+      "--bs-alert-transition-timing": "Timing function of the fade-out."
+    }
+  }
+}

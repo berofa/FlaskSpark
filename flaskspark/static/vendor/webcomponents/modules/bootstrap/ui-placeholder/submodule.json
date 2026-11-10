@@ -1,0 +1,24 @@
+{
+  "name": "ui-placeholder",
+  "description": "Bootstrap 6 placeholder (skeleton): width in columns or CSS, sizes, wave or pulse animation, theme colour.",
+  "elements": [
+    "ui-placeholder"
+  ],
+  "entry": "ui-placeholder.js",
+  "files": [
+    "ui-placeholder.js",
+    "ui-placeholder.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".placeholder",
+        "prefix": "--bs-placeholder-"
+      }
+    ],
+    "descriptions": {
+      "--bs-placeholder-opacity-max": "Opacity of the block (and the bright end of the animation).",
+      "--bs-placeholder-opacity-min": "Dim end of the pulse animation."
+    }
+  }
+}

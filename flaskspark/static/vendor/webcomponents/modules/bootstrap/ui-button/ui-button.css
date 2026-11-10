@@ -1,0 +1,19 @@
+/* ui-button (Bootstrap 6): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+:host([block]) {
+  display: flex;
+}
+
+/* When the host is stretched (block, d-grid, flex-fill, w-100) the button fills it. */
+[part="button"] {
+  flex: 1 1 auto;
+}
+
+/* A disabled link has no pointer events itself; the host must not look clickable either. */
+:host([disabled]) {
+  cursor: default;
+}

@@ -1,0 +1,32 @@
+{
+  "name": "ui-spinner",
+  "description": "Bootstrap 6 spinner: border or grow, small, theme colour, accessible label, custom rotating icon.",
+  "elements": [
+    "ui-spinner"
+  ],
+  "entry": "ui-spinner.js",
+  "files": [
+    "ui-spinner.js",
+    "ui-spinner.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".spinner-border",
+        "prefix": "--bs-spinner-"
+      },
+      {
+        "selector": ".spinner-grow",
+        "prefix": "--bs-spinner-"
+      }
+    ],
+    "descriptions": {
+      "--bs-spinner-width": "Width (1em: follows the font size).",
+      "--bs-spinner-height": "Height.",
+      "--bs-spinner-border-width": "Ring width (border spinner).",
+      "--bs-spinner-animation-speed": "Duration of one turn / pulse.",
+      "--bs-spinner-animation-timing-function": "Timing function of the animation.",
+      "--bs-spinner-animation-name": "The keyframes (spinner-border, spinner-grow)."
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "ui-pagination",
+  "description": "Bootstrap 6 pagination: pages from total / current with gaps, links or events, previous / next (text or icons), sizes, theme colour, alignment.",
+  "elements": [
+    "ui-pagination"
+  ],
+  "entry": "ui-pagination.js",
+  "files": [
+    "ui-pagination.js",
+    "ui-pagination.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".pagination",
+        "prefix": "--bs-pagination-"
+      }
+    ],
+    "descriptions": {
+      "--bs-pagination-min-height": "Minimum height of an entry.",
+      "--bs-pagination-padding-x": "Horizontal padding.",
+      "--bs-pagination-padding-y": "Vertical padding.",
+      "--bs-pagination-font-size": "Font size.",
+      "--bs-pagination-color": "Link colour.",
+      "--bs-pagination-bg": "Background.",
+      "--bs-pagination-border-width": "Border width.",
+      "--bs-pagination-border-color": "Border colour.",
+      "--bs-pagination-border-radius": "Corner radius of the ends.",
+      "--bs-pagination-hover-color": "Link colour on hover.",
+      "--bs-pagination-hover-bg": "Background on hover.",
+      "--bs-pagination-hover-border-color": "Border colour on hover.",
+      "--bs-pagination-active-color": "Text colour of the current page (theme: its contrast).",
+      "--bs-pagination-active-bg": "Background of the current page (theme: its bg).",
+      "--bs-pagination-active-border-color": "Border colour of the current page.",
+      "--bs-pagination-disabled-color": "Text colour when disabled.",
+      "--bs-pagination-disabled-bg": "Background when disabled.",
+      "--bs-pagination-disabled-border-color": "Border colour when disabled."
+    }
+  }
+}

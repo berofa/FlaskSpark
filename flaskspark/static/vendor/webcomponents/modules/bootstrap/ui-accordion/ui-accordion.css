@@ -1,0 +1,15 @@
+/* ui-accordion (Bootstrap 6 accordion): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}
+
+/* A disabled item does not open. */
+.accordion-item[aria-disabled="true"] > .accordion-header {
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+/* The icon source element is only copied into the items. */
+slot[name="icon"] {
+  display: none;
+}

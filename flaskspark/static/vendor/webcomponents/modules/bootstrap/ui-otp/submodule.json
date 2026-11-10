@@ -1,0 +1,31 @@
+{
+  "name": "ui-otp",
+  "description": "Bootstrap 6 OTP input: one accessible field drawn as slots; numeric/alphanumeric/alpha, mask, groups, connected, sizes; form field; data API for [data-bs-otp].",
+  "elements": [
+    "ui-otp"
+  ],
+  "entry": "ui-otp.js",
+  "files": [
+    "ui-otp.js",
+    "otp-controller.js",
+    "ui-otp.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".otp",
+        "prefix": "--bs-otp-"
+      }
+    ],
+    "descriptions": {
+      "--bs-otp-size": "Width and height of a slot (sm / lg change it).",
+      "--bs-otp-font-size": "Font size of the characters.",
+      "--bs-otp-gap": "Space between slots.",
+      "--bs-otp-slot-fg": "Text colour of a slot.",
+      "--bs-otp-slot-bg": "Background of a slot.",
+      "--bs-otp-slot-border-width": "Border width of a slot.",
+      "--bs-otp-slot-border-color": "Border colour of a slot.",
+      "--bs-otp-slot-border-radius": "Corner radius of a slot."
+    }
+  }
+}

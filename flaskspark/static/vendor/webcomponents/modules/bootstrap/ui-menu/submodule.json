@@ -1,0 +1,58 @@
+{
+  "name": "ui-menu",
+  "description": "Bootstrap menu behaviour for Bootstrap's own markup: top layer, placements (responsive), offset, reference, auto close, keyboard, submenus.",
+  "elements": [
+    "ui-menu"
+  ],
+  "entry": "ui-menu.js",
+  "files": [
+    "ui-menu.js",
+    "ui-menu.document.css"
+  ],
+  "tokens": {
+    "light": true,
+    "sources": [
+      {"selector": ".menu", "prefix": "--bs-menu-"}
+    ],
+    "optional": ["--bs-menu-max-height", "--bs-menu-overflow-y", "--bs-menu-border-width", "--bs-menu-border-color", "--bs-menu-border-radius"],
+    "descriptions": {
+      "--bs-menu-zindex": "Stacking order (without the top layer).",
+      "--bs-menu-gap": "Space between the items.",
+      "--bs-menu-min-width": "Minimum width.",
+      "--bs-menu-padding-x": "Horizontal padding.",
+      "--bs-menu-padding-y": "Vertical padding.",
+      "--bs-menu-spacer": "Distance to the toggle.",
+      "--bs-menu-font-size": "Font size.",
+      "--bs-menu-color": "Text colour.",
+      "--bs-menu-bg": "Background.",
+      "--bs-menu-box-shadow": "Shadow.",
+      "--bs-menu-divider-bg": "Colour of dividers.",
+      "--bs-menu-divider-margin-y": "Vertical space around dividers.",
+      "--bs-menu-divider-margin-x": "Horizontal inset of dividers.",
+      "--bs-menu-item-color": "Text colour of items.",
+      "--bs-menu-item-hover-color": "Text colour of a hovered or focused item.",
+      "--bs-menu-item-hover-bg": "Background of a hovered or focused item.",
+      "--bs-menu-item-active-color": "Text colour of the active item.",
+      "--bs-menu-item-active-bg": "Background of the active item.",
+      "--bs-menu-item-disabled-color": "Text colour of disabled items.",
+      "--bs-menu-item-gap": "Space between an item's icon and text.",
+      "--bs-menu-item-padding-x": "Horizontal padding of items.",
+      "--bs-menu-item-padding-y": "Vertical padding of items.",
+      "--bs-menu-item-border-radius": "Corner radius of items.",
+      "--bs-menu-icon-size": "Size of .menu-item-icon.",
+      "--bs-menu-description-font-size": "Font size of .menu-item-description.",
+      "--bs-menu-check-color": "Colour of the check mark of .selected items.",
+      "--bs-menu-header-color": "Text colour of .menu-header.",
+      "--bs-menu-header-padding-x": "Horizontal padding of .menu-header.",
+      "--bs-menu-header-padding-y": "Vertical padding of .menu-header.",
+      "--bs-menu-transition-property": "Properties animated on open and close.",
+      "--bs-menu-transition-duration": "Duration of the animation.",
+      "--bs-menu-transition-timing": "Timing function of the animation.",
+      "--bs-menu-max-height": "Maximum height (scrollable menus; unset: none).",
+      "--bs-menu-overflow-y": "Vertical overflow (scrollable menus; unset: initial).",
+      "--bs-menu-border-width": "Border width (unset: the global border width).",
+      "--bs-menu-border-color": "Border colour (unset: the translucent border colour).",
+      "--bs-menu-border-radius": "Corner radius (unset: radius 7)."
+    }
+  }
+}

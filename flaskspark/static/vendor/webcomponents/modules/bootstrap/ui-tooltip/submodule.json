@@ -1,0 +1,36 @@
+{
+  "name": "ui-tooltip",
+  "description": "Bootstrap tooltip: placements (responsive), triggers, delay, offset, HTML (sanitized), custom class, data API.",
+  "elements": [
+    "ui-tooltip"
+  ],
+  "entry": "ui-tooltip.js",
+  "files": [
+    "ui-tooltip.js",
+    "ui-tooltip.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".tooltip",
+        "prefix": "--bs-tooltip-"
+      }
+    ],
+    "descriptions": {
+      "--bs-tooltip-zindex": "Stacking order (without the top layer).",
+      "--bs-tooltip-max-width": "Maximum width of the box.",
+      "--bs-tooltip-padding-x": "Horizontal padding.",
+      "--bs-tooltip-padding-y": "Vertical padding.",
+      "--bs-tooltip-font-size": "Font size.",
+      "--bs-tooltip-color": "Text colour.",
+      "--bs-tooltip-bg": "Background.",
+      "--bs-tooltip-border-radius": "Corner radius.",
+      "--bs-tooltip-opacity": "Opacity while shown.",
+      "--bs-tooltip-arrow-width": "Width of the arrow.",
+      "--bs-tooltip-arrow-height": "Height of the arrow.",
+      "--bs-tooltip-transition-property": "Properties animated on show and hide.",
+      "--bs-tooltip-transition-duration": "Duration of the fade.",
+      "--bs-tooltip-transition-timing": "Timing function of the fade."
+    }
+  }
+}

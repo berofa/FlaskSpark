@@ -1,0 +1,4 @@
+/* ui-range (Bootstrap 6 range): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}

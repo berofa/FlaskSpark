@@ -1,0 +1,47 @@
+{
+  "name": "ui-popover",
+  "description": "Bootstrap popover: title and body, placements (responsive), triggers, delay, offset, HTML (sanitized), custom class, data API.",
+  "elements": [
+    "ui-popover"
+  ],
+  "entry": "ui-popover.js",
+  "files": [
+    "ui-popover.js"
+  ],
+  "requires": [
+    "ui-tooltip"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".popover",
+        "prefix": "--bs-popover-"
+      }
+    ],
+    "descriptions": {
+      "--bs-popover-zindex": "Stacking order (without the top layer).",
+      "--bs-popover-max-width": "Maximum width of the box.",
+      "--bs-popover-font-size": "Font size.",
+      "--bs-popover-bg": "Background.",
+      "--bs-popover-border-width": "Border width.",
+      "--bs-popover-border-color": "Border colour.",
+      "--bs-popover-border-radius": "Corner radius.",
+      "--bs-popover-inner-border-radius": "Corner radius of header and body inside the border.",
+      "--bs-popover-box-shadow": "Shadow.",
+      "--bs-popover-header-padding-x": "Horizontal padding of the header.",
+      "--bs-popover-header-padding-y": "Vertical padding of the header.",
+      "--bs-popover-header-font-size": "Font size of the header.",
+      "--bs-popover-header-color": "Text colour of the header.",
+      "--bs-popover-header-bg": "Background of the header.",
+      "--bs-popover-body-padding-x": "Horizontal padding of the body.",
+      "--bs-popover-body-padding-y": "Vertical padding of the body.",
+      "--bs-popover-body-color": "Text colour of the body.",
+      "--bs-popover-arrow-width": "Width of the arrow.",
+      "--bs-popover-arrow-height": "Height of the arrow.",
+      "--bs-popover-arrow-border": "Border colour of the arrow.",
+      "--bs-popover-transition-property": "Properties animated on show and hide.",
+      "--bs-popover-transition-duration": "Duration of the fade.",
+      "--bs-popover-transition-timing": "Timing function of the fade."
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "ui-avatar",
+  "description": "Bootstrap 6 avatar: image or initials, theme colours, subtle, sizes, status indicator, overlapping stacks.",
+  "elements": [
+    "ui-avatar",
+    "ui-avatar-stack"
+  ],
+  "entry": "ui-avatar.js",
+  "files": [
+    "ui-avatar.js",
+    "ui-avatar.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".avatar",
+        "prefix": "--bs-avatar-"
+      }
+    ],
+    "descriptions": {
+      "--bs-avatar-size": "Width and height (size changes it).",
+      "--bs-avatar-border-radius": "Corner radius (50%: round).",
+      "--bs-avatar-border-width": "Ring width in a stack.",
+      "--bs-avatar-border-color": "Ring colour in a stack.",
+      "--bs-avatar-bg": "Background of initials.",
+      "--bs-avatar-color": "Colour of initials.",
+      "--bs-avatar-status-size": "Size of the status dot.",
+      "--bs-avatar-status-border-width": "Ring width of the status dot.",
+      "--bs-avatar-status-border-color": "Ring colour of the status dot.",
+      "--bs-avatar-stack-spacing": "Overlap in a stack (share of the size, negative).",
+      "--bs-avatar-stack-transition": "Transition of the hover lift in a stack.",
+      "--bs-avatar-font-weight": "Font weight of initials (unset: medium)."
+    },
+    "optional": [
+      "--bs-avatar-font-weight"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+/* ui-button-group (Bootstrap 6 .btn-group): plain CSS on top of the shared Bootstrap copy (shadow-styles.js).
+   The members style their place themselves (../grouped.css). */
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+/* Nested in another group: the inner group is one member (Bootstrap's .btn-group > .btn-group). */
+:host([grouped="horizontal"]:not([group-first])) {
+  margin-inline-start: calc(-1 * var(--bs-border-width));
+}
+
+:host([grouped="vertical"]) {
+  width: 100%;
+}
+
+.btn-group-vertical > slot::slotted(*) {
+  width: 100%;
+}

@@ -1,0 +1,22 @@
+/* ui-card-group (Bootstrap 6 .card-group): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+:host {
+  display: block;
+  /* Bootstrap's .card-group switches at a container width of 576px. */
+  container-type: inline-size;
+}
+
+.ui-card-group > slot::slotted(ui-card) {
+  margin-bottom: var(--bs-card-group-margin);
+}
+
+@container (width >= 576px) {
+  .ui-card-group {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  .ui-card-group > slot::slotted(ui-card) {
+    flex: 1 0 0;
+    margin-bottom: 0;
+  }
+}

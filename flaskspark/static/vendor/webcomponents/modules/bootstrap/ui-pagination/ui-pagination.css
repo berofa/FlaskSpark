@@ -1,0 +1,8 @@
+/* ui-pagination (Bootstrap 6 pagination): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}
+
+.pagination {
+  margin: 0;
+}

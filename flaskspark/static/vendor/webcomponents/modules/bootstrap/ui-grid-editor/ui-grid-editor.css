@@ -1,0 +1,244 @@
+/* ui-grid-editor: layout editor on Bootstrap 6 cards, buttons and tokens. */
+:host {
+  --ui-grid-editor-boundary-size: 3.5rem;
+  --ui-grid-editor-item-gap: 0.75rem;
+  --ui-grid-editor-area-padding: 0.9rem;
+  --ui-grid-editor-area-min-height: 9rem;
+  --ui-grid-editor-area-bg: color-mix(in srgb, var(--bs-bg-1) 88%, transparent);
+  --ui-grid-editor-area-border-color: var(--bs-border-color);
+  --ui-grid-editor-area-radius: var(--bs-radius-7);
+  --ui-grid-editor-empty-bg: var(--bs-bg-2);
+  --ui-grid-editor-empty-color: var(--bs-fg-3);
+  --ui-grid-editor-drop-color: var(--bs-focus-ring-color);
+  --ui-grid-editor-line-color: var(--bs-border-color);
+  --ui-grid-editor-control-shadow: 0 0.25rem 0.75rem rgb(15 23 42 / 0.12);
+  display: block;
+}
+
+.ui-grid-editor {
+  display: grid;
+  gap: 1rem;
+}
+
+.ui-grid-editor__stage {
+  position: relative;
+  padding: 2rem 0;
+  overflow: visible;
+}
+
+.ui-grid-editor__surface {
+  display: grid;
+  gap: 0;
+}
+
+.ui-grid-editor-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-grid-editor-item-gap);
+  min-height: var(--ui-grid-editor-area-min-height);
+  padding: var(--ui-grid-editor-area-padding);
+  background: var(--ui-grid-editor-area-bg);
+  border: var(--bs-border-width) solid var(--ui-grid-editor-area-border-color);
+  border-radius: var(--ui-grid-editor-area-radius);
+}
+
+.ui-grid-editor-area.is-empty {
+  border-style: dashed;
+}
+
+.ui-grid-editor-area.is-drop-target {
+  outline: 2px solid var(--ui-grid-editor-drop-color);
+  outline-offset: 2px;
+}
+
+.ui-grid-editor-stack {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--ui-grid-editor-item-gap);
+  min-height: 100%;
+}
+
+.ui-grid-editor-stack--single {
+  justify-content: stretch;
+}
+
+.ui-grid-editor-stack--single > .ui-grid-editor-item {
+  flex: 1 1 auto;
+}
+
+.ui-grid-editor-stack > * {
+  width: 100%;
+}
+
+.ui-grid-editor-stack.has-preview > .ui-grid-editor-empty {
+  display: none;
+}
+
+.ui-grid-editor-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 7rem;
+  padding: 1rem;
+  font-size: var(--bs-font-size-sm);
+  color: var(--ui-grid-editor-empty-color);
+  text-align: center;
+  background: var(--ui-grid-editor-empty-bg);
+  border-radius: var(--bs-radius-5);
+}
+
+.ui-grid-editor-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  cursor: grab;
+}
+
+.ui-grid-editor-item > .card {
+  width: 100%;
+}
+
+.ui-grid-editor-stack--single > .ui-grid-editor-item > .card {
+  height: 100%;
+}
+
+.ui-grid-editor.is-dragging,
+.ui-grid-editor.is-dragging * {
+  cursor: grabbing !important;
+}
+
+.ui-grid-editor-item.is-drag-origin {
+  display: none !important;
+}
+
+.ui-grid-editor-item .card-body {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.ui-grid-editor-item__header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.ui-grid-editor-item__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--bs-fg-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.ui-grid-editor-item__title {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.ui-grid-editor-item__description {
+  margin: 0;
+}
+
+.ui-grid-editor-item__meta {
+  font-size: var(--bs-font-size-sm);
+  color: var(--bs-fg-3);
+}
+
+.ui-grid-editor-drag-image {
+  position: fixed;
+  top: -10000px;
+  left: -10000px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.ui-grid-editor-drop-preview {
+  pointer-events: none;
+  opacity: 0.58;
+  filter: saturate(0.78);
+  transform: scale(0.985);
+}
+
+.ui-grid-editor-drop-preview,
+.ui-grid-editor-drop-preview * {
+  pointer-events: none !important;
+}
+
+.ui-grid-editor-controls {
+  position: relative;
+  top: -0.7rem;
+  z-index: 4;
+  align-self: center;
+  margin: auto auto -1rem;
+}
+
+.ui-grid-editor-action-group {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: var(--bs-radius-pill, 999px);
+  box-shadow: var(--ui-grid-editor-control-shadow);
+}
+
+.ui-grid-editor-control {
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 0;
+}
+
+.ui-grid-editor-row-toolbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ui-grid-editor-boundary-size);
+}
+
+.ui-grid-editor-row-toolbar-segment {
+  position: relative;
+  z-index: 1;
+  min-height: var(--ui-grid-editor-boundary-size);
+}
+
+.ui-grid-editor-row-toolbar-segment::before {
+  position: absolute;
+  inset: 50% 0 auto;
+  content: "";
+  border-top: 2px dotted var(--ui-grid-editor-line-color);
+  transform: translateY(-50%);
+}
+
+.ui-grid-editor-column-toolbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  width: var(--ui-grid-editor-boundary-size);
+}
+
+.ui-grid-editor-column-toolbar .ui-grid-editor-action-group {
+  flex-direction: column;
+  margin-top: calc(var(--ui-grid-editor-boundary-size) + 1rem);
+}
+
+.ui-grid-editor-column-toolbar-segment {
+  position: relative;
+  z-index: 1;
+  width: var(--ui-grid-editor-boundary-size);
+}
+
+.ui-grid-editor-column-toolbar-segment::before {
+  position: absolute;
+  inset: 0 auto 0 50%;
+  content: "";
+  border-left: 2px dotted var(--ui-grid-editor-line-color);
+  transform: translateX(-50%);
+}

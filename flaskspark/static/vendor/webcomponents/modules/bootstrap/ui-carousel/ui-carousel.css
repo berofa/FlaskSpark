@@ -1,0 +1,23 @@
+/* ui-carousel (Bootstrap 6 carousel): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}
+
+/* The control rows of the stacked layouts (Bootstrap's docs use d-flex utilities for them). */
+.carousel-bar {
+  display: flex;
+  gap: var(--bs-carousel-gap);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.carousel-heading {
+  font-size: var(--bs-font-size-lg, 1.25rem);
+  font-weight: 500;
+}
+
+/* Slotted slides fill their slide. */
+.carousel-item > slot {
+  display: block;
+  height: 100%;
+}

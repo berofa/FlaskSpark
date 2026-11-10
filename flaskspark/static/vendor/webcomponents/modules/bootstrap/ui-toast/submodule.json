@@ -1,0 +1,39 @@
+{
+  "name": "ui-toast",
+  "description": "Bootstrap toast: header with meta and close, theme colours, translucent, dark, instant, autohide and delay, stacking container with placements, showToast().",
+  "elements": [
+    "ui-toast",
+    "ui-toast-container"
+  ],
+  "entry": "ui-toast.js",
+  "files": [
+    "ui-toast.js",
+    "ui-toast.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".toast",
+        "prefix": "--bs-toast-"
+      }
+    ],
+    "descriptions": {
+      "--bs-toast-zindex": "Stacking order (without the top layer).",
+      "--bs-toast-padding-x": "Horizontal padding of header and body.",
+      "--bs-toast-padding-y": "Vertical padding of the header.",
+      "--bs-toast-spacing": "Space between stacked toasts.",
+      "--bs-toast-max-width": "Width of a toast.",
+      "--bs-toast-font-size": "Font size.",
+      "--bs-toast-bg": "Background.",
+      "--bs-toast-border-width": "Border width.",
+      "--bs-toast-border-color": "Border colour.",
+      "--bs-toast-box-shadow": "Shadow.",
+      "--bs-toast-header-color": "Text colour of the header.",
+      "--bs-toast-header-bg": "Background of the header.",
+      "--bs-toast-header-border-color": "Colour of the line under the header.",
+      "--bs-toast-transition-property": "Properties animated on show and hide.",
+      "--bs-toast-transition-duration": "Duration of the fade.",
+      "--bs-toast-transition-timing": "Timing function of the fade."
+    }
+  }
+}

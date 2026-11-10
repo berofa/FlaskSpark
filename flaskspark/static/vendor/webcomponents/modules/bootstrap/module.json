@@ -1,0 +1,22 @@
+{
+  "name": "bootstrap",
+  "description": "Bootstrap components as web components with shadow roots, themed via CSS variables (Bootstrap 6).",
+  "entry": "bootstrap.js",
+  "files": [
+    "bootstrap.js",
+    "shadow-styles.js",
+    "tip-element.js",
+    "grouped.css",
+    "form-field.css",
+    "theme.js",
+    "toggler.js",
+    "strength.js",
+    "nav-overflow.js",
+    "scrollspy.js",
+    "ui-tokens.css"
+  ],
+  "vendor": [
+    "bootstrap6",
+    "vanilla-calendar-pro"
+  ]
+}

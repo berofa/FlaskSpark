@@ -1,0 +1,51 @@
+/* ui-toast and ui-toast-container (Bootstrap 6 toasts). */
+:host {
+  display: block;
+}
+
+/* The container is fixed in the window (Bootstrap places .toast-container with position utilities). */
+:host(ui-toast-container) {
+  position: fixed;
+  z-index: var(--bs-z-toast);
+  pointer-events: none;
+}
+
+.toast-container {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bs-toast-spacing, 1.5rem);
+  padding: 1rem;
+}
+
+.toast-container > slot::slotted(*) {
+  pointer-events: auto;
+}
+
+:host(ui-toast-container[placement^="top"]),
+:host(ui-toast-container:not([placement])) {
+  top: 0;
+}
+
+:host(ui-toast-container[placement^="bottom"]) {
+  bottom: 0;
+}
+
+:host(ui-toast-container[placement^="middle"]) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+:host(ui-toast-container[placement$="-start"]) {
+  inset-inline-start: 0;
+}
+
+:host(ui-toast-container[placement$="-end"]),
+:host(ui-toast-container:not([placement])) {
+  inset-inline-end: 0;
+}
+
+:host(ui-toast-container[placement$="-center"]) {
+  left: 50%;
+  translate: -50% 0;
+}

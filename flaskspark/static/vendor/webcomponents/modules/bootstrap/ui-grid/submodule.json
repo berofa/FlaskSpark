@@ -1,0 +1,33 @@
+{
+  "name": "ui-grid",
+  "description": "Equal-column grid with a column count per Bootstrap 6 breakpoint (viewport or container), gaps and spans.",
+  "elements": [
+    "ui-grid"
+  ],
+  "entry": "ui-grid.js",
+  "files": [
+    "grid-layout.js",
+    "ui-grid.js",
+    "ui-grid.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-grid-",
+        "file": "ui-grid.css"
+      }
+    ],
+    "optional": [
+      "--ui-grid-span"
+    ],
+    "descriptions": {
+      "--ui-grid-columns": "Columns below the first breakpoint (the columns attribute).",
+      "--ui-grid-gap": "Space between cells (the gap attribute).",
+      "--ui-grid-gap-x": "Space between columns.",
+      "--ui-grid-gap-y": "Space between rows.",
+      "--ui-grid-align": "Vertical alignment of the cells.",
+      "--ui-grid-span": "On a child: how many columns it spans."
+    }
+  }
+}

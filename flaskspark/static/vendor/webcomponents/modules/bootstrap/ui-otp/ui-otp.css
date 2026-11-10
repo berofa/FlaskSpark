@@ -1,0 +1,4 @@
+/* ui-otp (Bootstrap 6 OTP input): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}

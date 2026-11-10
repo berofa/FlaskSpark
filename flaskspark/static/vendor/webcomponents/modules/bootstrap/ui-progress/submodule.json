@@ -1,0 +1,32 @@
+{
+  "name": "ui-progress",
+  "description": "Bootstrap 6 progress: value bar with label, theme colours, striped and animated, stacked segments.",
+  "elements": [
+    "ui-progress",
+    "ui-progress-bar"
+  ],
+  "entry": "ui-progress.js",
+  "files": [
+    "ui-progress.js",
+    "ui-progress.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".progress",
+        "prefix": "--bs-progress-"
+      }
+    ],
+    "descriptions": {
+      "--bs-progress-height": "Height of the bar.",
+      "--bs-progress-font-size": "Font size of the label.",
+      "--bs-progress-bg": "Background of the track.",
+      "--bs-progress-border-radius": "Corner radius.",
+      "--bs-progress-box-shadow": "Inner shadow of the track.",
+      "--bs-progress-bar-color": "Text colour in the bar.",
+      "--bs-progress-bar-bg": "Colour of the bar (theme: its bg).",
+      "--bs-progress-bar-transition": "Transition of the width.",
+      "--bs-progress-bar-animation": "Animation of the moving stripes."
+    }
+  }
+}

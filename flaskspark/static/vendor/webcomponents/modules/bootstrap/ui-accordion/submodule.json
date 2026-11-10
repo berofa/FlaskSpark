@@ -1,0 +1,58 @@
+{
+  "name": "ui-accordion",
+  "description": "Bootstrap accordion on native <details>: exclusive or always open, theme colours, small, flush, gap, custom icons, open/close all.",
+  "elements": [
+    "ui-accordion",
+    "ui-accordion-item"
+  ],
+  "entry": "ui-accordion.js",
+  "files": [
+    "ui-accordion.js",
+    "ui-accordion.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".accordion",
+        "prefix": "--bs-accordion-"
+      }
+    ],
+    "optional": [
+      "--bs-accordion-btn-padding-x",
+      "--bs-accordion-btn-padding-y",
+      "--bs-accordion-body-padding-x",
+      "--bs-accordion-body-padding-y",
+      "--bs-accordion-font-size",
+      "--bs-accordion-radius"
+    ],
+    "descriptions": {
+      "--bs-accordion-padding-x": "Horizontal padding of header and body.",
+      "--bs-accordion-padding-y": "Vertical padding of header and body.",
+      "--bs-accordion-color": "Text colour.",
+      "--bs-accordion-bg": "Background.",
+      "--bs-accordion-transition-property": "Properties of the header animated on open.",
+      "--bs-accordion-transition-duration": "Duration of that transition.",
+      "--bs-accordion-transition-timing": "Timing function of that transition.",
+      "--bs-accordion-panel-transition-property": "Properties of the panel animated on open and close.",
+      "--bs-accordion-panel-transition-duration": "Duration of the panel animation.",
+      "--bs-accordion-panel-transition-timing": "Timing function of the panel animation.",
+      "--bs-accordion-border-color": "Border colour.",
+      "--bs-accordion-border-width": "Border width.",
+      "--bs-accordion-border-radius": "Corner radius.",
+      "--bs-accordion-gap": "Space between items (gap sets it).",
+      "--bs-accordion-btn-color": "Text colour of a closed header.",
+      "--bs-accordion-btn-bg": "Background of a closed header.",
+      "--bs-accordion-btn-icon-width": "Size of the icon.",
+      "--bs-accordion-btn-icon-transform": "Transform of the icon of an open item.",
+      "--bs-accordion-btn-icon-transition": "Transition of the icon.",
+      "--bs-accordion-active-color": "Text colour of an open header.",
+      "--bs-accordion-active-bg": "Background of an open header.",
+      "--bs-accordion-font-size": "Font size (unset: inherited; sm sets it).",
+      "--bs-accordion-radius": "Base corner radius (unset: radius 7).",
+      "--bs-accordion-btn-padding-x": "Horizontal padding of the header (unset: padding-x).",
+      "--bs-accordion-btn-padding-y": "Vertical padding of the header (unset: padding-y).",
+      "--bs-accordion-body-padding-x": "Horizontal padding of the body (unset: padding-x).",
+      "--bs-accordion-body-padding-y": "Vertical padding of the body (unset: padding-y)."
+    }
+  }
+}

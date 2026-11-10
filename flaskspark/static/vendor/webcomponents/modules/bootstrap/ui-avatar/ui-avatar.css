@@ -1,0 +1,31 @@
+/* ui-avatar and ui-avatar-stack (Bootstrap 6 avatar): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+/* An avatar in a stack (Bootstrap's .avatar-stack .avatar across the shadow boundary): ring and overlap. */
+.ui-avatar-stacked {
+  border: var(--bs-avatar-border-width) solid var(--bs-avatar-border-color);
+}
+
+.ui-avatar-stacked:not(.ui-avatar-stack-last) {
+  margin-left: calc(var(--bs-avatar-size) * var(--bs-avatar-stack-spacing));
+}
+
+/* The stack: reversed (the first avatar on top), lifted on hover. */
+.ui-avatar-stack {
+  display: inline-flex;
+  flex-direction: row-reverse;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::slotted(ui-avatar) {
+    transition: var(--bs-avatar-stack-transition, transform 0.2s ease-in-out);
+  }
+}
+
+::slotted(ui-avatar:hover) {
+  z-index: 1;
+  transform: translateY(-2px);
+}

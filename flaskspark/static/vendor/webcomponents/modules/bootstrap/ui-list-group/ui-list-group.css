@@ -1,0 +1,11 @@
+/* ui-list-group (Bootstrap 6): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+
+/* Responsive horizontal layouts (md:list-group-horizontal, …) query the width of the element itself. */
+:host([horizontal]) {
+  container-type: inline-size;
+}
+
+/* Links and buttons in a list group fill the item; their slotted content keeps the list's text styles. */
+button.list-group-item {
+  font: inherit;
+}

@@ -1,0 +1,86 @@
+/* ui-grid: equal columns per Bootstrap 6 breakpoint. */
+:host {
+  --ui-grid-columns: 1;
+  --ui-grid-gap: var(--bs-spacer);
+  --ui-grid-gap-x: var(--ui-grid-gap);
+  --ui-grid-gap-y: var(--ui-grid-gap);
+  --ui-grid-align: stretch;
+  display: block;
+}
+
+.ui-grid {
+  --_columns: var(--ui-grid-columns);
+  display: grid;
+  grid-template-columns: repeat(var(--_columns), minmax(0, 1fr));
+  gap: var(--ui-grid-gap-y) var(--ui-grid-gap-x);
+  align-items: var(--ui-grid-align);
+}
+
+/* The container variant measures the grid itself. */
+:host([container]) {
+  container-type: inline-size;
+}
+
+::slotted(*) {
+  grid-column: span var(--ui-grid-span, 1);
+}
+
+@media (width >= 576px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-sm, var(--ui-grid-columns));
+  }
+}
+
+@container (width >= 576px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-sm, var(--ui-grid-columns));
+  }
+}
+
+@media (width >= 768px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns)));
+  }
+}
+
+@container (width >= 768px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns)));
+  }
+}
+
+@media (width >= 1024px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns))));
+  }
+}
+
+@container (width >= 1024px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns))));
+  }
+}
+
+@media (width >= 1280px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-xl, var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns)))));
+  }
+}
+
+@container (width >= 1280px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-xl, var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns)))));
+  }
+}
+
+@media (width >= 1536px) {
+  .ui-grid:not(.ui-grid-container) {
+    --_columns: var(--_columns-2xl, var(--_columns-xl, var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns))))));
+  }
+}
+
+@container (width >= 1536px) {
+  .ui-grid-container {
+    --_columns: var(--_columns-2xl, var(--_columns-xl, var(--_columns-lg, var(--_columns-md, var(--_columns-sm, var(--ui-grid-columns))))));
+  }
+}

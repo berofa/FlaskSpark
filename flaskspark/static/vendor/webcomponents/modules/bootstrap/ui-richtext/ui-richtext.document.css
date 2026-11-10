@@ -1,0 +1,24 @@
+/* ui-richtext: the content of the editable area (light DOM, where shadow styles cannot reach). */
+@layer components {
+  ui-richtext .ui-richtext-editor p,
+  ui-richtext .ui-richtext-editor ul,
+  ui-richtext .ui-richtext-editor ol,
+  ui-richtext .ui-richtext-editor blockquote {
+    margin: 0 0 0.5em;
+  }
+
+  ui-richtext .ui-richtext-editor ul,
+  ui-richtext .ui-richtext-editor ol {
+    padding-inline-start: 1.5em;
+  }
+
+  ui-richtext .ui-richtext-editor blockquote {
+    padding-inline-start: 0.75em;
+    color: var(--ui-richtext-quote-color);
+    border-inline-start: 3px solid var(--ui-richtext-quote-border);
+  }
+
+  ui-richtext .ui-richtext-editor a {
+    color: var(--ui-richtext-link-color);
+  }
+}

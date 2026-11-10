@@ -8,6 +8,12 @@
 
         <title>{% block title %}FlaskSpark{% endblock %}</title>
 
+        {% block flaskspark_vendor_styles %}
+        {% if vendor_include_webcomponents %}
+        <link rel="stylesheet" href="{{ webcomponents_url('vendor/bootstrap6/css/bootstrap.min.css') }}" type="text/css">
+        {% endif %}
+        {% endblock %}
+
         {% block flaskspark_head_assets %}
         <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}">
         <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
@@ -36,6 +42,12 @@
         </div>
         {% endif %}
         {% endwith %}
+        {% endblock %}
+
+        {% block flaskspark_vendor_scripts %}
+        {% if vendor_include_webcomponents %}
+        <script type="module" src="{{ webcomponents_url('modules/bootstrap/bootstrap.js') }}"></script>
+        {% endif %}
         {% endblock %}
 
         {% block flaskspark_scripts %}

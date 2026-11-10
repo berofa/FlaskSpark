@@ -1,0 +1,42 @@
+{
+  "name": "ui-drawer",
+  "description": "Bootstrap drawer (sidebar panel) on the native <dialog>: placements, static backdrop, body scrolling, responsive docking, sheet, translucent, swipe to close.",
+  "elements": [
+    "ui-drawer"
+  ],
+  "entry": "ui-drawer.js",
+  "files": [
+    "ui-drawer.js",
+    "ui-drawer.css"
+  ],
+  "requires": [
+    "ui-dialog"
+  ],
+  "tokens": {
+    "sources": [
+      {"selector": ".drawer", "prefix": "--bs-drawer-"}
+    ],
+    "optional": ["--bs-drawer-sheet-width"],
+    "descriptions": {
+      "--bs-drawer-inset": "Space between the panel and the viewport edges.",
+      "--bs-drawer-zindex": "Stacking order of a non-modal drawer.",
+      "--bs-drawer-width": "Width (start and end placements).",
+      "--bs-drawer-height": "Height (top and bottom placements).",
+      "--bs-drawer-padding-x": "Horizontal padding of header, body and footer.",
+      "--bs-drawer-padding-y": "Vertical padding of header, body and footer.",
+      "--bs-drawer-color": "Text colour.",
+      "--bs-drawer-bg": "Background.",
+      "--bs-drawer-border-width": "Border width.",
+      "--bs-drawer-border-color": "Border colour.",
+      "--bs-drawer-border-radius": "Corner radius.",
+      "--bs-drawer-box-shadow": "Shadow.",
+      "--bs-drawer-transition-property": "Properties animated when it slides.",
+      "--bs-drawer-transition-duration": "Duration of the slide.",
+      "--bs-drawer-transition-timing": "Timing function of the slide.",
+      "--bs-drawer-title-line-height": "Line height of the title.",
+      "--bs-drawer-backdrop-bg": "Colour of the backdrop.",
+      "--bs-drawer-backdrop-blur": "Blur of the page behind the backdrop.",
+      "--bs-drawer-sheet-width": "Maximum width of a sheet from lg on (unset: 760px)."
+    }
+  }
+}

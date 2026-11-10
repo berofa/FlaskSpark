@@ -1,0 +1,199 @@
+/* ui-gallery: tiles and lightbox on Bootstrap 6 tokens. */
+:host {
+  --ui-gallery-tile-size: 8rem;
+  --ui-gallery-tile-aspect: 1;
+  --ui-gallery-gap: var(--bs-spacer-2);
+  --ui-gallery-radius: var(--bs-radius-5);
+  --ui-gallery-tile-bg: var(--bs-bg-2);
+  --ui-gallery-tile-color: var(--bs-fg-3);
+  --ui-gallery-object-fit: cover;
+  --ui-gallery-hover-scale: 1.04;
+  --ui-gallery-play-size: 2.5rem;
+  --ui-gallery-caption-color: var(--bs-fg-2);
+  --ui-gallery-caption-font-size: var(--bs-font-size-sm);
+  --ui-gallery-backdrop: rgb(0 0 0 / 0.9);
+  --ui-gallery-lightbox-color: #fff;
+  --ui-gallery-lightbox-padding: var(--bs-spacer);
+  --ui-gallery-drop-color: var(--bs-focus-ring-color);
+  display: block;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.ui-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--ui-gallery-tile-size), 1fr));
+  gap: var(--ui-gallery-gap);
+}
+
+.ui-gallery-item {
+  position: relative;
+  margin: 0;
+}
+
+.ui-gallery-item[draggable="true"] {
+  cursor: grab;
+}
+
+.ui-gallery-item.is-dragging {
+  opacity: 0.4;
+}
+
+.ui-gallery-item.is-target .ui-gallery-tile {
+  outline: 2px dashed var(--ui-gallery-drop-color);
+  outline-offset: 2px;
+}
+
+.ui-gallery-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: var(--ui-gallery-tile-aspect);
+  padding: 0;
+  overflow: hidden;
+  color: var(--ui-gallery-tile-color);
+  cursor: pointer;
+  background: var(--ui-gallery-tile-bg);
+  border: 0;
+  border-radius: var(--ui-gallery-radius);
+}
+
+.ui-gallery-tile:focus-visible {
+  outline: var(--bs-focus-ring);
+}
+
+.ui-gallery-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: var(--ui-gallery-object-fit);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ui-gallery-thumb {
+    transition: transform 0.2s ease;
+  }
+}
+
+.ui-gallery-tile:hover .ui-gallery-thumb {
+  transform: scale(var(--ui-gallery-hover-scale));
+}
+
+.ui-gallery-kind {
+  font-size: var(--bs-font-size-sm);
+}
+
+.ui-gallery-play {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: var(--ui-gallery-play-size);
+  height: var(--ui-gallery-play-size);
+  background: rgb(0 0 0 / 0.55);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ui-gallery-play::after {
+  position: absolute;
+  inset: 50% auto auto 54%;
+  content: "";
+  border-block: calc(var(--ui-gallery-play-size) * 0.18) solid transparent;
+  border-inline-start: calc(var(--ui-gallery-play-size) * 0.3) solid #fff;
+  transform: translate(-50%, -50%);
+}
+
+.ui-gallery-edit {
+  position: absolute;
+  inset-block-start: var(--bs-spacer-1, 0.25rem);
+  inset-inline-end: var(--bs-spacer-1, 0.25rem);
+  opacity: 0.85;
+}
+
+.ui-gallery-caption {
+  margin-block-start: var(--bs-spacer-1, 0.25rem);
+  overflow: hidden;
+  font-size: var(--ui-gallery-caption-font-size);
+  color: var(--ui-gallery-caption-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-gallery-empty {
+  margin: 0;
+  color: var(--bs-fg-3);
+}
+
+.ui-gallery-lightbox {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  padding: var(--ui-gallery-lightbox-padding);
+  margin: 0;
+  color: var(--ui-gallery-lightbox-color);
+  background: transparent;
+  border: 0;
+}
+
+.ui-gallery-lightbox[open] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bs-spacer-2);
+}
+
+.ui-gallery-lightbox::backdrop {
+  background: var(--ui-gallery-backdrop);
+}
+
+.ui-gallery-stage {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.ui-gallery-media {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.ui-gallery-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bs-spacer-2);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ui-gallery-title {
+  font-weight: var(--bs-font-weight-semibold, 600);
+}
+
+.ui-gallery-description {
+  font-size: var(--bs-font-size-sm);
+  opacity: 0.8;
+}
+
+.ui-gallery-controls {
+  display: flex;
+  gap: var(--bs-spacer-1, 0.25rem);
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+.ui-gallery-count {
+  min-width: 3.5em;
+  font-size: var(--bs-font-size-sm);
+  text-align: center;
+}
+
+/* A video without thumbnail: the kind under the play mark. */
+.ui-gallery-tile:has(.ui-gallery-play) .ui-gallery-kind {
+  position: absolute;
+  inset-block-end: var(--bs-spacer-2);
+}

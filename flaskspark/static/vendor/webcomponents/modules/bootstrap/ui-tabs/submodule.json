@@ -1,0 +1,73 @@
+{
+  "name": "ui-tabs",
+  "description": "Bootstrap nav with the tab plugin: tabs, pills, underline, list group, vertical, fill, card, fade, keyboard, persistence, data API.",
+  "elements": [
+    "ui-tabs",
+    "ui-tab-panel"
+  ],
+  "entry": "ui-tabs.js",
+  "files": [
+    "ui-tabs.js",
+    "ui-tabs.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ".nav",
+        "prefix": "--bs-nav-"
+      },
+      {
+        "selector": ".nav-tabs",
+        "prefix": "--bs-nav-tabs-"
+      },
+      {
+        "selector": ".nav-pills",
+        "prefix": "--bs-nav-pills-"
+      },
+      {
+        "selector": ".nav-underline",
+        "prefix": "--bs-nav-underline-"
+      },
+      {
+        "selector": ".tab-content > .tab-pane",
+        "prefix": "--bs-tab-pane-"
+      }
+    ],
+    "descriptions": {
+      "--bs-nav-gap": "Space between the tabs.",
+      "--bs-nav-link-gap": "Space between icon and text of a tab.",
+      "--bs-nav-link-align": "Vertical alignment inside a tab.",
+      "--bs-nav-link-justify": "Horizontal alignment inside a tab.",
+      "--bs-nav-link-padding-x": "Horizontal padding of a tab.",
+      "--bs-nav-link-padding-y": "Vertical padding of a tab.",
+      "--bs-nav-link-color": "Text colour of a tab.",
+      "--bs-nav-link-hover-color": "Text colour of a hovered tab.",
+      "--bs-nav-link-hover-bg": "Background of a hovered tab.",
+      "--bs-nav-link-active-color": "Text colour of the active tab.",
+      "--bs-nav-link-active-bg": "Background of the active tab (pills).",
+      "--bs-nav-link-disabled-color": "Text colour of a disabled tab.",
+      "--bs-nav-link-border-width": "Border width of tabs (tabs, underline).",
+      "--bs-nav-link-transition-property": "Properties animated on hover and activation.",
+      "--bs-nav-link-transition-duration": "Duration of that transition.",
+      "--bs-nav-link-transition-timing": "Timing function of that transition.",
+      "--bs-tab-pane-transition-property": "Properties animated when a pane is shown (fade).",
+      "--bs-tab-pane-transition-duration": "Duration of the fade.",
+      "--bs-tab-pane-transition-timing": "Timing function of the fade.",
+      "--bs-nav-tabs-border-width": "Tabs: width of the line under the tabs and of their borders.",
+      "--bs-nav-tabs-border-color": "Tabs: colour of the line under the tabs.",
+      "--bs-nav-tabs-border-radius": "Tabs: top corner radius of a tab.",
+      "--bs-nav-tabs-link-hover-border-color": "Tabs: border colour of a hovered tab.",
+      "--bs-nav-tabs-link-active-color": "Tabs: text colour of the active tab.",
+      "--bs-nav-tabs-link-active-bg": "Tabs: background of the active tab.",
+      "--bs-nav-tabs-link-active-border-color": "Tabs: border colours of the active tab (top, sides, bottom).",
+      "--bs-nav-pills-bg": "Pills: background behind the pills.",
+      "--bs-nav-pills-padding": "Pills: padding around the pills.",
+      "--bs-nav-pills-border-radius": "Pills: corner radius of the background.",
+      "--bs-nav-pills-link-active-color": "Pills: text colour of the active pill.",
+      "--bs-nav-pills-link-active-bg": "Pills: background of the active pill.",
+      "--bs-nav-pills-link-border-radius": "Pills: corner radius of a pill.",
+      "--bs-nav-underline-border-width": "Underline: thickness of the underline.",
+      "--bs-nav-underline-link-active-color": "Underline: text colour of the active tab."
+    }
+  }
+}

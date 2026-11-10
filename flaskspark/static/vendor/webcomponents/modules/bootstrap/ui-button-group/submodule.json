@@ -1,0 +1,12 @@
+{
+  "name": "ui-button-group",
+  "description": "Bootstrap button group: horizontal or vertical, dividers, sizes, nesting, toggle buttons.",
+  "elements": [
+    "ui-button-group"
+  ],
+  "entry": "ui-button-group.js",
+  "files": [
+    "ui-button-group.js",
+    "ui-button-group.css"
+  ]
+}

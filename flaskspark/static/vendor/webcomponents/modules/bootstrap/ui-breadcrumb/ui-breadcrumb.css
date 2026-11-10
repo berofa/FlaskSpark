@@ -1,0 +1,4 @@
+/* ui-breadcrumb (Bootstrap 6): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+.breadcrumb-divider > svg {
+  display: block;
+}
