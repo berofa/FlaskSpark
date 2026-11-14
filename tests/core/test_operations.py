@@ -631,3 +631,18 @@ def test_backup_mirror_copies_and_removes_and_the_tile_tells(app, tmp_path, monk
     assert (share / "notes.txt").exists()
     tile = status.collect(cfg, ctx=ctx, shown=[status.BackupTile()])[0]
     assert tile["level"] == "ok" and tile["details"][-1] == ["Mirror", "current (2 database backups)"]
+
+
+def test_gunicorns_control_socket_is_the_apps_own(monkeypatch):
+    """Not gunicorn's default (one path per user, shared by every app on the host): the app's STATE_DIR."""
+    from types import SimpleNamespace
+
+    from gunicorn import config
+
+    from flaskspark.core import paths
+    from flaskspark.core.services import web
+
+    monkeypatch.setattr(config, "KNOWN_SETTINGS", [SimpleNamespace(name="bind"), SimpleNamespace(name="control_socket")])
+    assert web.control_socket_args() == ["--control-socket", str(paths.STATE_DIR / "gunicorn.ctl")]
+    monkeypatch.setattr(config, "KNOWN_SETTINGS", [SimpleNamespace(name="bind")])  # an older gunicorn: no such option
+    assert web.control_socket_args() == []
