@@ -1,10 +1,12 @@
 {% extends "layouts/main.html" %}
 {#- «Settings» (admins): the access (role x area, with sign-in), the users' roles (with sign-in), the application's
-    accounts (when a module names APP_ACCOUNT_TYPES; <ui-user-accounts> on /api/settings/accounts), a tab per module
+    accounts (when a module names APP_ACCOUNT_TYPES; <ui-user-accounts> on /api/settings/accounts), the info screens
+    (Module.SCREENS; when there are any), a tab per module
     with its own sections (Module.SETTINGS) and its settings of config.yaml (Module.CONFIG, generated from the
     manifest), and «Data»: what modules no longer delivered left behind (flaskspark.core.leftovers), to clean up.
     Script: flaskspark/settings.js. -#}
 {% block page_title %}{{ _("Settings") }}{% endblock %}
+{% from "flaskspark/icons.html" import icon %}
 
 {% macro field(f) %}
   {%- set label = f.label ~ (" (" ~ f.unit ~ ")" if f.unit else "") -%}
@@ -118,6 +120,40 @@
       {% if app_accounts %}
         <ui-tab-panel heading="{{ _('Accounts') }}" name="accounts">
           <ui-user-accounts src="{{ url_for('core_settings_accounts') }}"></ui-user-accounts>
+        </ui-tab-panel>
+      {% endif %}
+      {% if screens %}
+        <ui-tab-panel heading="{{ _('Screens') }}" name="screens">
+          <div data-settings-screens>
+            <p class="small fg-3 mb-3">{{ _("The info screens of the modules: pages for a display on the wall, without navigation and buttons. Open one on the display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there.") }}</p>
+            <ui-table size="sm" valign="middle" responsive><table class="mb-0">
+              <thead>
+                <tr>
+                  <th>{{ _("Screen") }}</th><th>{{ _("Module") }}</th><th>{{ _("Area") }}</th>
+                  <th>{{ _("Colour mode") }}</th><th>{{ _("Daily reload") }}</th><th>{{ _("Address") }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in screens %}
+                  <tr data-screen-row="{{ s.key }}">
+                    <td>
+                      <span class="fw-semibold">{{ icon(s.icon) }} {{ s.title }}</span>
+                      {% if s.description %}<br><small class="fg-3">{{ s.description }}</small>{% endif %}
+                      {% if not s.sections %}<br><small class="fg-3">{{ _("No module adds anything to it yet.") }}</small>{% endif %}
+                    </td>
+                    <td class="text-nowrap">{{ s.module }}</td>
+                    <td class="text-nowrap">{{ s.area }}</td>
+                    <td class="text-nowrap">{{ {"light": _("Light"), "dark": _("Dark"), "system": _("System")}.get(s.mode, _("As in the app")) }}</td>
+                    <td class="text-nowrap">{{ s.reload_at or _("never") }}</td>
+                    <td class="text-nowrap">
+                      <a href="{{ s.url }}" target="_blank" rel="noopener" data-screen-open="{{ s.key }}">{{ s.url }} {{ icon("box-arrow-up-right") }}</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table></ui-table>
+            <p class="small fg-3 mt-3 mb-0">{{ _("A screen needs its area, like any other page; each module's section asks for its own.") }} <a href="{{ url_for('flaskspark_screens') }}">{{ _("All screens") }}</a></p>
+          </div>
         </ui-tab-panel>
       {% endif %}
       {% for tab in tabs %}

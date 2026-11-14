@@ -16,6 +16,10 @@ All notable changes to this project are documented in this file.
   anything), reloads the page when the push channel stayed down for long (once the server answers) and daily at
   `Screen.reload_at`, and offers `onNewDay(callback)`. Tokens `--app-screen-scale`, `--app-screen-padding`,
   `--app-screen-gap`, `--app-screen-logo-height`.
+- Info screens: a section with `.app-screen-aside` is a column on the right over the whole height (token
+  `--app-screen-aside-width`, default 28%), the other sections stay one below the other on the left.
+- «Settings › Screens» (admins): every info screen of the loaded modules with title, description, module, area, colour
+  mode, daily reload and a link opening it in a new tab (`/settings#screens`).
 - `layouts/framework.html`: block `html_attrs` (attributes of `<html>`).
 - A page may fix its colour mode: `<html data-theme-fixed="light|dark|system">` (the layout's early script and
   webcomponents' `theme.js` neither read nor store the visitor's choice then).

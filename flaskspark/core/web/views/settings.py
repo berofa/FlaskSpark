@@ -1,4 +1,5 @@
-"""«Settings» (admins only): the access (role x area, with sign-in), the users' roles (with sign-in) and a tab per
+"""«Settings» (admins only): the access (role x area, with sign-in), the users' roles (with sign-in), the info screens
+of the modules (Module.SCREENS, a list with links; when there are any) and a tab per
 module with its own sections (Module.SETTINGS: templates of the module) and its settings of config.yaml (Module.CONFIG,
 flaskspark.core.settings). With OpenAccess everyone is an admin (a trusted network).
 
@@ -198,6 +199,36 @@ def _cleaned_message(result: dict) -> str:
     return text
 
 
+def screen_items(manifests=None) -> list[dict]:
+    """The info screens of the loaded modules (Module.SCREENS) for the tab «Screens»: key, title, description, icon,
+    module (its label), area (its label), mode, reload_at and url, translated, by position."""
+    from flask import url_for
+
+    from flaskspark.core.web.access import areas
+    from flaskspark.core.web.views import screen as screens
+
+    loaded = manifests if manifests is not None else modules.load(config.load())
+    known = areas(loaded)
+    out = []
+    for item, module in screens.declared(loaded):
+        area = known.get(item.area)
+        out.append({
+            "key": item.key,
+            "title": _t(item.title),
+            "description": _t(item.description),
+            "icon": item.icon or "display",
+            "module": _t(module.LABEL) or module.NAME,
+            "module_name": module.NAME,
+            "area": _t(area.label) if area is not None else item.area,
+            "area_key": item.area,
+            "mode": item.mode,
+            "reload_at": item.reload_at,
+            "url": url_for("flaskspark_screen", key=item.key),
+            "sections": len(screens.sections(item, loaded)),
+        })
+    return out
+
+
 def app_offered(cfg=None) -> dict[str, list]:
     """The types of the application's accounts: key -> the manifests of the loaded modules that name it
     (APP_ACCOUNT_TYPES). Admins may use every module."""
@@ -254,7 +285,7 @@ class SettingsView(FlaskSparkMethodView):
         return render_template("flaskspark/settings.html", tabs=tabs,
                                matrix=matrix(access) if access.HAS_MATRIX else None,
                                users=access.users() if access.HAS_USERS else None, me=user_id(),
-                               app_accounts=bool(app_offered()), leftovers=data_items())
+                               app_accounts=bool(app_offered()), screens=screen_items(), leftovers=data_items())
 
 
 class AccessApiView(FlaskSparkMethodView):

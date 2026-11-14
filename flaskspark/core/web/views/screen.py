@@ -24,11 +24,16 @@ SCALE_MIN, SCALE_MAX = 0.5, 3.0
 
 def screens(manifests=None) -> list[Screen]:
     """Every screen of the loaded modules, by position (the first of a key wins)."""
-    found: dict[str, Screen] = {}
+    return [screen for screen, _module in declared(manifests)]
+
+
+def declared(manifests=None) -> list[tuple[Screen, object]]:
+    """Every screen of the loaded modules with the module that declares it, by position (the first of a key wins)."""
+    found: dict[str, tuple[Screen, object]] = {}
     for module in manifests if manifests is not None else modules.load(config.load()):
         for screen in module.SCREENS:
-            found.setdefault(screen.key, screen)
-    return sorted(found.values(), key=lambda s: s.position)
+            found.setdefault(screen.key, (screen, module))
+    return sorted(found.values(), key=lambda pair: pair[0].position)
 
 
 def find(key: str, manifests=None) -> Screen | None:

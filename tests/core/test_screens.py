@@ -92,6 +92,33 @@ def test_ordinary_pages_are_no_screens(client):
     assert "data-screen" not in html and "flaskspark/js/screen.js" not in html
 
 
+def test_settings_list_the_screens(app):
+    from flaskspark.core.web.views.settings import screen_items
+
+    with app.test_request_context():
+        items = screen_items()
+    assert [i["key"] for i in items] == ["wall", "empty"]
+    wall, empty = items
+    assert wall["title"] == "Wall" and wall["description"] == "Notes on the wall" and wall["icon"] == "display"
+    assert wall["module"] == "Demo" and wall["module_name"] == "demo"
+    assert wall["area"] == "Demo" and wall["area_key"] == "demo"
+    assert wall["mode"] == "dark" and wall["reload_at"] == "04:00" and wall["url"] == "/screen/wall"
+    assert wall["sections"] == 1 and empty["sections"] == 0 and empty["reload_at"] == ""
+
+
+def test_the_settings_tab_screens(client):
+    html = client.get("/settings").get_data(as_text=True)
+    assert 'name="screens"' in html and 'data-screen-row="wall"' in html and 'data-screen-row="empty"' in html
+    assert 'href="/screen/wall" target="_blank"' in html and "Notes on the wall" in html
+    row = html.split('data-screen-row="empty"')[1].split("</tr>")[0]
+    assert "never" in row and "As in the app" in row and "No module adds anything to it yet." in row
+
+
+def test_the_settings_tab_screens_in_german(client):
+    html = client.get("/settings", headers={"Accept-Language": "de"}).get_data(as_text=True)
+    assert 'heading="Bildschirme"' in html and "Tägliches Neuladen" in html and "Wie in der App" in html
+
+
 @pytest.fixture(scope="module")
 def sso(app):  # noqa: ARG001 - the demo app (its tables) first
     from tests.core.sso import sso_app
@@ -106,3 +133,8 @@ def test_a_screen_needs_its_area(sso):
     assert denied.status_code == 403 and "data-no-access" in denied.get_data(as_text=True)
     listed = client_for(sso, "guest").get("/screen").get_data(as_text=True)
     assert 'href="/screen/wall"' not in listed
+
+
+def test_only_admins_see_the_screens_in_the_settings(sso):
+    assert 'data-screen-row="wall"' in client_for(sso, "admin").get("/settings").get_data(as_text=True)
+    assert client_for(sso, "user").get("/settings").status_code == 403

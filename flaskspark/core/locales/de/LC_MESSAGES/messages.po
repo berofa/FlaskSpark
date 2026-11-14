@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FlaskSpark \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 17:08+0100\n"
+"POT-Creation-Date: 2026-11-14 17:50+0100\n"
 "PO-Revision-Date: 2026-11-13 16:19+0100\n"
 "Last-Translator: FlaskSpark\n"
 "Language: de\n"
@@ -159,6 +159,9 @@ msgstr "1 Zeile"
 msgid "1 warning"
 msgstr "1 Warnung"
 
+msgid "A screen needs its area, like any other page; each module's section asks for its own."
+msgstr "Ein Bildschirm braucht seinen Bereich wie jede andere Seite; jeder Abschnitt eines Moduls fragt nach seinem eigenen."
+
 msgid "Access"
 msgstr "Zugriff"
 
@@ -210,6 +213,9 @@ msgstr "Administratoren dürfen immer alles nutzen."
 msgid "Alert"
 msgstr "Hinweisbox"
 
+msgid "All screens"
+msgstr "Alle Bildschirme"
+
 msgid ""
 "An account is one sign-in (user name and password) with everything its server offers. The password is stored "
 "encrypted; the data stays on the servers. A new account is kept only if every chosen service signs in."
@@ -217,6 +223,12 @@ msgstr ""
 "Ein Konto ist eine Anmeldung (Benutzername und Passwort) mit allem, was sein Server anbietet. Das Passwort wird "
 "verschlüsselt gespeichert; die Daten bleiben auf den Servern. Ein neues Konto bleibt nur, wenn sich jeder gewählte "
 "Dienst anmelden kann."
+
+msgid "Area"
+msgstr "Bereich"
+
+msgid "As in the app"
+msgstr "Wie in der App"
 
 msgid "Ask an administrator if you need it."
 msgstr "Wende dich an einen Administrator, wenn du ihn brauchst."
@@ -342,6 +354,9 @@ msgstr "Kontakte (CardDAV)"
 
 msgid "Core"
 msgstr "Kern"
+
+msgid "Daily reload"
+msgstr "Tägliches Neuladen"
 
 msgid "Dark"
 msgstr "Dunkel"
@@ -601,6 +616,9 @@ msgstr "Menü"
 msgid "Mirror"
 msgstr "Spiegel"
 
+msgid "Module"
+msgstr "Modul"
+
 msgid "Module no longer delivered"
 msgstr "Modul, das nicht mehr mitgeliefert wird"
 
@@ -657,6 +675,9 @@ msgstr ""
 
 msgid "No matching command"
 msgstr "Kein passender Befehl"
+
+msgid "No module adds anything to it yet."
+msgstr "Noch kein Modul zeigt etwas darauf."
 
 msgid "No module uses accounts of the application."
 msgstr "Kein Modul verwendet Konten der App."
@@ -855,6 +876,9 @@ msgstr "Gespeichert. Gilt nach einem Neustart von: %(services)s"
 msgid "Saving…"
 msgstr "Speichere…"
 
+msgid "Screen"
+msgstr "Bildschirm"
+
 msgid "Screens"
 msgstr "Bildschirme"
 
@@ -1037,6 +1061,13 @@ msgstr "Die Datei ist zu gross."
 
 msgid "The file storage is not available. Please try again later."
 msgstr "Die Dateiablage ist nicht verfügbar. Bitte später nochmals versuchen."
+
+msgid ""
+"The info screens of the modules: pages for a display on the wall, without navigation and buttons. Open one on the "
+"display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there."
+msgstr ""
+"Die Infobildschirme der Module: Seiten für einen Bildschirm an der Wand, ohne Navigation und Buttons. Öffne einen auf"
+" dem Bildschirm; ?mode=dark und ?scale=1.5 in der Adresse legen dort Farbmodus und Grösse fest."
 
 msgid "The order is not readable."
 msgstr "Die Reihenfolge ist nicht lesbar."
@@ -1291,6 +1322,9 @@ msgstr "Migrations-Revision %(rev)s"
 #, python-format
 msgid "module %(module)s"
 msgstr "Modul %(module)s"
+
+msgid "never"
+msgstr "nie"
 
 msgid "no backup yet"
 msgstr "noch kein Backup"

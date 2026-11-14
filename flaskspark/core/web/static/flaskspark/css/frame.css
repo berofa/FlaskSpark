@@ -38,6 +38,7 @@
  *   --app-screen-scale                                       info screens: the size (1.25: 1rem = 20px at 1920 x 1080)
  *   --app-screen-padding, --app-screen-gap                   info screens: the margin around the page, between sections
  *   --app-screen-logo-height                                 info screens: the logo in the head row
+ *   --app-screen-aside-width                                 info screens: the column on the right (.app-screen-aside)
  */
 
 /* A length, so a theme may write 0 (attached sidebar) and calc()/min() still get a length. */
@@ -969,6 +970,7 @@ ui-tooltip {
   --app-screen-padding: 1.25rem;
   --app-screen-gap: 1rem;
   --app-screen-logo-height: 2.25rem;
+  --app-screen-aside-width: 28%;
 }
 
 html[data-screen] {
@@ -1057,13 +1059,26 @@ body.app-screen-body {
   min-block-size: 0;
 }
 
-/* The sections of the modules, one below the other; a section with .app-screen-fill takes the height that is left. */
+/* The sections of the modules, one below the other; a section with .app-screen-fill takes the height that is left. A
+   section with .app-screen-aside is a column on the right instead (--app-screen-aside-width, the whole height; what
+   it holds beyond the height is cut off): the others stay one below the other on the left. */
 .app-screen-sections {
+  position: relative;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   gap: var(--app-screen-gap);
   min-block-size: 0;
+
+  &:has(> .app-screen-aside) { padding-inline-end: calc(var(--app-screen-aside-width) + var(--app-screen-gap)); }
+
+  > .app-screen-aside {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: var(--app-screen-aside-width);
+    overflow: hidden;
+  }
 }
 
 .app-screen-section {

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FlaskSpark \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 17:08+0100\n"
+"POT-Creation-Date: 2026-11-14 17:50+0100\n"
 "PO-Revision-Date: 2026-11-13 16:19+0100\n"
 "Last-Translator: FlaskSpark\n"
 "Language: en\n"
@@ -154,6 +154,9 @@ msgstr ""
 msgid "1 warning"
 msgstr ""
 
+msgid "A screen needs its area, like any other page; each module's section asks for its own."
+msgstr ""
+
 msgid "Access"
 msgstr ""
 
@@ -205,9 +208,18 @@ msgstr ""
 msgid "Alert"
 msgstr ""
 
+msgid "All screens"
+msgstr ""
+
 msgid ""
 "An account is one sign-in (user name and password) with everything its server offers. The password is stored "
 "encrypted; the data stays on the servers. A new account is kept only if every chosen service signs in."
+msgstr ""
+
+msgid "Area"
+msgstr ""
+
+msgid "As in the app"
 msgstr ""
 
 msgid "Ask an administrator if you need it."
@@ -333,6 +345,9 @@ msgid "Contacts (CardDAV)"
 msgstr ""
 
 msgid "Core"
+msgstr ""
+
+msgid "Daily reload"
 msgstr ""
 
 msgid "Dark"
@@ -591,6 +606,9 @@ msgstr ""
 msgid "Mirror"
 msgstr ""
 
+msgid "Module"
+msgstr ""
+
 msgid "Module no longer delivered"
 msgstr ""
 
@@ -644,6 +662,9 @@ msgid ""
 msgstr ""
 
 msgid "No matching command"
+msgstr ""
+
+msgid "No module adds anything to it yet."
 msgstr ""
 
 msgid "No module uses accounts of the application."
@@ -843,6 +864,9 @@ msgstr ""
 msgid "Saving…"
 msgstr ""
 
+msgid "Screen"
+msgstr ""
+
 msgid "Screens"
 msgstr ""
 
@@ -1024,6 +1048,11 @@ msgid "The file is too large."
 msgstr ""
 
 msgid "The file storage is not available. Please try again later."
+msgstr ""
+
+msgid ""
+"The info screens of the modules: pages for a display on the wall, without navigation and buttons. Open one on the "
+"display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there."
 msgstr ""
 
 msgid "The order is not readable."
@@ -1272,6 +1301,9 @@ msgstr ""
 
 #, python-format
 msgid "module %(module)s"
+msgstr ""
+
+msgid "never"
 msgstr ""
 
 msgid "no backup yet"

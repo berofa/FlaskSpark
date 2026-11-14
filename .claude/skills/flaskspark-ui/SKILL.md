@@ -88,12 +88,16 @@ Ziel: alles möglichst generisch, und was spezifisch ist, sauber getrennt dort, 
   URL). Moduleigenes CSS für den Bildschirm unter `html[data-screen] { … }`, Grössen in `rem` oder relativ zum
   Container (`cqi`), nicht in festen `px`.
 - Helfer des Kerns: `app-screen-section`, `app-screen-section-head`, `app-screen-section-title` (Icon davor),
-  `app-screen-fill` (nimmt die restliche Höhe).
+  `app-screen-fill` (nimmt die restliche Höhe), `app-screen-aside` (Spalte rechts über die ganze Höhe, Breite
+  `--app-screen-aside-width`, Standard 28 %; die anderen Abschnitte bleiben links untereinander; was nicht Platz hat,
+  wird abgeschnitten).
 - `<html data-screen>` blendet aus: `ui-button`, `ui-button-group`, `ui-dialog`, `button`, `.btn`, `.app-toolbar`,
   `.app-page-actions` …; in den Web Components deren eigene Bedienelemente (`--ui-screen: on`). Opt-out
   `data-screen-keep`, Opt-in `data-screen-hide` (auch im Shadow DOM einer Komponente). Eine neue Komponente mit
   eigenen Bedienelementen markiert sie mit `data-screen-hide`.
 - Farbmodus wie in der App, ausser `Screen.mode` oder `?mode=` legt ihn fest (`<html data-theme-fixed>`).
+- Admins sehen alle Bildschirme der Module (Titel, Modul, Bereich, Farbmodus, Neuladen, Link) unter «Einstellungen ›
+  Bildschirme» (`/settings#screens`); `/screen` listet die, die der Besucher nutzen darf.
 - Prüfen: Headless-Screenshot bei 1920 × 1080 hell und dunkel; alles sichtbar ohne Scrollen.
 
 ## 7. Prüfen
