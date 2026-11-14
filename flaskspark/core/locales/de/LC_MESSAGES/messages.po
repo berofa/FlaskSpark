@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FlaskSpark \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 09:35+0100\n"
+"POT-Creation-Date: 2026-11-14 17:08+0100\n"
 "PO-Revision-Date: 2026-11-13 16:19+0100\n"
 "Last-Translator: FlaskSpark\n"
 "Language: de\n"
@@ -571,8 +571,14 @@ msgstr "Link (Strg+K)"
 msgid "Link address"
 msgstr "Adresse des Links"
 
+msgid "Live"
+msgstr "Live"
+
 msgid "Live channel"
 msgstr "Live-Kanal"
+
+msgid "Live: changes appear at once."
+msgstr "Live: Änderungen erscheinen sofort."
 
 msgid "Loaded"
 msgstr "Geladen"
@@ -658,6 +664,9 @@ msgstr "Kein Modul verwendet Konten der App."
 msgid "No role to share this with."
 msgstr "Keine Rolle, mit der sich das teilen lässt."
 
+msgid "No screens."
+msgstr "Keine Bildschirme."
+
 msgid "No settings."
 msgstr "Keine Einstellungen."
 
@@ -703,6 +712,9 @@ msgstr "Unter dieser Adresse wurde nichts gefunden."
 msgid "Nothing left over."
 msgstr "Nichts übrig."
 
+msgid "Nothing on this screen yet."
+msgstr "Auf diesem Bildschirm ist noch nichts."
+
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
@@ -741,6 +753,9 @@ msgstr "PID %(pid)s auf %(host)s"
 msgid "Pages"
 msgstr "Seiten"
 
+msgid "Pages for an info screen on the wall: no navigation, no buttons, they update themselves."
+msgstr "Seiten für einen Infobildschirm an der Wand: ohne Navigation, ohne Buttons, sie aktualisieren sich selbst."
+
 msgid "Password"
 msgstr "Passwort"
 
@@ -776,6 +791,9 @@ msgstr "Wirklich löschen?"
 
 msgid "Really remove?"
 msgstr "Wirklich entfernen?"
+
+msgid "Reconnecting…"
+msgstr "Verbindung wird wiederhergestellt …"
 
 msgid "Remove"
 msgstr "Entfernen"
@@ -836,6 +854,9 @@ msgstr "Gespeichert. Gilt nach einem Neustart von: %(services)s"
 
 msgid "Saving…"
 msgstr "Speichere…"
+
+msgid "Screens"
+msgstr "Bildschirme"
 
 #, python-format
 msgid "Secure connection failed: %(error)s"

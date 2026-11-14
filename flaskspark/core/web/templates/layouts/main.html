@@ -30,16 +30,18 @@
     {% set i18n_parts = i18n_modules if i18n_modules is defined else i18n_page_parts() %}
     <script type="application/json" id="flaskspark-i18n">{{ i18n_catalogue(i18n_parts) | tojson }}</script>
   {% endif %}
-  {#- The stored colour mode before the first paint; webcomponents' theme.js takes over afterwards. #}
+  {#- The stored colour mode before the first paint; webcomponents' theme.js takes over afterwards. A page that fixes
+      its mode (<html data-theme-fixed="dark">, e.g. a screen) neither reads nor stores the choice. #}
   <script>
     (() => {
       document.documentElement.lang = "{{ language }}";  {#- FlaskSpark's framework.html says "en" #}
-      let mode = "{{ theme.default_mode }}";
-      try { mode = localStorage.getItem("ui-theme") || mode; } catch (e) {}
+      const fixed = document.documentElement.getAttribute("data-theme-fixed") || "";
+      let mode = fixed || "{{ theme.default_mode }}";
+      try { if (!fixed) mode = localStorage.getItem("ui-theme") || mode; } catch (e) {}
       const resolved = mode === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : mode;
       document.documentElement.setAttribute("data-bs-theme", resolved);
       document.documentElement.classList.add(resolved === "dark" ? "theme-dark" : "theme-light");
-      try { if (!localStorage.getItem("ui-theme")) localStorage.setItem("ui-theme", "{{ theme.default_mode }}"); } catch (e) {}
+      try { if (!fixed && !localStorage.getItem("ui-theme")) localStorage.setItem("ui-theme", "{{ theme.default_mode }}"); } catch (e) {}
     })();
   </script>
 {% endblock %}

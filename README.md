@@ -29,7 +29,7 @@ operations matter more than a front-end build of their own.
   [assets](#assets-scss--js), [sign-in](#oauth-oidc-login-provider), [database](#database--migrations), [i18n](#i18n)
 - [Modular apps (flaskspark.core)](#modular-apps-flasksparkcore): [project layout](#project-layout),
   [`config.yaml`](#configyaml), [environment](#environment-variables), [module manifest](#module-manifest),
-  [access](#access), [start page](#start-page), [settings](#settings), [personal settings](#personal-settings),
+  [access](#access), [start page](#start-page), [info screens](#info-screens), [settings](#settings), [personal settings](#personal-settings),
   [accounts](#accounts), [shares](#shares), [attachments](#attachments), [database](#database),
   [migrations](#migrations), [themes](#themes), [layout and pages](#layout-and-pages),
   [browser JavaScript](#browser-javascript), [translations](#translations), [live data](#live-data)
@@ -1257,7 +1257,8 @@ Every module has exactly one `Module` subclass in `<package>/module.py`. `NAME` 
 | `CONFIG` | Its settings of `config.yaml` the admins may change: `Setting(...)` (see [Settings](#settings)). |
 | `SETTINGS` | Templates of its own sections in its tab of «Settings» (admins), above the generated form of `CONFIG`, e.g. `("notes/settings.html",)`; each brings its own script and API. |
 | `PUBLIC_ENDPOINTS` | Endpoints reachable without a sign-in (e.g. an API for agents with its own authentication). |
-| `PAGE_SECTIONS` | Templates it adds to a page: `"home"` (the core's start page) and `"profile"` (the [profile](#accounts), with sign-in; only of modules the visitor may use), e.g. `{"home": ("notes/home_section.html",), "profile": ("notes/profile.html",)}`. |
+| `PAGE_SECTIONS` | Templates it adds to a page: `"home"` (the core's start page), `"profile"` (the [profile](#accounts), with sign-in; only of modules the visitor may use) and `"screen:<key>"` (an [info screen](#info-screens) of any module), e.g. `{"home": ("notes/home_section.html",), "profile": ("notes/profile.html",)}`. |
+| `SCREENS` | Its [info screens](#info-screens): `Screen(key, title, area, description="", icon="", mode="", reload_at="04:00", position=100)`, each a page `/screen/<key>` for a display on the wall. |
 | `LAYOUT` | Templates included in every page (dialogs, scripts of the navigation). |
 | `CLI` | `"<python module>:<click command or group>"`: a command of the app's command line (`myapp <command> …`, in the web app's context) and of the `flask` CLI (`flask --app flaskspark.core.web.app:create_app <command>`). |
 | `PACKAGE` | Set by the loader: the module's package. |
@@ -1293,6 +1294,29 @@ Other kinds of access are subclasses of the abstract `Access` (`flaskspark.core.
 
 ### Start page
 The core's start page (`/`, endpoint `index`: the modules' tiles and their `PAGE_SECTIONS["home"]`) is a fallback: a view of a module or of the app with `url = "/"` replaces it (FlaskSpark registers a view with `fallback = True` only when no other view claims its URL). `config.yaml` `app.start` (a path or an endpoint) makes the core's start page send the visitor there instead. «The start page» for the access is whatever `/` is and what `app.start` names (`flaskspark.core.web.start_endpoints()`, `start_url()`): a visitor who may not use it goes to the start page of the first area they may use. The navigation's «Home» entry follows it: shown while `/` is the core's start page, hidden otherwise; `app.home_entry` (`true`/`false`) overrides that.
+
+### Info screens
+An info screen is a page for a display on the wall that nobody operates (a TV, designed for 1920 × 1080): no navigation, no page chrome, no buttons, no context menus, and it keeps itself up to date. A module declares it in its manifest; any module (the same or another) fills it with sections, just like the start page:
+
+```python
+from flaskspark.core.module import Area, Module, N_, Screen
+
+class Wall(Module):
+    NAME = "wall"
+    LABEL = N_("Info screens")
+    AREAS = (Area("wall", N_("Info screens"), N_("Pages for an info screen on the wall")),)
+    SCREENS = (Screen("office", N_("Office"), "wall", N_("Open tasks and today's dates"), "display"),)
+
+class Notes(Module):  # another module adds a section to it
+    PAGE_SECTIONS = {"home": ("notes/home_section.html",), "screen:office": ("notes/home_section.html",)}
+```
+
+- `/screen/<key>` shows the sections of `PAGE_SECTIONS["screen:<key>"]` of all loaded modules, in the order of the modules; `/screen` lists the screens the visitor may use. The screen needs its `area`; each section asks for its own (`{% if can("notes") %}`) like those of the start page. A section may tell a screen from other pages by `screen` (the `Screen`, defined only there), e.g. to leave out its dialogs.
+- Layout `layouts/screen.html` (the head of `layouts/main.html`: theme, colour mode, import map, translations; no sidebar, no top bar, no `LAYOUT` templates of the modules): a slim head row with the logo, the screen's title, the live state and a clock, then the page filling the viewport (`.app-screen-sections`; helpers `app-screen-section`, `app-screen-section-head`, `app-screen-section-title`, `app-screen-fill` for the section that takes the height left).
+- Sizes follow the viewport: 1rem is 16px × `--app-screen-scale` at 1920 × 1080 and in proportion elsewhere, so a screen looks the same on every display. `?scale=1.5` in the URL overrides the theme's token for one display.
+- Colour mode: the app's (the browser's stored choice, else the theme's `default_mode`) unless `Screen.mode` fixes one; `?mode=dark|light|system` in the URL wins. A fixed mode is `<html data-theme-fixed="…">` (webcomponents' `theme.js` then neither reads nor stores the choice).
+- `<html data-screen="<key>">` makes the page display-only: `frame.css` hides `ui-button`, `ui-button-group`, `ui-close-button`, `ui-pagination`, `ui-dialog`, `ui-drawer`, toasts, `button`, `.btn`, `.app-page-actions` and `.app-toolbar`; the web components hide their own controls (close and remove buttons, a card's chevron and actions; `--ui-screen: on`, see [Web components](#web-components)); the content takes no pointer events. `flaskspark/screen.js` swallows right clicks (neither the browser's menu nor `ui-context-menu`: `contextMenu()` attaches none and `UiContextMenu.open()` refuses), clicks and the activating keys. `[data-screen-keep]` keeps an element visible and working, `[data-screen-hide]` hides any element (also inside a component's shadow tree).
+- Recovery: the push channel reconnects by itself and sections reload their data on `resync` (as everywhere). Should the channel stay down for 5 minutes, the page loads itself anew once the server answers again (the wait doubles after every such reload, up to an hour); every day at `Screen.reload_at` (default `04:00`, `""` never) it reloads too, so new code arrives after a deployment. `onNewDay(callback)` of `flaskspark/screen.js` tells a section that the date changed (e.g. to show what is current today).
 
 ### Settings
 A module names the settings of `config.yaml` the admins may change in its manifest:
@@ -1635,6 +1659,9 @@ The layout lives in FlaskSpark only (`flaskspark/core/web/static/flaskspark/css/
 | `--app-table-cell-padding-y` | unset (Bootstrap's) | The rows of `.app-table`. |
 | `--app-table-last-row-border-width` | `0` | The line under the last row of `.app-table` and `ui-table`. |
 | `--app-font` | Bootstrap's | The page font (optional). |
+| `--app-screen-scale` | `1.25` | [Info screens](#info-screens): the size (1rem = 16px × the scale at 1920 × 1080, in proportion on other displays). |
+| `--app-screen-padding`, `--app-screen-gap` | `1.25rem`, `1rem` | Info screens: the margin around the page, the gap between sections. |
+| `--app-screen-logo-height` | `2.25rem` | Info screens: the logo in the head row. |
 
 A page background per colour mode that `light-dark()` cannot hold (a gradient) is the same token set per mode:
 `html.theme-dark { --app-page-bg: linear-gradient(…); }` (likewise `html.theme-light`).
@@ -1714,7 +1741,8 @@ The page's import map names four prefixes: `webcomponents/` (the web components)
 - `forms.js`: forms on the web components' fields sent as JSON: `validateForm(root)`, `formJson(form)`, `submitForm(form, options)` (checked, sent, the answer's message as a notice, the page's content refreshed), `refreshPage(selector)` (morph, no reload); `<form data-fetch>` does all of it on submit
 - `hidden-json-feed.js`: `<hidden-json-feed src="/api/..." push-topics="..." interval="60">` loads JSON once for any number of subscribers (`subscribe(callback)`), reloads on a pushed topic or by polling
 - `hidden-push-fragment.js`: `<hidden-push-fragment push-topics="..." target="#list">` keeps a part of a server-rendered page current: on a pushed topic it loads the page again and morphs only `target`
-- `context-menu.js`: `contextMenu(root, {selector, items})` (right click, long press, menu key), `quietRightClick()`
+- `context-menu.js`: `contextMenu(root, {selector, items})` (right click, long press, menu key; none on an info screen), `quietRightClick()`
+- `screen.js`: the script of an [info screen](#info-screens) (display only, clock, live state, recovery); `onNewDay(callback)`
 - `ui-service-status.js`: `<ui-service-status>`, the status tiles in the sidebar (included by the layout for admins)
 - `ui-share-dialog.js`: `<ui-share-dialog>` and `<ui-share-editor>`, sharing an item with roles ([Shares](#shares))
 - `attachments.js` and `ui-attachments.js`: the attachments' API and `<ui-attachments>` ([Attachments](#attachments))
@@ -2055,6 +2083,8 @@ Sessions are kept on the server (Flask-Session, files in `STATE_DIR/sessions`); 
 FlaskSpark includes a library of web components built on Bootstrap 6 (package `webcomponents`): custom elements (`ui-button`, `ui-dialog`, `ui-table`, `ui-datepicker`, …) that render in a Shadow DOM, are grouped into modules and submodules and are themed via CSS variables. They are plain ES modules and plain CSS, nothing has to be built.
 
 The detailed documentation (structure, every component, writing components, tests) is in [`webcomponents/README.md`](./webcomponents/README.md); the [docs app](#development-and-tests) shows every component with examples.
+
+Display-only pages (an [info screen](#info-screens): `<html data-screen>`, which sets `--ui-screen: on`): every component hides its own controls (close and remove buttons, a card's chevron and actions, and anything marked `data-screen-hide` inside its shadow tree), through a style query on `--ui-screen` (`:host-context(html[data-screen])` where style queries are missing). `ui-context-menu` opens no menu there.
 
 ### Use them in a FlaskSpark app
 The components are installed with FlaskSpark. Switch them on in `.env`:

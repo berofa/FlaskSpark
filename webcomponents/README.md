@@ -142,6 +142,14 @@ it provides the consumer side: `LightFeedElement` (core; implements
 - Expose CSS parts (`part="…"`) on the elements host pages need to theme.
   Bootstrap declares many `--bs-*` variables on the component class itself
   (e.g. `.btn`, `.tooltip`), so host overrides must target the part.
+- Display-only pages (an info screen: `<html data-screen>`, which sets the
+  inherited `--ui-screen: on`): a component's own controls must not show.
+  `core/ui-shadow-base.css` hides `.btn-close`, `.chip-dismiss`,
+  `.ui-card-chevron`, `.ui-card-actions` and anything marked
+  `data-screen-hide` (a style query on `--ui-screen`, `:host-context()` as the
+  fallback); a new component with controls of another kind marks them
+  `data-screen-hide`. `UiContextMenu.open()` refuses there (`displayOnly()`),
+  and `theme.js` keeps a mode the page fixes (`<html data-theme-fixed>`).
 
 ### Bootstrap module notes
 

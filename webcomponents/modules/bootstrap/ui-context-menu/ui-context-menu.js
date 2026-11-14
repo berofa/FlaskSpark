@@ -57,6 +57,11 @@ export function tidy(items) {
   return out;
 }
 
+/** Is the page display-only (an info screen: <html data-screen>)? Then no context menu opens. */
+export function displayOnly(doc = typeof document !== "undefined" ? document : null) {
+  return Boolean(doc?.documentElement?.hasAttribute?.("data-screen"));
+}
+
 /**
  * <ui-context-menu> (Bootstrap 6 menu as a context menu): the menu of an element on a right click, on a touch
  * screen when a finger rests on it (LONG_PRESS), and with the keyboard's context menu key (Shift+F10). One element
@@ -200,8 +205,10 @@ export class UiContextMenu extends HTMLElement {
     return this.#menu?.classList.contains("show") ?? false;
   }
 
-  /** Open the menu with these items at x, y (viewport pixels) for target; false if a listener cancelled it. */
+  /** Open the menu with these items at x, y (viewport pixels) for target; false if a listener cancelled it, or on a
+   *  display-only page (<html data-screen>: an info screen has no context menus). */
   open(items, { target = null, event = null, x = 0, y = 0 } = {}) {
+    if (displayOnly()) return false;
     if (this.isOpen) this.hide(false);
     const show = new CustomEvent("ui-context-menu:show", { bubbles: true, composed: true, cancelable: true, detail: { items } });
     if (target && !target.dispatchEvent(show)) return false;

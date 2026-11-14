@@ -5,6 +5,21 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added
+- Info screens: pages for a display on the wall nobody operates. A module declares them in its manifest
+  (`Module.SCREENS`, `Screen(key, title, area, description, icon, mode, reload_at, position)`), any module fills them
+  with `PAGE_SECTIONS["screen:<key>"]`; `/screen/<key>` (and the list `/screen`) renders them with the new layout
+  `layouts/screen.html`: no navigation or page chrome, a head row with logo, title, live state and clock, sizes in
+  proportion to the viewport (designed for 1920 × 1080, token `--app-screen-scale`, `?scale=`), the app's colour mode
+  unless `Screen.mode` or `?mode=` fixes one. `<html data-screen>` makes the page display-only: `frame.css` hides
+  buttons, toolbars, dialogs; the web components hide their own controls (`--ui-screen: on`); `flaskspark/screen.js`
+  swallows right clicks, clicks and activating keys (`[data-screen-keep]` opts out, `[data-screen-hide]` hides
+  anything), reloads the page when the push channel stayed down for long (once the server answers) and daily at
+  `Screen.reload_at`, and offers `onNewDay(callback)`. Tokens `--app-screen-scale`, `--app-screen-padding`,
+  `--app-screen-gap`, `--app-screen-logo-height`.
+- `layouts/framework.html`: block `html_attrs` (attributes of `<html>`).
+- A page may fix its colour mode: `<html data-theme-fixed="light|dark|system">` (the layout's early script and
+  webcomponents' `theme.js` neither read nor store the visitor's choice then).
+- `contextMenu()` attaches nothing and `UiContextMenu.open()` refuses on a display-only page (`<html data-screen>`).
 - Command line: the app's command (`flaskspark`, or its alias) runs the modules' `Module.CLI` commands too
   (`myapp <command> …`, in the web app's context like `flask --app flaskspark.core.web.app:create_app <command>`);
   `--help` lists them.

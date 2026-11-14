@@ -2,7 +2,7 @@
 name: flaskspark-new-module
 description: Neues Modul einer App auf FlaskSpark (flaskspark.core) anlegen oder ein Manifest ändern - Paketstruktur,
   Module-Unterklasse in module.py mit NAME/LABEL/POSITION/AREAS/NAVIGATION/TILES/DEPENDS/OPTIONAL_DEPENDS/MODELS/
-  TABLES/SHARED_TABLES/CONFIG/SETTINGS/PAGE_SECTIONS/LAYOUT/CLI/PUSH_TOPICS/ROUTES/SERVICES/ACCOUNT_TYPES/SHAREABLES/
+  TABLES/SHARED_TABLES/CONFIG/SETTINGS/PAGE_SECTIONS/SCREENS/LAYOUT/CLI/PUSH_TOPICS/ROUTES/SERVICES/ACCOUNT_TYPES/SHAREABLES/
   ATTACHMENT_OWNERS/EXPOSURE/NAV_BADGES, Views mit `area`, Templates, Static, client.py als Schnittstelle,
   Übersetzungen, Migrationen, Tests. Verwenden, wenn ein neues Thema/Feature als Modul kommt, ein Modul eine Seite,
   einen Menüeintrag, eine Kachel, einen Bereich oder eine Abhängigkeit zu einem anderen Modul bekommt.
@@ -40,7 +40,7 @@ dann `uv pip install -e .`. Der Entry-Point-Name muss `NAME` sein.
 ## 2. Manifest
 
 ```python
-from flaskspark.core.module import (INTERNAL, Area, Module, N_, NavBadge, NavItem, PushTopic, Route,
+from flaskspark.core.module import (INTERNAL, Area, Module, N_, NavBadge, NavItem, PushTopic, Route, Screen,
                                     ServiceInfo, Tile)
 from flaskspark.core.settings import Setting
 
@@ -61,7 +61,9 @@ class Notes(Module):
     SHARED_TABLES = ()
     CONFIG = (Setting("notes.page_size", N_("Notes per page"), "int", min=1, max=100),)
     SETTINGS = ("notes/settings.html",)              # eigene Abschnitte im Reiter «Settings» des Moduls
-    PAGE_SECTIONS = {"home": ("notes/home_section.html",), "profile": ("notes/profile.html",)}
+    PAGE_SECTIONS = {"home": ("notes/home_section.html",), "profile": ("notes/profile.html",),
+                     "screen:office": ("notes/home_section.html",)}  # Abschnitt auf einem Infobildschirm
+    SCREENS = (Screen("office", N_("Office"), "notes", N_("Notes on the wall"), "display"),)  # /screen/office
     LAYOUT = ("notes/badge_script.html",)            # auf JEDER Seite: nur Dialoge/Navigationsskripte
     PUSH_TOPICS = (PushTopic("notes.changed", "notes"), PushTopic("notes.user.{uid}", "notes", latest=True))
     SERVICES = (ServiceInfo("notes", N_("Notes"), "myapp.modules.notes.service:main"),)
@@ -86,7 +88,12 @@ Entscheide:
   `web/static/public/<x>/`); `<x>` in `DEPENDS` (Pflicht) oder `OPTIONAL_DEPENDS` (+ `is_enabled`, dann erst
   importieren). Nie fremde Tabellen, Templates oder Interna importieren.
 - **Seite eines anderen Moduls erweitern:** dort `{% for t in page_sections("<seite>") %}{% include t %}{% endfor %}`,
-  hier `PAGE_SECTIONS = {"<seite>": (…,)}`. Kern-Seiten: `home`, `profile`.
+  hier `PAGE_SECTIONS = {"<seite>": (…,)}`. Kern-Seiten: `home`, `profile`, `screen:<key>`.
+- **Infobildschirm** (Seite für einen Bildschirm an der Wand, ohne Navigation und Buttons, 1920 × 1080): ein Modul
+  deklariert ihn mit `SCREENS = (Screen(key, title, area, …),)`, jedes Modul füllt ihn mit
+  `PAGE_SECTIONS["screen:<key>"]`; URL `/screen/<key>`, Liste `/screen`. Ein Abschnitt erkennt den Bildschirm an
+  `screen` (nur dort definiert) und lässt dann z.B. seine Dialoge weg. Details: Skill `flaskspark-ui` §6, README
+  «Info screens».
 
 ## 3. Views
 

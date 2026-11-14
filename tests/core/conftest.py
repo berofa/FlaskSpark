@@ -40,7 +40,7 @@ demo:
     "src/modules/__init__.py": "",
     "src/modules/demo/__init__.py": '"""Demo module."""',
     "src/modules/demo/module.py": '''
-from flaskspark.core.module import Area, Module, N_, NavBadge, NavItem, PushTopic, Tile
+from flaskspark.core.module import Area, Module, N_, NavBadge, NavItem, PushTopic, Screen, Tile
 from flaskspark.core.settings import Setting
 
 
@@ -61,7 +61,9 @@ class Demo(Module):
     NAVIGATION = (NavItem(N_("Demo"), N_("Notes"), "/demo/notes", "demo", icon="journal", badge="demo-new"),)
     NAV_BADGES = (NavBadge("/demo/notes", "demo-open", "demo"), NavBadge("/demo/notes", "demo-admin", "admin"))
     SETTINGS = ("demo/settings.html",)
-    PAGE_SECTIONS = {"profile": ("demo/profile.html",)}
+    PAGE_SECTIONS = {"profile": ("demo/profile.html",), "screen:wall": ("demo/screen.html",)}
+    SCREENS = (Screen("wall", N_("Wall"), "demo", N_("Notes on the wall"), "display", mode="dark"),
+               Screen("empty", N_("Empty"), "demo", reload_at="", position=200))
     TILES = (Tile(N_("Notes"), "/demo/notes", "demo", N_("Short notes"), "journal"),)
     PUSH_TOPICS = (PushTopic("demo.state", "demo", latest=True),)
     MODELS = ("modules.demo.models",)
@@ -129,6 +131,9 @@ class NotesView(FlaskSparkMethodView):
 {% block content %}<div class="app-page-head"><div><h1>Notes</h1></div></div>{% for n in notes %}<p>{{ n }}</p>{% endfor %}{% endblock %}
 ''',
     "src/modules/demo/web/templates/demo/settings.html": '''<section data-demo-settings>Demo section</section>
+''',
+    "src/modules/demo/web/templates/demo/screen.html": '''{% if can("demo") %}<section class="app-screen-section" data-demo-screen>
+<ui-button data-demo-button>Edit</ui-button><span data-screen-keep>kept</span></section>{% endif %}
 ''',
     "src/modules/demo/web/templates/demo/profile.html": '''<section data-demo-profile>Demo profile section</section>
 ''',

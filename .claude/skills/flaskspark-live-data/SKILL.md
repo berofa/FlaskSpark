@@ -120,6 +120,12 @@ Deklarativ statt eigenem Skript:
 
 Achtung: im Manifest heisst der Platzhalter `{uid}`, im Browser `{user}`.
 
+Auf einem Infobildschirm (`layouts/screen.html`, niemand lädt die Seite neu) gilt dasselbe, dazu
+`flaskspark/screen.js`: Ist der Push-Kanal 5 Minuten weg, lädt die Seite neu, sobald der Server antwortet (Wartezeit
+verdoppelt sich bis 1 h), und täglich um `Screen.reload_at`. Was vom Datum abhängt (z.B. «heute aktuell»), mit
+`import { onNewDay } from "flaskspark/screen.js"; onNewDay(() => reload());` nachführen. Ohne offenen Kanal
+zusätzlich selbst pollen (wie die anderen Seiten).
+
 ## 6. Themen auf Abruf (`TopicSource`)
 
 Für Daten, die nur entstehen, solange jemand zuschaut (z.B. ein Feed, den ein Service bei einem Fremdsystem

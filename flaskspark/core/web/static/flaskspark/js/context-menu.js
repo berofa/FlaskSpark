@@ -8,17 +8,25 @@
  *   quietRightClick();  // opt-in, once per page: a right click without a menu does nothing
  *
  * quietRightClick() keeps the browser's own menu where it is needed (text fields, selected text, links, media).
+ * On an info screen (<html data-screen>, layouts/screen.html) there are no context menus: contextMenu() attaches none.
  */
 import { UiContextMenu } from "webcomponents/modules/bootstrap/ui-context-menu/ui-context-menu.js";
 
 /** The context menus for the elements matching options.selector in root; returns the function that removes them. */
 export function contextMenu(root, options) {
+  if (onScreen(root)) return () => {};
   root.classList.add("has-context-menu");
   const detach = UiContextMenu.attach(root, options);
   return () => {
     detach();
     root.classList.remove("has-context-menu");
   };
+}
+
+/** Is `node` part of an info screen (<html data-screen>)? */
+export function onScreen(node) {
+  const doc = node?.ownerDocument || (typeof document !== "undefined" ? document : null);
+  return Boolean(doc?.documentElement?.hasAttribute?.("data-screen"));
 }
 
 /** Where the browser's own menu stays: text fields (paste), links and media (open, save), selected text (copy). */

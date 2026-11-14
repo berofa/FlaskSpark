@@ -1,0 +1,11 @@
+{% extends "layouts/screen.html" %}
+{#- A screen (Module.SCREENS, views/screen.py): the sections the modules add to it (PAGE_SECTIONS["screen:<key>"]),
+    one below the other; each section checks its own area (can()) like those of the start page. -#}
+{% block content %}
+  <div class="app-screen-sections">
+    {% for template in screen_sections %}{% include template %}{% endfor %}
+  </div>
+  {% if not screen_sections %}
+    <p class="app-screen-empty">{{ _("Nothing on this screen yet.") }}</p>
+  {% endif %}
+{% endblock %}

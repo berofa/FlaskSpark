@@ -8,9 +8,22 @@ export function resolveTheme(theme) {
   return theme;
 }
 
+/** The mode a page fixes (<html data-theme-fixed="light|dark|system">, e.g. an info screen), else "". */
+export function fixedTheme() {
+  return document.documentElement.getAttribute("data-theme-fixed") || "";
+}
+
 export function applyTheme(theme) {
+  const fixed = fixedTheme();
+  if (fixed) theme = fixed; // a fixed page neither follows nor changes the stored choice
   document.documentElement.setAttribute("data-bs-theme", resolveTheme(theme));
-  window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  if (!fixed) {
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // no storage (private window, blocked): the mode applies to this page only
+    }
+  }
 
   document.querySelectorAll("[data-theme-value]").forEach((button) => {
     const active = button.getAttribute("data-theme-value") === theme;
@@ -24,7 +37,13 @@ export function applyTheme(theme) {
 }
 
 export function getStoredTheme() {
-  return window.localStorage.getItem(THEME_STORAGE_KEY) || "system";
+  const fixed = fixedTheme();
+  if (fixed) return fixed;
+  try {
+    return window.localStorage.getItem(THEME_STORAGE_KEY) || "system";
+  } catch {
+    return "system";
+  }
 }
 
 export function setupThemeSwitcher() {

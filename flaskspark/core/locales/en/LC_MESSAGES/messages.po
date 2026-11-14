@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FlaskSpark \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 09:35+0100\n"
+"POT-Creation-Date: 2026-11-14 17:08+0100\n"
 "PO-Revision-Date: 2026-11-13 16:19+0100\n"
 "Last-Translator: FlaskSpark\n"
 "Language: en\n"
@@ -561,7 +561,13 @@ msgstr ""
 msgid "Link address"
 msgstr ""
 
+msgid "Live"
+msgstr ""
+
 msgid "Live channel"
+msgstr ""
+
+msgid "Live: changes appear at once."
 msgstr ""
 
 msgid "Loaded"
@@ -646,6 +652,9 @@ msgstr ""
 msgid "No role to share this with."
 msgstr ""
 
+msgid "No screens."
+msgstr ""
+
 msgid "No settings."
 msgstr ""
 
@@ -691,6 +700,9 @@ msgstr ""
 msgid "Nothing left over."
 msgstr ""
 
+msgid "Nothing on this screen yet."
+msgstr ""
+
 msgid "Notifications"
 msgstr ""
 
@@ -729,6 +741,9 @@ msgstr ""
 msgid "Pages"
 msgstr ""
 
+msgid "Pages for an info screen on the wall: no navigation, no buttons, they update themselves."
+msgstr ""
+
 msgid "Password"
 msgstr ""
 
@@ -763,6 +778,9 @@ msgid "Really delete?"
 msgstr ""
 
 msgid "Really remove?"
+msgstr ""
+
+msgid "Reconnecting…"
 msgstr ""
 
 msgid "Remove"
@@ -823,6 +841,9 @@ msgid "Saved. Takes effect after a restart of: %(services)s"
 msgstr ""
 
 msgid "Saving…"
+msgstr ""
+
+msgid "Screens"
 msgstr ""
 
 #, python-format

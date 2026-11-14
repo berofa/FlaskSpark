@@ -8,6 +8,7 @@ part (views, templates, static files) lives in <package>/web and is registered w
 
 from __future__ import annotations
 
+import re
 from abc import ABC
 from dataclasses import dataclass
 
@@ -111,6 +112,50 @@ class Tile:
     position: int = 100
 
 
+@dataclass(frozen=True)
+class Screen:
+    """A page for an info screen (a display on the wall that nobody operates): /screen/<key>, without navigation, page
+    chrome, buttons or context menus, filling the viewport (designed for 1920 x 1080). What it shows are the sections
+    the modules add to the page "screen:<key>" (Module.PAGE_SECTIONS, in the order of the modules); any module may add
+    to a screen another module declares. Visitors need `area` (each section asks for its own area too).
+
+    mode: the colour mode of the screen ("light", "dark", "system"; "" follows the app: the browser's stored choice, else
+    the theme's default); ?mode=… in the URL wins. reload_at: a local time ("04:00") at which the screen loads itself
+    anew every day (new code after a deployment, a fresh start), "" never."""
+
+    key: str  # letters, digits, "-" and "_" (the URL /screen/<key>)
+    title: str
+    area: str
+    description: str = ""
+    icon: str = ""  # a Bootstrap Icons name (the list of screens, /screen)
+    mode: str = ""
+    reload_at: str = "04:00"
+    position: int = 100  # order in the list of screens
+
+    def __post_init__(self):
+        if not SCREEN_KEY.fullmatch(self.key or ""):
+            raise ValueError(f"screen key {self.key!r}: letters, digits, '-' and '_' only")
+        if self.mode not in SCREEN_MODES:
+            raise ValueError(f"screen {self.key!r}: mode must be one of {SCREEN_MODES}")
+        if self.reload_at and not RELOAD_AT.fullmatch(self.reload_at):
+            raise ValueError(f"screen {self.key!r}: reload_at must be HH:MM or empty")
+
+    @property
+    def page(self) -> str:
+        """The key of its sections in Module.PAGE_SECTIONS ("screen:<key>")."""
+        return screen_page(self.key)
+
+
+SCREEN_KEY = re.compile(r"[A-Za-z0-9_-]+")
+SCREEN_MODES = ("", "light", "dark", "system")
+RELOAD_AT = re.compile(r"([01]\d|2[0-3]):[0-5]\d")
+
+
+def screen_page(key: str) -> str:
+    """The page of a screen's sections in Module.PAGE_SECTIONS: "screen:<key>"."""
+    return f"screen:{key}"
+
+
 class Module(ABC):
     """The manifest of a module. Subclasses set NAME (the name of its entry point in flaskspark.modules) and LABEL; the
     rest is optional.
@@ -149,7 +194,9 @@ class Module(ABC):
     SETTINGS: tuple[str, ...] = ()  # templates of its own sections in its tab of «Settings» (admins; e.g.
     # "shop/settings.html"), above the generated form of CONFIG; each brings its own script
     PUBLIC_ENDPOINTS: tuple[str, ...] = ()  # endpoints reachable without a session once sign-in comes (e.g. agents)
-    PAGE_SECTIONS: dict[str, tuple[str, ...]] = {}  # page -> templates it adds there (e.g. "home")
+    PAGE_SECTIONS: dict[str, tuple[str, ...]] = {}  # page -> templates it adds there (e.g. "home", "profile",
+    # "screen:<key>" for a screen of any module)
+    SCREENS: tuple[Screen, ...] = ()  # its pages for info screens (/screen/<key>, sections: PAGE_SECTIONS["screen:<key>"])
     LAYOUT: tuple[str, ...] = ()  # templates included in every page (dialogs, scripts of the navigation)
     CLI: str = ""  # "<module>:<click group or command>" added to the flask CLI
     PACKAGE: str = ""  # set by the loader: the module's package (e.g. "myapp.modules.notes")

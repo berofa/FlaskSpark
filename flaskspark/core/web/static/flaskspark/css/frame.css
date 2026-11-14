@@ -35,6 +35,9 @@
  *   --app-table-cell-padding-y                               rows of .app-table (unset: Bootstrap's)
  *   --app-table-last-row-border-width                        the last row of .app-table and ui-table (0: no line)
  *   --app-font                                               the page font (optional)
+ *   --app-screen-scale                                       info screens: the size (1.25: 1rem = 20px at 1920 x 1080)
+ *   --app-screen-padding, --app-screen-gap                   info screens: the margin around the page, between sections
+ *   --app-screen-logo-height                                 info screens: the logo in the head row
  */
 
 /* A length, so a theme may write 0 (attached sidebar) and calc()/min() still get a length. */
@@ -953,6 +956,148 @@ ui-tooltip {
   display: inline-block;
   flex-shrink: 0;
   vertical-align: -0.125em;
+}
+
+/* --- Info screens (layouts/screen.html, <html data-screen>) -------------------------------------------------------
+ * A display on the wall nobody operates: no navigation, no buttons, the page fills the viewport. Sizes follow the
+ * viewport (designed for 1920 x 1080: 1rem = 16px x --app-screen-scale there, in proportion on other sizes), so a
+ * screen looks the same on every display and is legible from a few metres. Controls are hidden: ui-button and the
+ * like, the page's action rows, and inside the web components their own controls (--ui-screen: on, ui-shadow-base.css).
+ * [data-screen-keep] keeps an element (and what it holds) working and visible, [data-screen-hide] hides any element. */
+:root {
+  --app-screen-scale: 1.25;
+  --app-screen-padding: 1.25rem;
+  --app-screen-gap: 1rem;
+  --app-screen-logo-height: 2.25rem;
+}
+
+html[data-screen] {
+  --ui-screen: on;
+  font-size: calc(var(--app-screen-scale) * min(100vw / 120, 100dvh / 67.5));
+  scrollbar-width: none;
+  user-select: none;
+
+  :is(ui-button, ui-button-group, ui-close-button, ui-pagination, ui-dialog, ui-drawer, ui-toast-container, button,
+      .btn, input:is([type="button"], [type="submit"], [type="reset"]), .app-page-actions, .app-toolbar,
+      [data-screen-hide]):not([data-screen-keep]) {
+    display: none !important;
+  }
+
+  /* Nothing reacts to a pointer (no hover, no tooltips); flaskspark/screen.js swallows clicks and right clicks. */
+  .app-screen-main { pointer-events: none; }
+  [data-screen-keep] { pointer-events: auto; user-select: auto; }
+}
+
+body.app-screen-body {
+  min-block-size: 100dvh;
+  overflow: hidden;
+}
+
+.app-screen {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-screen-gap);
+  block-size: 100dvh;
+  padding: var(--app-screen-padding);
+}
+
+.app-screen-head {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 1rem;
+
+  .brand-logo { block-size: var(--app-screen-logo-height); }
+}
+
+.app-screen-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.app-screen-live {
+  display: inline-flex;
+  margin-inline-start: auto;
+
+  .app-screen-live-dot {
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    border-radius: 50%;
+    background: var(--bs-fg-3);
+  }
+
+  &[data-state="open"] .app-screen-live-dot {
+    background: var(--bs-success-base, #198754);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--bs-success-base, #198754) 25%, transparent);
+  }
+
+  &:is([data-state="closed"], [data-state="signed-out"], [data-state="stopped"]) .app-screen-live-dot {
+    background: var(--bs-warning-base, #ffc107);
+  }
+}
+
+.app-screen-clock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  .app-screen-date { color: var(--bs-fg-3); }
+  .app-screen-time { font-size: 1.5rem; font-weight: 700; }
+}
+
+.app-screen-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+/* The sections of the modules, one below the other; a section with .app-screen-fill takes the height that is left. */
+.app-screen-sections {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--app-screen-gap);
+  min-block-size: 0;
+}
+
+.app-screen-section {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-block-size: 0;
+
+  &.app-screen-fill { flex: 1 1 auto; }
+}
+
+.app-screen-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+}
+
+.app-screen-section-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+
+  :is(.bi, .bi-svg) {
+    margin-inline-end: 0.4rem;
+    color: var(--app-card-icon-color);
+  }
+}
+
+.app-screen-empty {
+  margin: auto;
+  color: var(--bs-fg-3);
+  font-size: 1.25rem;
 }
 
 /* [hidden] hides everything, also web components whose host sets its own display (ui-card, ui-alert, …). */

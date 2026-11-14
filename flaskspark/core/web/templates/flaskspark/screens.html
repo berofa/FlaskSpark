@@ -1,0 +1,26 @@
+{% extends "layouts/main.html" %}
+{#- The info screens the visitor may use (Module.SCREENS, views/screen.py), each a link to /screen/<key>. -#}
+{% block page_title %}{{ _("Screens") }}{% endblock %}
+{% block content %}
+  <div class="app-page-head">
+    <div>
+      <h1>{{ _("Screens") }}</h1>
+      <p>{{ _("Pages for an info screen on the wall: no navigation, no buttons, they update themselves.") }}</p>
+    </div>
+  </div>
+  {% if screens %}
+    <div class="app-tiles">
+      {% for screen in screens %}
+        <a class="app-tile" href="{{ url_for('flaskspark_screen', key=screen.key) }}" data-screen-link="{{ screen.key }}">
+          <i class="bi bi-{{ screen.icon or 'display' }}" aria-hidden="true"></i>
+          <span>
+            <strong>{{ screen.title }}</strong>
+            <small>{{ screen.description or url_for('flaskspark_screen', key=screen.key) }}</small>
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <ui-alert>{{ _("No screens.") }}</ui-alert>
+  {% endif %}
+{% endblock %}

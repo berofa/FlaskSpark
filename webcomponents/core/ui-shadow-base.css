@@ -22,3 +22,18 @@
 [hidden] {
   display: none !important;
 }
+
+/*
+ * Display-only pages (an info screen: the document root has data-screen, which sets --ui-screen: on): a component's
+ * own controls are not shown (close and remove buttons, a card's chevron and actions, anything marked
+ * [data-screen-hide] inside a shadow tree). Style queries where the browser has them, :host-context() elsewhere.
+ */
+@container style(--ui-screen: on) {
+  :is(.btn-close, .chip-dismiss, .ui-card-chevron, .ui-card-actions, [data-screen-hide]) {
+    display: none !important;
+  }
+}
+
+:host-context(html[data-screen]) :is(.btn-close, .chip-dismiss, .ui-card-chevron, .ui-card-actions, [data-screen-hide]) {
+  display: none !important;
+}

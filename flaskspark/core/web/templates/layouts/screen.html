@@ -1,0 +1,51 @@
+{% extends "layouts/main.html" %}
+{#- The layout of an info screen (a display on the wall nobody operates, Module.SCREENS): the head of main.html (theme,
+    colour mode, import map, translations) without navigation and page chrome; a slim head row (logo, title, live state,
+    clock) and the page filling the viewport (designed for 1920 x 1080 without scrolling).
+
+    <html data-screen="<key>">: frame.css and the web components hide buttons and other controls (opt-out
+    [data-screen-keep], opt-in [data-screen-hide]); flaskspark/screen.js swallows right clicks (no context menus), clicks
+    and activating keys, shows the clock and the live state, and recovers by itself (reloads after the push channel was
+    down for long and once a day at screen.reload_at). The modules' LAYOUT templates (navigation scripts, dialogs) are
+    not included.
+
+    Pages fill `content` (the core's flaskspark/screen.html: the sections of the modules); `screen_head` replaces the
+    head row. Context: screen (Module.Screen), screen_title, screen_mode (a fixed colour mode or ""), screen_scale. -#}
+
+{% block html_attrs %} data-screen="{{ screen.key }}"
+  {%- if screen_mode %} data-theme-fixed="{{ screen_mode }}"{% endif %}
+  {%- if screen.reload_at %} data-screen-reload-at="{{ screen.reload_at }}"{% endif %}
+  {%- if screen_scale %} style="--app-screen-scale: {{ screen_scale }}"{% endif %}{% endblock %}
+
+{% block title %}{{ screen_title }} · {{ app_title }}{% endblock %}
+
+{% block body_attrs %}class="app-body app-screen-body" data-theme="{{ theme.name }}" data-i18n-endpoint="{{ url_for('flaskspark_i18n') }}"{% endblock %}
+
+{% block app_body %}
+  <div class="app-screen">
+    {% block screen_head %}
+      <header class="app-screen-head">
+        <span class="app-screen-brand">
+          <img src="{{ url_for('theme.static', filename='images/' ~ theme.logo) }}" alt="{{ app_title }}" class="brand-logo brand-logo--light">
+          <img src="{{ url_for('theme.static', filename='images/' ~ theme.logo_dark) }}" alt="{{ app_title }}" class="brand-logo brand-logo--dark">
+        </span>
+        <h1 class="app-screen-title">{{ screen_title }}</h1>
+        {#- The live state (screen.js: the push channel) and the clock (date and time in the page's language). #}
+        <span class="app-screen-live" data-screen-live data-state="connecting" title="{{ _('Live') }}">
+          <span class="app-screen-live-dot" aria-hidden="true"></span>
+        </span>
+        <time class="app-screen-clock" data-screen-clock></time>
+      </header>
+    {% endblock %}
+    <main class="app-screen-main">
+      {% block page_header %}{% endblock %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+{% endblock %}
+
+{% block app_scripts %}
+  <script type="module" src="{{ url_for('static', filename='flaskspark/js/app.js') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='flaskspark/js/screen.js') }}"></script>
+  {% block page_scripts %}{% endblock %}
+{% endblock %}

@@ -79,7 +79,24 @@ Ziel: alles möglichst generisch, und was spezifisch ist, sauber getrennt dort, 
 - Bootstrap 5 gibt es nicht mehr (kein `.row`/`.col-md-*`, `.form-control`, `.modal`, `.dropdown`, `.text-muted`);
   Layout mit den Hilfsklassen des Kerns und den Bootstrap-6-Utilities.
 
-## 6. Prüfen
+## 6. Infobildschirme (`layouts/screen.html`)
+
+- Seite für einen Bildschirm an der Wand, den niemand bedient (Manifest `SCREENS`, Abschnitte
+  `PAGE_SECTIONS["screen:<key>"]`, Skill `flaskspark-new-module`): keine Navigation, keine Buttons, kein Kontextmenü,
+  füllt den Viewport (ausgelegt auf 1920 × 1080 ohne Scrollen).
+- Grössen folgen dem Viewport: 1rem = 16px × `--app-screen-scale` bei 1920 × 1080 (Token im Theme, `?scale=` in der
+  URL). Moduleigenes CSS für den Bildschirm unter `html[data-screen] { … }`, Grössen in `rem` oder relativ zum
+  Container (`cqi`), nicht in festen `px`.
+- Helfer des Kerns: `app-screen-section`, `app-screen-section-head`, `app-screen-section-title` (Icon davor),
+  `app-screen-fill` (nimmt die restliche Höhe).
+- `<html data-screen>` blendet aus: `ui-button`, `ui-button-group`, `ui-dialog`, `button`, `.btn`, `.app-toolbar`,
+  `.app-page-actions` …; in den Web Components deren eigene Bedienelemente (`--ui-screen: on`). Opt-out
+  `data-screen-keep`, Opt-in `data-screen-hide` (auch im Shadow DOM einer Komponente). Eine neue Komponente mit
+  eigenen Bedienelementen markiert sie mit `data-screen-hide`.
+- Farbmodus wie in der App, ausser `Screen.mode` oder `?mode=` legt ihn fest (`<html data-theme-fixed>`).
+- Prüfen: Headless-Screenshot bei 1920 × 1080 hell und dunkel; alles sichtbar ohne Scrollen.
+
+## 7. Prüfen
 
 - Jede Seite hell **und** dunkel ansehen (Headless-Browser genügt für den Überblick), auch schmal (Handy).
 - Keine Konsolenfehler; Texte über gettext (`_()`, `N_()`, JS `t()`), nicht fest im Template.
