@@ -10,9 +10,11 @@ Later, with one container per service, a reverse proxy (e.g. nginx, Traefik) tak
 
 A service of the core like web and push (ServiceInfo "router", process flaskspark-router, unit
 flaskspark-router.service; `<app> service router`, also `<app> router`): it proxies from the start, NATS or not.
-Once NATS is reachable (user "router", optional) it sends heartbeats into the service directory with its routes, the
-connections it holds open (requests in flight, WebSockets) and its requests and upstream failures of the last
-minute; the status tile RouterTile shows them and the guardian's ServicesCheck watches it like every service.
+A WebSocket goes to its service first: one the service refuses (e.g. 404) gets that answer, only a service that does
+not answer counts as an upstream failure (502). Once NATS is reachable (user "router", optional) it sends heartbeats
+into the service directory with its routes, the connections it holds open (requests in flight, WebSockets) and its
+requests and upstream failures of the last minute; the status tile RouterTile shows them and the guardian's
+ServicesCheck watches it like every service.
 """
 
 from __future__ import annotations
@@ -140,16 +142,24 @@ class Router:
         return response
 
     async def _websocket(self, request: web.Request, url: str) -> web.StreamResponse:
-        client = web.WebSocketResponse(autoping=True, heartbeat=None)
-        await client.prepare(request)
+        """The service first, then the browser: a service that refuses (e.g. 404, no such path) answers the browser
+        with its status and is no upstream failure; one that does not answer at all is (502)."""
         headers = {k: v for k, v in self._headers(request).items() if not k.lower().startswith("sec-websocket")}
         try:
             upstream = await self.http.ws_connect(url.replace("http://", "ws://", 1), headers=headers, autoping=True)
+        except aiohttp.WSServerHandshakeError as exc:
+            log.info("websocket %s refused by its service: %d", request.path, exc.status)
+            return web.Response(status=exc.status, text=f"{exc.message}\n")
         except aiohttp.ClientError as exc:
             log.warning("websocket %s: %s", request.path, exc)
             self._failures.append(time.monotonic())
-            await client.close(code=1011, message=b"service not reachable")
-            return client
+            return web.Response(status=502, text="service not reachable\n")
+        client = web.WebSocketResponse(autoping=True, heartbeat=None)
+        try:
+            await client.prepare(request)
+        except (ConnectionError, asyncio.CancelledError):
+            await upstream.close()
+            raise
 
         async def pump(source, sink):
             async for msg in source:

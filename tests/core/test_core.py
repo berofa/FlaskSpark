@@ -291,6 +291,57 @@ def test_the_router_counts_what_it_carries():
                                           "upstream_failures": 1}
 
 
+def test_the_router_passes_a_refused_websocket_on_and_counts_only_what_does_not_answer():
+    """A service that refuses a WebSocket (no such path: 404) answers the browser through the router as it is and is
+    no upstream failure; only a service that is not there counts (502). An accepted one carries messages both ways."""
+    import asyncio
+    import socket
+
+    import aiohttp
+    from aiohttp import web
+
+    def free_port() -> int:
+        with socket.socket() as s:
+            s.bind(("127.0.0.1", 0))
+            return s.getsockname()[1]
+
+    async def echo(request):
+        ws = web.WebSocketResponse()
+        await ws.prepare(request)
+        async for msg in ws:
+            await ws.send_str("echo " + msg.data)
+        return ws
+
+    async def main():
+        upstream = web.Application()
+        upstream.router.add_get("/ws/ok", echo)
+        up = web.AppRunner(upstream)
+        await up.setup()
+        web_port, port = free_port(), free_port()
+        await web.TCPSite(up, "127.0.0.1", web_port).start()
+        router = Router([Target("/ws/away", free_port(), websocket=True)], web_port=web_port)
+        runner = await router.start("127.0.0.1", port)
+        try:
+            async with aiohttp.ClientSession() as http:
+                async with http.ws_connect(f"http://127.0.0.1:{port}/ws/ok") as ws:
+                    await ws.send_str("hi")
+                    assert (await ws.receive()).data == "echo hi"
+                with pytest.raises(aiohttp.WSServerHandshakeError) as refused:
+                    await http.ws_connect(f"http://127.0.0.1:{port}/ws/gone")
+                assert refused.value.status == 404
+                assert router.details()["upstream_failures"] == 0
+                with pytest.raises(aiohttp.WSServerHandshakeError) as away:
+                    await http.ws_connect(f"http://127.0.0.1:{port}/ws/away")
+                assert away.value.status == 502
+                assert router.details()["upstream_failures"] == 1
+        finally:
+            await runner.cleanup()
+            await router.close()
+            await up.cleanup()
+
+    asyncio.run(main())
+
+
 def test_core_imports_no_application_code():
     for path in CORE.rglob("*.py"):
         for node in ast.walk(ast.parse(path.read_text())):
