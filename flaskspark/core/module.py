@@ -121,7 +121,8 @@ class Screen:
 
     mode: the colour mode of the screen ("light", "dark", "system"; "" follows the app: the browser's stored choice, else
     the theme's default); ?mode=… in the URL wins. reload_at: a local time ("04:00") at which the screen loads itself
-    anew every day (new code after a deployment, a fresh start), "" never."""
+    anew every day (new code after a deployment, a fresh start), "" never. show_title: the title beside the logo in the
+    head row (False: only the logo; the title stays for screen readers)."""
 
     key: str  # letters, digits, "-" and "_" (the URL /screen/<key>)
     title: str
@@ -131,6 +132,7 @@ class Screen:
     mode: str = ""
     reload_at: str = "04:00"
     position: int = 100  # order in the list of screens
+    show_title: bool = True
 
     def __post_init__(self):
         if not SCREEN_KEY.fullmatch(self.key or ""):

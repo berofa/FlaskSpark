@@ -63,7 +63,7 @@ class Demo(Module):
     SETTINGS = ("demo/settings.html",)
     PAGE_SECTIONS = {"profile": ("demo/profile.html",), "screen:wall": ("demo/screen.html",)}
     SCREENS = (Screen("wall", N_("Wall"), "demo", N_("Notes on the wall"), "display", mode="dark"),
-               Screen("empty", N_("Empty"), "demo", reload_at="", position=200))
+               Screen("empty", N_("Empty"), "demo", reload_at="", position=200, show_title=False))
     TILES = (Tile(N_("Notes"), "/demo/notes", "demo", N_("Short notes"), "journal"),)
     PUSH_TOPICS = (PushTopic("demo.state", "demo", latest=True),)
     MODELS = ("modules.demo.models",)

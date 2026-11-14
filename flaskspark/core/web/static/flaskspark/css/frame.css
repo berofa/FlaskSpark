@@ -39,6 +39,7 @@
  *   --app-screen-padding, --app-screen-gap                   info screens: the margin around the page, between sections
  *   --app-screen-logo-height                                 info screens: the logo in the head row
  *   --app-screen-aside-width                                 info screens: the column on the right (.app-screen-aside)
+ *   --app-screen-section-title-size                         info screens: the titles of the sections
  */
 
 /* A length, so a theme may write 0 (attached sidebar) and calc()/min() still get a length. */
@@ -971,6 +972,7 @@ ui-tooltip {
   --app-screen-gap: 1rem;
   --app-screen-logo-height: 2.25rem;
   --app-screen-aside-width: 28%;
+  --app-screen-section-title-size: 1.05rem;
 }
 
 html[data-screen] {
@@ -1100,7 +1102,7 @@ body.app-screen-body {
 
 .app-screen-section-title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--app-screen-section-title-size);
   font-weight: 600;
 
   :is(.bi, .bi-svg) {

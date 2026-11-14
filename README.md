@@ -1258,7 +1258,7 @@ Every module has exactly one `Module` subclass in `<package>/module.py`. `NAME` 
 | `SETTINGS` | Templates of its own sections in its tab of «Settings» (admins), above the generated form of `CONFIG`, e.g. `("notes/settings.html",)`; each brings its own script and API. |
 | `PUBLIC_ENDPOINTS` | Endpoints reachable without a sign-in (e.g. an API for agents with its own authentication). |
 | `PAGE_SECTIONS` | Templates it adds to a page: `"home"` (the core's start page), `"profile"` (the [profile](#accounts), with sign-in; only of modules the visitor may use) and `"screen:<key>"` (an [info screen](#info-screens) of any module), e.g. `{"home": ("notes/home_section.html",), "profile": ("notes/profile.html",)}`. |
-| `SCREENS` | Its [info screens](#info-screens): `Screen(key, title, area, description="", icon="", mode="", reload_at="04:00", position=100)`, each a page `/screen/<key>` for a display on the wall. |
+| `SCREENS` | Its [info screens](#info-screens): `Screen(key, title, area, description="", icon="", mode="", reload_at="04:00", position=100, show_title=True)`, each a page `/screen/<key>` for a display on the wall (`show_title=False`: only the logo in the head row). |
 | `LAYOUT` | Templates included in every page (dialogs, scripts of the navigation). |
 | `CLI` | `"<python module>:<click command or group>"`: a command of the app's command line (`myapp <command> …`, in the web app's context) and of the `flask` CLI (`flask --app flaskspark.core.web.app:create_app <command>`). |
 | `PACKAGE` | Set by the loader: the module's package. |
@@ -1664,6 +1664,7 @@ The layout lives in FlaskSpark only (`flaskspark/core/web/static/flaskspark/css/
 | `--app-screen-padding`, `--app-screen-gap` | `1.25rem`, `1rem` | Info screens: the margin around the page, the gap between sections. |
 | `--app-screen-logo-height` | `2.25rem` | Info screens: the logo in the head row. |
 | `--app-screen-aside-width` | `28%` | Info screens: the width of the column on the right (a section with `.app-screen-aside`). |
+| `--app-screen-section-title-size` | `1.05rem` | Info screens: the titles of the sections (`.app-screen-section-title`). |
 
 A page background per colour mode that `light-dark()` cannot hold (a gradient) is the same token set per mode:
 `html.theme-dark { --app-page-bg: linear-gradient(…); }` (likewise `html.theme-light`).

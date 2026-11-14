@@ -67,6 +67,11 @@ def test_the_url_sets_mode_and_scale(client):
     assert plain == '<html lang="en" data-screen="empty">'
 
 
+def test_the_title_beside_the_logo_or_only_for_screen_readers(client):
+    assert '<h1 class="app-screen-title">Wall</h1>' in client.get("/screen/wall").get_data(as_text=True)
+    assert '<h1 class="app-screen-title visually-hidden">Empty</h1>' in client.get("/screen/empty").get_data(as_text=True)
+
+
 def test_an_empty_screen_says_so(client):
     html = client.get("/screen/empty").get_data(as_text=True)
     assert "Nothing on this screen yet." in html

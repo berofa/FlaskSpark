@@ -29,7 +29,7 @@
           <img src="{{ url_for('theme.static', filename='images/' ~ theme.logo) }}" alt="{{ app_title }}" class="brand-logo brand-logo--light">
           <img src="{{ url_for('theme.static', filename='images/' ~ theme.logo_dark) }}" alt="{{ app_title }}" class="brand-logo brand-logo--dark">
         </span>
-        <h1 class="app-screen-title">{{ screen_title }}</h1>
+        <h1 class="app-screen-title{% if not screen.show_title %} visually-hidden{% endif %}">{{ screen_title }}</h1>
         {#- The live state (screen.js: the push channel) and the clock (date and time in the page's language). #}
         <span class="app-screen-live" data-screen-live data-state="connecting" title="{{ _('Live') }}">
           <span class="app-screen-live-dot" aria-hidden="true"></span>
