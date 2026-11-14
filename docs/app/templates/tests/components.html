@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Component checks</title>
+  <link rel="stylesheet" href="{{ webcomponents_url('vendor/bootstrap6/css/bootstrap.min.css') }}">
+  <script type="module" src="{{ webcomponents_url('modules/bootstrap/bootstrap.js') }}"></script>
+  <script type="module" src="{{ webcomponents_url('modules/calendar/calendar.js') }}"></script>
+  <style>
+    .page-primary { --bs-primary-bg: rgb(1, 2, 3); }
+  </style>
+</head>
+<body>
+  {# Fixtures: one element per check; the script below reads them and reports JSON into #results. #}
+  <div id="fixtures">
+    <ui-button id="themed-button" variant="primary" style="--bs-btn-border-radius: 7px">Themed</ui-button>
+    <div class="page-primary"><ui-button id="page-token-button" variant="primary">Page token</ui-button></div>
+    <div style="--bs-btn-border-radius: 11px"><ui-button id="wrapped-token-button">Wrapper token</ui-button></div>
+    <ui-button id="small-button" size="sm" style="--bs-btn-padding-x: 50px">Small</ui-button>
+    <ui-button id="toggle-button" toggle>Toggle</ui-button>
+    <fieldset disabled><ui-button id="fieldset-button">In fieldset</ui-button></fieldset>
+    <form id="submit-form"><ui-button id="submit-button" type="submit">Submit</ui-button></form>
+
+    <ui-badge id="themed-badge" style="--bs-badge-padding-x: 9px">Badge</ui-badge>
+    <ui-badge id="outline-badge" variant="danger" appearance="outline">Outline</ui-badge>
+    <ui-badge id="empty-badge"></ui-badge>
+    <ui-badge id="scoped-badge" scope="Status" color="#000000" pill>Triage</ui-badge>
+    <ui-badge id="light-badge" color="#ffecdb">Backend</ui-badge>
+    <ui-badge id="variant-scoped-badge" scope="Release" variant="success">v1</ui-badge>
+
+    <ui-alert id="themed-alert" dismissible style="--bs-alert-border-radius: 3px"><p>Alert</p></ui-alert>
+    <ui-alert id="instant-alert" instant><p>Gone</p></ui-alert>
+    <ui-alert id="cancel-alert" instant><p>Stays</p></ui-alert>
+    <ui-alert id="dismiss-alert" instant><p><button data-bs-dismiss="alert" id="dismiss-trigger">x</button></p></ui-alert>
+
+    <ui-close-button id="themed-close" style="--bs-btn-close-size: 30px"></ui-close-button>
+
+    <ui-breadcrumb id="crumbs" divider="/">
+      <ui-breadcrumb-item href="#a">A</ui-breadcrumb-item>
+      <ui-breadcrumb-item href="#b">B</ui-breadcrumb-item>
+      <ui-breadcrumb-item active>C</ui-breadcrumb-item>
+    </ui-breadcrumb>
+    <ui-breadcrumb id="themed-crumbs" style="--bs-breadcrumb-link-color: rgb(4, 5, 6)">
+      <ui-breadcrumb-item href="#a">A</ui-breadcrumb-item>
+      <ui-breadcrumb-item active>B</ui-breadcrumb-item>
+    </ui-breadcrumb>
+
+    <ui-list-group id="plain-list" style="--bs-list-group-item-padding-x: 33px">
+      <ui-list-group-item>One</ui-list-group-item>
+      <ui-list-group-item active>Two</ui-list-group-item>
+      <ui-list-group-item>Three</ui-list-group-item>
+    </ui-list-group>
+    <ui-list-group id="action-list">
+      <ui-list-group-item href="#x">Link</ui-list-group-item>
+      <ui-list-group-item action>Button</ui-list-group-item>
+      <ui-list-group-item action disabled>Disabled</ui-list-group-item>
+    </ui-list-group>
+    <ui-list-group id="class-list" numbered>
+      <ui-list-group-item class="d-flex justify-content-between"><span>Text</span><span>14</span></ui-list-group-item>
+    </ui-list-group>
+    <ui-list-group id="numbered-list" numbered>
+      <ui-list-group-item>One</ui-list-group-item>
+      <ui-list-group-item>Two</ui-list-group-item>
+    </ui-list-group>
+
+
+    <ui-button-group id="group" divider label="Group">
+      <ui-button variant="primary">A</ui-button>
+      <ui-button variant="primary">B</ui-button>
+      <ui-button variant="primary">C</ui-button>
+    </ui-button-group>
+    <ui-button-group id="vgroup" vertical size="sm">
+      <ui-button>A</ui-button>
+      <ui-button>B</ui-button>
+    </ui-button-group>
+    <ui-button-group id="toggle-group">
+      <ui-check type="radio" name="tg" button="outline" variant="primary" checked>1</ui-check>
+      <ui-check type="radio" name="tg" button="outline" variant="primary">2</ui-check>
+    </ui-button-group>
+
+    <form id="check-form">
+      <ui-check id="check-a" name="a" value="yes" label="A" variant="success" style="--bs-check-size: 30px"></ui-check>
+      <ui-check id="check-ind" indeterminate label="Ind"></ui-check>
+      <ui-check id="check-switch" switch label="Switch" description="More"></ui-check>
+      <ui-check id="radio-1" type="radio" name="r" value="1" label="One" required></ui-check>
+      <ui-check id="radio-2" type="radio" name="r" value="2" label="Two" required></ui-check>
+      <ui-input id="text-input" name="t" label="Text" help="Help" value="x" style="--bs-control-border-radius: 13px"></ui-input>
+      <ui-input id="required-input" name="req" label="Req" required valid-feedback="Fine"></ui-input>
+      <ui-input id="error-input" name="err" label="Err" value="taken" error="Already taken"></ui-input>
+      <ui-input id="floating-input" label="Email" floating type="email"></ui-input>
+      <ui-input id="adorn-input" label="Amount" start="$" end="CHF"></ui-input>
+      <ui-input id="group-input" label="URL" prefix="https://"><ui-button slot="suffix">Go</ui-button></ui-input>
+      <ui-input id="list-input" label="City" caret><datalist><option value="Bern"></option><option value="Basel"></option></datalist></ui-input>
+      <ui-select id="multi-select" name="m" multiple label="Multi">
+        <option value="1" selected>One</option><option value="2" selected>Two</option><option value="3">Three</option>
+      </ui-select>
+      <ui-textarea id="area" name="area" label="Area" rows="4" floating></ui-textarea>
+      <ui-select id="floating-select" label="Pick" floating><option>One</option></ui-select>
+    </form>
+
+
+    <ui-button id="dlg-trigger" data-bs-toggle="dialog" data-bs-target="#dlg">Open</ui-button>
+    <ui-dialog id="dlg" heading="Title" style="--bs-dialog-border-radius: 9px">
+      <p>Body</p>
+      <ui-button slot="footer" id="dlg-dismiss" data-bs-dismiss="dialog">Close</ui-button>
+      <ui-button slot="footer" id="swap-trigger" data-bs-toggle="dialog" data-bs-target="#dlg2">Next</ui-button>
+    </ui-dialog>
+    <ui-dialog id="dlg2" heading="Second"><p>Two</p></ui-dialog>
+    <ui-dialog id="dlg-static" heading="Static" backdrop="static" keyboard="false"><p>Static</p></ui-dialog>
+    <ui-dialog id="dlg-nonmodal" heading="Non-modal" modal="false" animation="instant"><p>Non-modal</p></ui-dialog>
+    <ui-drawer id="drw" heading="Drawer" placement="end"><p>Drawer</p></ui-drawer>
+    <ui-drawer id="drw-scroll" heading="Scroll" scroll backdrop="false"><p>Scroll</p></ui-drawer>
+    <ui-drawer id="drw-docked" heading="Docked" responsive="sm"><p>Docked content</p></ui-drawer>
+
+    <ui-menu id="mnu">
+      <ui-button id="mnu-toggle" data-bs-toggle="menu">Menu</ui-button>
+      <div class="menu">
+        <a class="menu-item" href="#" id="mnu-first">First</a>
+        <div class="submenu">
+          <button class="menu-item" type="button" id="mnu-sub-trigger">More</button>
+          <div class="menu"><a class="menu-item" href="#" id="mnu-sub-item">Deep</a></div>
+        </div>
+        <a class="menu-item" href="#" id="mnu-last">Last</a>
+      </div>
+    </ui-menu>
+    <ui-menu id="mnu-inside" auto-close="inside">
+      <button data-bs-toggle="menu" id="mnu-inside-toggle">Inside</button>
+      <div class="menu"><a class="menu-item" href="#">Item</a></div>
+    </ui-menu>
+    <button data-bs-toggle="menu" id="plain-toggle">Plain</button>
+    <div class="menu" id="plain-menu"><a class="menu-item" href="#">Plain item</a></div>
+
+
+    <ui-button id="col-trigger" data-bs-toggle="collapse" data-bs-target=".multi">Both</ui-button>
+    <ui-collapse id="col-a" class="multi"><p>A</p></ui-collapse>
+    <div class="collapse multi" id="col-b"><p>B</p></div>
+    <div style="width: 700px"><ui-tabs id="tabs-card" card>
+      <ui-tab-panel heading="One">One</ui-tab-panel><ui-tab-panel heading="Two">Two</ui-tab-panel>
+      <ui-tab-panel heading="Third panel">3</ui-tab-panel><ui-tab-panel heading="Fourth panel">4</ui-tab-panel>
+      <ui-tab-panel heading="Fifth panel">5</ui-tab-panel><ui-tab-panel heading="Sixth panel">6</ui-tab-panel>
+      <button slot="actions" id="tabs-card-action" type="button" style="width: 12rem">Act</button>
+    </ui-tabs></div>
+    <ui-tabs id="tabs" variant="pills">
+      <ui-tab-panel heading="One" name="one">One</ui-tab-panel>
+      <ui-tab-panel heading="Two" name="two">Two</ui-tab-panel>
+      <ui-tab-panel heading="Off" name="off" disabled>Off</ui-tab-panel>
+    </ui-tabs>
+    <ul class="nav nav-tabs" id="plain-tabs">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pane-a" type="button">A</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-b" type="button" id="plain-tab-b">B</button></li>
+    </ul>
+    <div class="tab-content"><div class="tab-pane active show" id="pane-a">A</div><div class="tab-pane" id="pane-b">B</div></div>
+    <nav class="navbar" id="test-navbar"><div class="container-fluid">
+      <button class="btn-icon navbar-toggler" type="button" data-bs-toggle="drawer" data-bs-target="#plainDrawer" id="plain-drawer-toggle" aria-expanded="false">≡</button>
+      <dialog class="drawer drawer-end" id="plainDrawer"><div class="drawer-header"><button type="button" class="btn-close" data-bs-dismiss="drawer" id="plain-drawer-close"></button></div><div class="drawer-body">Links</div></dialog>
+    </div></nav>
+
+
+    <div style="padding: 60px 0 0 200px">
+      <ui-tooltip id="tt" text="Hello" style="--bs-tooltip-bg: rgb(7, 8, 9)"><ui-button>Tip</ui-button></ui-tooltip>
+      <ui-tooltip id="tt-html" html text="<b>bold</b><img src=x onerror=alert(1)><script>alert(2)</script>" trigger="click"><ui-button>HTML</ui-button></ui-tooltip>
+      <ui-popover id="pop" heading="Title" text="Body" placement="bottom"><ui-button>Pop</ui-button></ui-popover>
+      <ui-popover id="pop2" text="Second"><ui-button>Pop 2</ui-button></ui-popover>
+      <button id="plain-tip" data-bs-toggle="tooltip" title="Plain title" data-bs-placement="bottom">Plain</button>
+    </div>
+    <ui-toast id="toast" heading="Head" meta="now" autohide="false">Message <button data-bs-dismiss="toast" id="toast-dismiss">x</button></ui-toast>
+    <ui-toast id="toast-auto" delay="200" keep>Auto</ui-toast>
+
+    <ui-card id="themed-card" style="--bs-card-border-radius: 11px">
+      <span slot="header">Header</span>
+      <p id="card-paragraph">Body</p>
+      <span slot="footer">Footer</span>
+    </ui-card>
+    <ui-card id="list-card">
+      <ui-list-group flush slot="list"><ui-list-group-item>Item</ui-list-group-item></ui-list-group>
+    </ui-card>
+    <ui-card id="head-card" heading="Revenue" icon="graph-up" style="--ui-card-icon-color: rgb(4, 5, 6)">
+      <button slot="actions" id="head-card-action">Act</button>
+      <p>Body</p>
+    </ui-card>
+    <ui-card id="fold-card" heading="Fold" collapsible collapsed><p id="fold-body">Folded body</p></ui-card>
+    <ui-kpi-group id="kpis" compact style="--ui-kpi-group-gap: 9px">
+      <ui-kpi id="kpi-a" label="Total" value="1'234" sub="since May" trend="2.5" variant="success" style="--ui-kpi-radius: 5px"></ui-kpi>
+      <ui-kpi id="kpi-b" label="Costs" trend="up" trend-inverse size="lg"><b id="kpi-b-value">99</b><span slot="sub">sub</span></ui-kpi>
+    </ui-kpi-group>
+    <ui-card-group id="card-group">
+      <ui-card>One</ui-card>
+      <ui-card>Two</ui-card>
+      <ui-card>Three</ui-card>
+    </ui-card-group>
+
+    <ui-accordion id="acc" variant="success" style="--bs-accordion-padding-x: 33px">
+      <ui-accordion-item heading="One" open>Body one</ui-accordion-item>
+      <ui-accordion-item><b slot="heading" id="acc-rich">Two</b>Body two</ui-accordion-item>
+      <ui-accordion-item heading="Three" disabled>Body three</ui-accordion-item>
+    </ui-accordion>
+
+    <div style="width: 300px">
+      <ui-carousel id="car" controls indicators ends="stop" style="--bs-carousel-indicator-width: 13px">
+        <ui-carousel-item><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+        <ui-carousel-item interval="1234"><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+        <ui-carousel-item><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+      </ui-carousel>
+      <ui-carousel id="car-fade" fade controls ends="wrap">
+        <ui-carousel-item><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+        <ui-carousel-item active><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+      </ui-carousel>
+      <ui-carousel id="car-loop" controls>
+        <ui-carousel-item><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+        <ui-carousel-item><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+      </ui-carousel>
+      <ui-carousel id="car-play" autoplay play-pause interval="300" pause="false">
+        <ui-carousel-item><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+        <ui-carousel-item><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></ui-carousel-item>
+      </ui-carousel>
+      <div id="plain-car" class="carousel slide" data-bs-ends="stop">
+        <div class="carousel-inner"><div class="carousel-item active"><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></div><div class="carousel-item"><svg width="100%" height="60"><rect width="100%" height="100%" fill="#888"/></svg></div></div>
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#plain-car" data-bs-slide-to="0" class="active"></button>
+          <button type="button" data-bs-target="#plain-car" data-bs-slide-to="1" id="plain-car-to-1"></button>
+        </div>
+      </div>
+    </div>
+
+    <ui-chip id="chip-toggle" toggle name="f" value="x" variant="success" style="--bs-chip-padding-x: 21px">Toggle</ui-chip>
+    <ui-chip id="chip-dismiss" dismissible>Bye</ui-chip>
+    <form id="chip-form">
+      <ui-chip-input id="chips" name="tags" value="A, B" max-chips="3" style="--bs-chip-input-gap: 9px"></ui-chip-input>
+    </form>
+    <ui-table id="tbl" variant="success" striped stacked="md" card style="--bs-table-cell-padding-x: 17px">
+      <table class="mb-0"><thead><tr><th>Name</th><th>Type</th></tr></thead>
+        <tbody><tr><td>a</td><td>x</td></tr><tr><td>b</td><td data-cell="Own">y</td></tr></tbody></table>
+    </ui-table>
+    <ui-table id="tbl-head" style="--ui-table-head-color: rgb(9, 8, 7); --ui-table-head-font-weight: 500; --ui-table-last-row-border-width: 0">
+      <table><thead><tr><th>H</th></tr></thead><tbody><tr><td>a</td></tr><tr><td>b</td></tr></tbody></table></ui-table>
+    <ui-table id="tbl-total"><table><tbody><tr><td>a</td></tr></tbody><tfoot><tr class="table-total"><td>Sum</td></tr></tfoot></table></ui-table>
+    <ui-table id="tbl-icons"><table><thead><tr><th>Name</th><th class="table-icons"></th></tr></thead>
+      <tbody><tr><td>a</td><td><ui-button icon size="sm" label="Edit">E</ui-button> <ui-button icon size="sm" label="Delete">D</ui-button></td></tr>
+        <tr><td colspan="2">wide</td></tr></tbody></table></ui-table>
+    <ui-gallery id="gal" captions editable sortable style="--ui-gallery-gap: 11px">
+      <ui-gallery-item item-id="a" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3C/svg%3E" title="A"></ui-gallery-item>
+      <ui-gallery-item item-id="b" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3C/svg%3E" title="B"></ui-gallery-item>
+      <ui-gallery-item item-id="c" kind="video" src="none.mp4" title="C"></ui-gallery-item>
+    </ui-gallery>
+    <form id="dz-form"><ui-dropzone id="dz" name="docs" multiple max-files="2" max-size="1KB" accept=".txt" required
+      style="--ui-dropzone-radius: 13px" variant="success"></ui-dropzone></form>
+    <div style="width: 700px"><ui-grid id="grid" container columns="1" columns-sm="3" gap="3" style="--ui-grid-gap-y: 7px">
+      <div>1</div><div style="--ui-grid-span: 2">2</div><div>3</div></ui-grid></div>
+    <div style="width: 800px"><ui-grid-editor id="ged" merge-right-label="Rechts verbinden" add-row-label="Zeile einfügen">
+      <script type="application/json">{"items": [{"id": "a", "title": "A", "badge": "B"}, {"id": "b", "title": "B"}],
+        "layout": {"rows_count": 1, "columns_count": 2, "areas": [
+          {"row": 1, "column": 1, "row_span": 1, "column_span": 1, "item_ids": ["a"], "cell_items": {"1:1": ["a"]}},
+          {"row": 1, "column": 2, "row_span": 1, "column_span": 1, "item_ids": ["b"], "cell_items": {"1:2": ["b"]}}]}}</script>
+    </ui-grid-editor></div>
+    <form id="rt-form"><ui-richtext id="rt" name="body" required bold-label="Fett" style="--ui-richtext-radius: 9px"
+      value="<p style='color:red' onclick='x()'>Hi <b>bold</b></p><script>bad()</script>"></ui-richtext></form>
+    <ui-richtext id="rt-empty" required></ui-richtext>
+    <form id="mde-form"><ui-markdown-editor id="mde" name="note" required style="--ui-markdown-editor-radius: 11px"
+      labels='{"bold": "Fett", "alert-note": "Hinweis"}' base-url="https://git.example.com/p"
+      value="**Hi** ![a](/uploads/a.png)&#10;&#10;- [x] done&#10;&#10;> [!note]&#10;> x"></ui-markdown-editor></form>
+    <ui-markdown-editor id="mde-empty" required></ui-markdown-editor>
+    <ui-markdown id="md-view" value="## Head&#10;&#10;[x](javascript:alert(1)) <img src=x onerror=alert(1)>"></ui-markdown>
+    <div data-bs-theme="dark"><ui-calendar id="cal-dark" soft view="week" date="2026-11-09" locale="en" style="--ui-calendar-height: 400px"></ui-calendar></div>
+    <ui-calendar id="cal" view="month" date="2026-11-09" locale="en" style="--ui-calendar-height: 400px; --ui-calendar-event-bg: rgb(1, 2, 3)"></ui-calendar>
+    <div lang="de-CH"><ui-calendar id="cal-de" view="month" date="2026-11-09" style="--ui-calendar-height: 300px"></ui-calendar></div>
+    <ui-calendar id="cal-labels" view="month" date="2026-11-09" locale="en" week-label="Semaine" today-label="Now" style="--ui-calendar-height: 300px"></ui-calendar>
+    <form id="rng-form"><ui-range id="rng" name="vol" min="0" max="10" value="5" bubble format="{value}!" variant="success">
+      <option value="0" label="Low"></option><option value="10" label="High"></option></ui-range></form>
+    <div id="plain-rng" class="form-range" data-bs-bubble><input type="range" class="form-range-input" value="25"></div>
+    <div id="tg-self" data-bs-toggle="toggler" data-bs-value="on">self</div>
+    <ui-button id="tg-btn" data-bs-toggle="toggler" data-bs-target=".tg-target">targets</ui-button>
+    <div class="tg-target" id="tg-a" data-bs-value="red"></div>
+    <fieldset class="tg-target" id="tg-b" data-bs-attribute="disabled" data-bs-value=""></fieldset>
+    <ui-input id="pw" type="password" strength strength-text strong-label="Top"></ui-input>
+    <div id="pw-plain"><input type="password" id="pw-plain-input"><div class="strength" data-bs-strength>
+      <div class="strength-segment"></div><div class="strength-segment"></div><div class="strength-segment"></div><div class="strength-segment"></div></div>
+      <span class="strength-text"></span></div>
+    <form id="otp-form"><ui-otp id="otp" name="code" length="4" groups="2,2" style="--bs-otp-gap: 5px"></ui-otp></form>
+    <div id="otp-plain" class="otp" data-bs-otp data-bs-mask="true"><input type="text" maxlength="3"></div>
+    <form id="dp-form"><ui-datepicker id="dp-inline" inline name="when" value="2026-11-12" style="--bs-datepicker-day-selected-bg: rgb(4, 5, 6)"></ui-datepicker></form>
+    <div style="position: relative; margin-left: 120px; padding-top: 30px"><ui-datepicker id="dp-popup" value="2026-03-04" locale="de-CH"></ui-datepicker></div>
+    <form id="cb-form">
+      <ui-combobox id="cb" name="pick" placeholder="Pick" search normalize style="--bs-menu-item-active-bg: rgb(7, 7, 7)">
+        <ui-option value="a">Alpha</ui-option><ui-option value="z" label="Zurich">Zürich</ui-option><ui-option value="x" disabled>X</ui-option>
+      </ui-combobox>
+      <ui-combobox id="cb-multi" name="many" multiple value="a,b" count-label="{n} chosen">
+        <ui-option value="a">A</ui-option><ui-option value="b">B</ui-option><ui-option value="c">C</ui-option>
+      </ui-combobox>
+    </form>
+    <button id="cb-plain" class="form-control combobox-toggle" type="button" data-bs-toggle="combobox" data-bs-name="plaincb" data-bs-placeholder="Plain">
+      <span class="combobox-value"></span></button>
+    <div class="menu"><button class="menu-item" type="button" data-bs-value="p1">P1</button></div>
+    <div id="no-box" style="width: 190px"><div id="no" class="nav-overflow" data-bs-toggle="nav-overflow"><ul class="nav nav-pills">
+      <li class="nav-item nav-overflow-keep"><a class="nav-link" href="#">Keep</a></li>
+      <li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="menu">Sub</button><div class="menu"><a class="menu-item" href="#">S1</a></div></li>
+      <li class="nav-item"><a class="nav-link active" href="#">Item 0</a></li><li class="nav-item"><a class="nav-link" href="#">Item 1</a></li><li class="nav-item"><a class="nav-link" href="#">Item 2</a></li><li class="nav-item"><a class="nav-link" href="#">Item 3</a></li><li class="nav-item"><a class="nav-link" href="#">Item 4</a></li><li class="nav-item"><a class="nav-link" href="#">Item 5</a></li><li class="nav-item"><a class="nav-link" href="#">Item 6</a></li><li class="nav-item"><a class="nav-link" href="#">Item 7</a></li></ul></div></div>
+    <ui-spinner id="sp-border" style="--bs-spinner-width: 31px"></ui-spinner>
+    <ui-spinner id="sp-grow" type="grow" variant="danger"></ui-spinner>
+    <ui-spinner id="sp-deco" label=""></ui-spinner>
+    <div style="width: 600px"><ui-placeholder id="ph" width="6" size="lg" animation="wave" style="--bs-placeholder-opacity-max: 0.5"></ui-placeholder></div>
+    <ui-progress id="pg" value="30" max="60" show-value label="Upload" variant="success" style="--bs-progress-height: 23px"></ui-progress>
+    <ui-progress id="pg-stack"><ui-progress-bar value="20" label="A"></ui-progress-bar><ui-progress-bar value="30" variant="info" label="B">x</ui-progress-bar></ui-progress>
+    <ui-avatar id="av" variant="success" subtle status="busy" style="--bs-avatar-size: 44px">AB</ui-avatar>
+    <ui-avatar-stack id="avs" size="lg"><ui-avatar src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3C/svg%3E" alt="a"></ui-avatar><ui-avatar src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3C/svg%3E" alt="b"></ui-avatar><ui-avatar size="xs">+2</ui-avatar></ui-avatar-stack>
+    <ui-pagination id="pgn" total="20" current="10" style="--bs-pagination-min-height: 41px"></ui-pagination>
+    <ui-pagination id="pgn-link" total="3" current="1" href="?p={page}" arrows="icons"></ui-pagination>
+    <ui-stepper id="stp" current="2" style="--bs-stepper-size: 27px"><ui-step>A</ui-step><ui-step>B</ui-step><ui-step variant="danger">C</ui-step></ui-stepper>
+    <ui-stepper id="stp-click" horizontal clickable><ui-step>A</ui-step><ui-step disabled>B</ui-step><ui-step href="#x">C</ui-step></ui-stepper>
+    <nav id="ss-nav" class="nav"><a class="nav-link" href="#ss-1">1</a><a class="nav-link" href="#ss-2">2</a><a class="nav-link" href="#ss-3">3</a><a class="nav-link" href="#ss-4">4</a></nav>
+    <div id="ss-box" data-bs-spy="scroll" data-bs-target="#ss-nav" style="height: 200px; overflow-y: auto; position: relative"><h4 id="ss-1">S1</h4><p style="height: 150px">x</p><h4 id="ss-2">S2</h4><p style="height: 150px">x</p><h4 id="ss-3">S3</h4><p style="height: 150px">x</p><h4 id="ss-4">S4</h4><p style="height: 150px">x</p></div>
+    <ui-list-group id="ss-list"><ui-list-group-item href="#ssl-1">A</ui-list-group-item><ui-list-group-item href="#ssl-2">B</ui-list-group-item></ui-list-group>
+    <div id="ss-box2" data-bs-spy="scroll" data-bs-target="#ss-list" style="height: 150px; overflow-y: auto"><h4 id="ssl-1">A</h4><p style="height: 300px">x</p><h4 id="ssl-2">B</h4><p style="height: 300px">y</p></div>
+    <form id="v-none"><ui-input id="v-none-in" required></ui-input></form>
+    <form id="v-on" data-bs-validate novalidate onsubmit="event.preventDefault()"><ui-input id="v-on-in" required></ui-input><ui-check id="v-on-check" required label="Agree"></ui-check>
+      <ui-input id="v-on-ok" value="filled"></ui-input></form>
+    <form id="v-valid" data-bs-validate="valid" novalidate><ui-input id="v-valid-in" value="ok" required></ui-input></form>
+    <div id="plain-chips" class="chip-input" data-bs-chips><span class="chip">P</span><input class="form-ghost"></div>
+  </div>
+
+  <pre id="results">pending</pre>
+
+  <script type="module">
+    const results = [];
+    const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), detail: String(detail) });
+    const $ = (selector) => document.querySelector(selector);
+    const inner = (host, selector) => host.shadowRoot.querySelector(selector);
+    const style = (element, pseudo) => getComputedStyle(element, pseudo);
+    const tick = () => new Promise((resolve) => setTimeout(resolve, 50));
+    const waitFor = async (condition, ms = 2000) => {
+      for (let waited = 0; waited < ms && !condition(); waited += 50) await tick();
+      return condition();
+    };
+
+    async function run() {
+      const tags = ["ui-button", "ui-badge", "ui-alert", "ui-close-button", "ui-breadcrumb", "ui-list-group", "ui-card",
+        "ui-card-group", "ui-button-group", "ui-check", "ui-input", "ui-select", "ui-textarea", "ui-dialog", "ui-drawer", "ui-collapse", "ui-tabs", "ui-tooltip", "ui-popover", "ui-toast", "ui-accordion", "ui-carousel", "ui-chip", "ui-chip-input", "ui-table", "ui-gallery", "ui-dropzone", "ui-grid", "ui-grid-editor", "ui-richtext", "ui-markdown-editor", "ui-markdown", "ui-calendar", "ui-range", "ui-otp", "ui-datepicker", "ui-combobox", "ui-spinner", "ui-placeholder", "ui-progress", "ui-avatar", "ui-avatar-stack", "ui-pagination", "ui-stepper", "ui-kpi", "ui-kpi-group"];
+      await Promise.all(tags.map((tag) => customElements.whenDefined(tag)));
+      // Stylesheets load asynchronously: wait until every component rendered.
+      for (let i = 0; i < 100 && [...document.querySelectorAll(tags.join(","))].some((el) => !el.hasRendered); i += 1) {
+        await tick();
+      }
+      await tick();
+
+      // Tokens: themeable on the host, page tokens inherit, modifiers still win.
+      check("button token on host", style(inner($("#themed-button"), "button")).borderTopLeftRadius === "7px",
+        style(inner($("#themed-button"), "button")).borderTopLeftRadius);
+      check("page token reaches the component", style(inner($("#page-token-button"), "button")).backgroundColor === "rgb(1, 2, 3)",
+        style(inner($("#page-token-button"), "button")).backgroundColor);
+      check("size modifier wins over host token", style(inner($("#small-button"), "button")).paddingLeft !== "50px",
+        style(inner($("#small-button"), "button")).paddingLeft);
+      check("badge token on host", style(inner($("#themed-badge"), ".badge")).paddingLeft === "9px",
+        style(inner($("#themed-badge"), ".badge")).paddingLeft);
+      check("badge outline modifier", inner($("#outline-badge"), ".badge").classList.contains("badge-outline")
+        && style(inner($("#outline-badge"), ".badge")).borderTopStyle === "solid");
+      check("empty badge hidden", style($("#empty-badge")).display === "none", style($("#empty-badge")).display);
+      {
+        const badge = inner($("#scoped-badge"), ".badge");
+        const scope = inner($("#scoped-badge"), "[part=scope]");
+        const value = inner($("#scoped-badge"), "[part=value]");
+        check("scoped badge: scope filled, value framed, one height", style(scope).backgroundColor === "rgb(0, 0, 0)"
+          && style(scope).color === "rgb(255, 255, 255)" && style(badge).overflow === "hidden"
+          && scope.getBoundingClientRect().height === value.getBoundingClientRect().height
+          && style(badge).borderTopStyle === "solid",
+          `${style(scope).backgroundColor} ${style(scope).color} ${scope.getBoundingClientRect().height}/${value.getBoundingClientRect().height}`);
+        check("scoped badge reads «Status: Triage»", scope.textContent === "Status: "
+          && inner($("#scoped-badge"), ".visually-hidden").textContent === ": " && value.querySelector("slot")
+          && $("#scoped-badge").textContent.trim() === "Triage", scope.textContent);
+        check("scoped pill rounds only outside", parseFloat(style(badge).borderTopLeftRadius) > 100
+          && style(scope).borderTopLeftRadius === "0px", style(badge).borderTopLeftRadius);
+      }
+      check("free colour: dark text on a light fill", style(inner($("#light-badge"), ".badge")).backgroundColor === "rgb(255, 236, 219)"
+        && inner($("#light-badge"), ".badge").style.getPropertyValue("--ui-badge-contrast").includes("975"),
+        style(inner($("#light-badge"), ".badge")).backgroundColor);
+      check("scoped badge with a variant takes the theme colour", inner($("#variant-scoped-badge"), ".badge").classList.contains("theme-success")
+        && style(inner($("#variant-scoped-badge"), "[part=scope]")).backgroundColor !== "rgba(0, 0, 0, 0)");
+      check("alert token on host", style(inner($("#themed-alert"), ".alert")).borderTopLeftRadius === "3px",
+        style(inner($("#themed-alert"), ".alert")).borderTopLeftRadius);
+      check("close button inside alert keeps its size", style(inner($("#themed-alert"), ".btn-close")).minWidth === "20px",
+        style(inner($("#themed-alert"), ".btn-close")).minWidth);
+      check("close button token on host", style(inner($("#themed-close"), ".btn-close")).minWidth === "30px",
+        style(inner($("#themed-close"), ".btn-close")).minWidth);
+      check("breadcrumb token on host", style(inner($("#themed-crumbs"), "a")).color === "rgb(4, 5, 6)",
+        style(inner($("#themed-crumbs"), "a")).color);
+      check("list group token on host", style(inner($("#plain-list"), ".list-group-item")).paddingLeft === "33px",
+        style(inner($("#plain-list"), ".list-group-item")).paddingLeft);
+      check("card token on host", style(inner($("#themed-card"), ".card")).borderTopLeftRadius === "11px",
+        style(inner($("#themed-card"), ".card")).borderTopLeftRadius);
+
+      // Slotted content: document stylesheets mirror Bootstrap's child rules.
+      check("alert paragraph without margin", style($("#themed-alert p")).marginBottom === "0px", style($("#themed-alert p")).marginBottom);
+      check("card body paragraph without margin", style($("#card-paragraph")).marginBottom === "0px", style($("#card-paragraph")).marginBottom);
+
+      // Button behaviour.
+      const toggle = $("#toggle-button");
+      inner(toggle, "button").click();
+      check("toggle switches active", toggle.hasAttribute("active") && inner(toggle, "button").getAttribute("aria-pressed") === "true");
+      check("disabled fieldset disables the button", inner($("#fieldset-button"), "button").disabled);
+      let submitted = false;
+      $("#submit-form").addEventListener("submit", (event) => { event.preventDefault(); submitted = true; });
+      inner($("#submit-button"), "button").click();
+      check("submit button submits its form", submitted);
+
+      // Alert behaviour.
+      let closing = 0;
+      let closed = 0;
+      document.addEventListener("ui-alert:close", () => { closing += 1; });
+      document.addEventListener("ui-alert:closed", () => { closed += 1; });
+      const removed = await $("#instant-alert").close();
+      check("close() removes the alert", removed === true && !$("#instant-alert") && closing === 1 && closed === 1, `${closing}/${closed}`);
+      $("#cancel-alert").addEventListener("ui-alert:close", (event) => event.preventDefault());
+      check("ui-alert:close can cancel", (await $("#cancel-alert").close()) === false && $("#cancel-alert"));
+      $("#dismiss-trigger").click();
+      await tick();
+      check("data-bs-dismiss closes the alert", !$("#dismiss-alert"));
+
+      // Breadcrumb.
+      const crumbs = $("#crumbs").shadowRoot;
+      check("breadcrumb items and dividers", crumbs.querySelectorAll(".breadcrumb-item").length === 3
+        && crumbs.querySelectorAll(".breadcrumb-divider").length === 2);
+      check("breadcrumb text divider", crumbs.querySelector(".breadcrumb-divider").textContent === "/");
+      check("breadcrumb current page", crumbs.querySelectorAll('[aria-current="page"]').length === 1
+        && crumbs.querySelector(".breadcrumb-item:last-child [part=link]").classList.contains("active"));
+
+      // List group.
+      const plain = $("#plain-list").shadowRoot;
+      check("plain list is ul > li", plain.querySelector("ul.list-group > li.list-group-item") !== null);
+      const items = plain.querySelectorAll(".list-group-item");
+      check("sibling rule: no double borders", style(items[2]).borderTopWidth === "0px", style(items[2]).borderTopWidth);
+      check("active item", items[1].classList.contains("active") && items[1].getAttribute("aria-current") === "true");
+      const actions = $("#action-list").shadowRoot;
+      check("action list is a div of a/button", actions.querySelector("div.list-group > a.list-group-item-action")
+        && actions.querySelector("div.list-group > button.list-group-item-action"));
+      let action = null;
+      $("#action-list").addEventListener("ui-list-group:action", (event) => { action = event.detail.index; });
+      actions.querySelector("button.list-group-item-action").click();
+      check("action event with index", action === 1, action);
+      check("disabled button item", actions.querySelectorAll("button.list-group-item-action")[1].disabled);
+      check("numbered list is an ol", $("#numbered-list").shadowRoot.querySelector("ol.list-group-numbered") !== null);
+      const classItem = $("#class-list").shadowRoot.querySelector(".list-group-item");
+      check("item classes go onto the rendered item", classItem.classList.contains("d-flex") && style(classItem).display === "flex",
+        style(classItem).display);
+      check("item element passes its content on", style($("#class-list > ui-list-group-item")).display === "contents",
+        style($("#class-list > ui-list-group-item")).display);
+      const added = document.createElement("ui-list-group-item");
+      added.textContent = "Four";
+      $("#plain-list").append(added);
+      await tick();
+      check("added item is rendered", plain.querySelectorAll(".list-group-item").length === 4);
+
+
+      // Button group.
+      const groupButtons = [...$("#group").children];
+      check("group places", groupButtons.map((b) => [b.getAttribute("grouped"), b.hasAttribute("group-first"), b.hasAttribute("group-last")].join()).join("|")
+        === "horizontal,true,false|horizontal,false,false|horizontal,false,true");
+      const middle = inner(groupButtons[1], "button");
+      check("group: inner corners square", style(middle).borderTopLeftRadius === "0px" && style(middle).borderTopRightRadius === "0px",
+        style(middle).borderTopLeftRadius);
+      check("group: outer corners round", style(inner(groupButtons[0], "button")).borderTopLeftRadius !== "0px");
+      check("group: overlapping borders", style(groupButtons[1]).marginLeft.startsWith("-"), style(groupButtons[1]).marginLeft);
+      check("group divider line", style(middle, "::before").content !== "none" && style(middle, "::before").content !== "",
+        style(middle, "::before").content);
+      check("vertical group passes size", [...$("#vgroup").children].every((b) => b.getAttribute("size") === "sm"
+        && b.getAttribute("grouped") === "vertical"));
+      const toggles = [...$("#toggle-group").children];
+      check("toggle buttons join the group", toggles[0].getAttribute("grouped") === "horizontal"
+        && style(inner(toggles[0], ".btn-check")).borderTopRightRadius === "0px");
+
+      // Check.
+      const checkA = inner($("#check-a"), "input");
+      check("check classes", checkA.classList.contains("check") && checkA.classList.contains("theme-success"));
+      check("check token on host", style(checkA).width === "30px", style(checkA).width);
+      checkA.click();
+      check("check submits its value", new FormData($("#check-form")).get("a") === "yes");
+      check("indeterminate", inner($("#check-ind"), "input").indeterminate === true);
+      check("switch with description", inner($("#check-switch"), ".switch input[switch]") && inner($("#check-switch"), ".form-text"));
+      check("radio group required: invalid while none checked", !$("#radio-1").checkValidity() && !$("#radio-2").checkValidity());
+      inner($("#radio-2"), "input").click();
+      check("radio group: one checked satisfies all", $("#radio-1").checkValidity() && $("#radio-2").checked);
+      inner($("#radio-1"), "input").click();
+      check("radio group: checking one unchecks the other", $("#radio-1").checked && !$("#radio-2").checked);
+      inner($("#radio-1"), "input").dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+      await tick();
+      check("radio group: arrow key moves", $("#radio-2").checked && !$("#radio-1").checked);
+
+      // Text fields.
+      const text = inner($("#text-input"), "input");
+      check("input in a form field with label and help", inner($("#text-input"), ".form-field > label.form-label")
+        && inner($("#text-input"), ".form-text") && text.classList.contains("form-control"));
+      check("control token on host", style(text).borderTopLeftRadius === "13px", style(text).borderTopLeftRadius);
+      check("input submits", new FormData($("#check-form")).get("t") === "x");
+      check("server error shown at once", inner($("#error-input"), "input").classList.contains("is-invalid")
+        && inner($("#error-input"), "[part=feedback]").textContent === "Already taken");
+      const errorInput = inner($("#error-input"), "input");
+      errorInput.value = "free";
+      errorInput.dispatchEvent(new Event("input"));
+      check("server error cleared by typing", !errorInput.classList.contains("is-invalid"));
+      const req = $("#required-input");
+      check("required invalid", !req.validate() && inner(req, "input").classList.contains("is-invalid"));
+      const reqControl = inner(req, "input");
+      reqControl.value = "ok";
+      reqControl.dispatchEvent(new Event("input"));
+      check("valid feedback", reqControl.classList.contains("is-valid") && inner(req, "[part=valid-feedback]").textContent === "Fine");
+      check("floating label", inner($("#floating-input"), ".form-floating > label + input[placeholder]") !== null);
+      const adorn = inner($("#adorn-input"), ".form-adorn");
+      check("adornments", adorn && adorn.querySelector(".form-ghost") && adorn.querySelectorAll(".form-adorn-text").length === 2);
+      const go = $("#group-input > ui-button");
+      check("suffix button joins the group", go.hasAttribute("grouped") && go.hasAttribute("group-last")
+        && style(inner(go, "button")).borderTopLeftRadius === "0px");
+      check("datalist copied", inner($("#list-input"), "datalist#list option") && inner($("#list-input"), "input").getAttribute("list") === "list");
+      check("multiple select submits all", new FormData($("#check-form")).getAll("m").join() === "1,2");
+      check("floating select: label is the select's sibling", inner($("#floating-select"), ".form-floating > label ~ select") !== null
+        && style(inner($("#floating-select"), ".form-floating > label")).transform !== "none",
+        style(inner($("#floating-select"), ".form-floating > label")).transform);
+      check("floating textarea", inner($("#area"), ".form-floating > label + textarea[rows='4']") !== null);
+
+
+      // Dialog.
+      check("a closed dialog takes no space (no page height below the content)",
+        style($("#dlg2").dialog).display === "none", style($("#dlg2").dialog).display);
+      const tabsCard = $("#tabs-card");
+      const tabsHeader = tabsCard.shadowRoot.querySelector('[part="header"]').getBoundingClientRect();
+      const tabsNav = tabsCard.shadowRoot.querySelector('[part="nav"]').getBoundingClientRect();
+      const tabsAction = $("#tabs-card-action").getBoundingClientRect();
+      check("card tabs: navigation at the start, actions at the end of the same line",
+        tabsNav.left - tabsHeader.left < 40 && Math.abs(tabsAction.right - tabsHeader.right) < 40
+        && tabsAction.top < tabsHeader.top + 40 && tabsNav.right <= tabsAction.left,
+        `nav ${Math.round(tabsNav.left - tabsHeader.left)} action ${Math.round(tabsHeader.right - tabsAction.right)} ${Math.round(tabsAction.top)}/${Math.round(tabsNav.bottom)}`);
+      const dlg = $("#dlg");
+      $("#dlg-trigger").click();
+      check("trigger opens the dialog", await waitFor(() => dlg.isOpen && dlg.hasAttribute("open") && dlg.dialog.matches(":modal")));
+      check("modal dialog locks the page", document.documentElement.classList.contains("dialog-open"));
+      check("dialog token on host", style(dlg.dialog).borderTopLeftRadius === "9px", style(dlg.dialog).borderTopLeftRadius);
+      check("dialog header with close button", inner(dlg, ".dialog-header .dialog-title") && inner(dlg, ".dialog-header .btn-close")
+        && inner(dlg, ".dialog-footer"));
+      $("#swap-trigger").click();
+      check("swap: the second opens, the first closes", await waitFor(() => $("#dlg2").isOpen && !dlg.dialog.open));
+      await $("#dlg2").hide();
+      check("hidden after hide()", !$("#dlg2").dialog.open && !$("#dlg2").hasAttribute("open")
+        && !document.documentElement.classList.contains("dialog-open"));
+      await dlg.show();
+      $("#dlg-dismiss").click();
+      check("data-bs-dismiss closes the dialog", await waitFor(() => !dlg.dialog.open));
+      await dlg.show();
+      dlg.dialog.dispatchEvent(new Event("cancel", { cancelable: true }));
+      check("Escape closes the dialog", await waitFor(() => !dlg.dialog.open));
+      const strict = $("#dlg-static");
+      await strict.show();
+      let prevented = 0;
+      strict.addEventListener("ui-dialog:hide-prevented", () => { prevented += 1; });
+      strict.dialog.dispatchEvent(new Event("cancel", { cancelable: true }));
+      const box = strict.dialog.getBoundingClientRect();
+      strict.dialog.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: 1, clientY: box.bottom + 20 }));
+      await tick();
+      check("static backdrop and keyboard=false keep it open", strict.dialog.open && prevented === 2, prevented);
+      await strict.hide();
+      dlg.addEventListener("ui-dialog:show", (event) => event.preventDefault(), { once: true });
+      check("ui-dialog:show can cancel", (await dlg.show()) === false && !dlg.dialog.open);
+      const nonModal = $("#dlg-nonmodal");
+      await nonModal.show();
+      check("non-modal dialog", nonModal.dialog.open && !nonModal.dialog.matches(":modal")
+        && nonModal.dialog.classList.contains("dialog-nonmodal"));
+      await nonModal.hide();
+
+      // Drawer.
+      const drw = $("#drw");
+      await drw.show();
+      check("drawer opens at its placement", drw.dialog.open && drw.dialog.classList.contains("drawer-end")
+        && drw.dialog.matches(":modal"));
+      await drw.hide();
+      check("drawer closes", !drw.dialog.open);
+      const scrolling = $("#drw-scroll");
+      await scrolling.show();
+      check("scroll + no backdrop: non-modal, page not locked", scrolling.dialog.open && !scrolling.dialog.matches(":modal")
+        && !document.documentElement.classList.contains("dialog-open"));
+      await scrolling.hide();
+      const docked = $("#drw-docked");
+      check("responsive drawer docks above its breakpoint", docked.hasAttribute("docked")
+        && style(docked.dialog).display === "flex" && docked.dialog.getBoundingClientRect().height > 0,
+        `${docked.hasAttribute("docked")} ${style(docked.dialog).display}`);
+
+      // Menu.
+      const menuEl = $("#mnu .menu");
+      $("#mnu-toggle").scrollIntoView({ block: "start" });
+      let shown = false;
+      $("#mnu").addEventListener("ui-menu:shown", () => { shown = true; }, { once: true });
+      inner($("#mnu-toggle"), "button").click();
+      check("menu opens in the top layer", await waitFor(() => menuEl.classList.contains("show") && menuEl.matches(":popover-open")));
+      check("ui-menu:shown after the animation", await waitFor(() => shown));
+      check("toggle state reaches the inner button", inner($("#mnu-toggle"), "button").getAttribute("aria-expanded") === "true");
+      // The placement the menu got (its box is scaled while the opening transition runs).
+      const toggleBox = $("#mnu-toggle").getBoundingClientRect();
+      const placedTop = Number.parseFloat(menuEl.style.top);
+      const placedLeft = Number.parseFloat(menuEl.style.left);
+      check("menu placed below the toggle, start aligned", Math.abs(placedTop - toggleBox.bottom - 2) < 1
+        && Math.abs(placedLeft - toggleBox.left) < 1 && menuEl.dataset.bsPlacement === "bottom-start",
+        `${placedTop} ${toggleBox.bottom} ${placedLeft} ${toggleBox.left}`);
+      $("#mnu-first").focus();
+      $("#mnu-first").dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+      check("arrow keys move between items", document.activeElement === $("#mnu-sub-trigger"));
+      $("#mnu-sub-trigger").click();
+      check("submenu opens", await waitFor(() => $("#mnu .submenu").classList.contains("show")
+        && $("#mnu-sub-trigger").getAttribute("aria-expanded") === "true"));
+      $("#mnu-sub-item").click();
+      check("item click closes the menu (auto close)", await waitFor(() => !menuEl.classList.contains("show")));
+      $("#mnu-inside-toggle").click();
+      await tick();
+      document.body.click();
+      await tick();
+      check("auto-close inside: outside click keeps it open", $("#mnu-inside .menu").classList.contains("show"));
+      $("#mnu-inside .menu-item").click();
+      check("auto-close inside: item click closes", await waitFor(() => !$("#mnu-inside .menu").classList.contains("show")));
+      $("#plain-toggle").click();
+      check("data API on plain markup", await waitFor(() => $("#plain-menu").classList.contains("show")));
+      $("#plain-menu").dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+      check("Escape closes the menu", await waitFor(() => !$("#plain-menu").classList.contains("show")));
+
+
+      // Collapse.
+      $("#col-trigger").click();
+      check("one trigger opens several targets (component and plain)", await waitFor(() => $("#col-a").shown
+        && $("#col-b").classList.contains("show") && inner($("#col-a"), ".collapse.show")));
+      check("trigger gets aria-expanded", inner($("#col-trigger"), "button").getAttribute("aria-expanded") === "true");
+      $("#col-trigger").click();
+      check("and closes them again", await waitFor(() => !$("#col-a").shown && !$("#col-b").classList.contains("show")));
+
+      // Tabs.
+      const tabsEl = $("#tabs");
+      const tabButtons = tabsEl.shadowRoot.querySelectorAll('[role="tab"]');
+      check("tabs rendered as pills with panes", tabsEl.shadowRoot.querySelector(".nav.nav-pills") && tabButtons.length === 3
+        && tabsEl.shadowRoot.querySelectorAll(".tab-content > .tab-pane").length === 3);
+      check("first tab active", tabButtons[0].classList.contains("active") && tabsEl.shadowRoot.querySelector(".tab-pane.active slot[name=panel-0]"));
+      let changed = null;
+      tabsEl.addEventListener("ui-tabs:change", (event) => { changed = event.detail.name; });
+      tabButtons[1].click();
+      check("click switches tab and pane", await waitFor(() => changed === "two"
+        && tabsEl.shadowRoot.querySelector(".tab-pane.active slot[name=panel-1]") !== null));
+      tabsEl.shadowRoot.querySelector('[data-index="1"]').dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+      check("arrow key skips the disabled tab", await waitFor(() => changed === "one"));
+      $("#plain-tab-b").click();
+      check("tab data API on plain markup", $("#plain-tab-b").classList.contains("active") && $("#pane-b").classList.contains("active")
+        && !$("#pane-a").classList.contains("active"));
+
+      // Navbar drawer (plain markup).
+      $("#plain-drawer-toggle").click();
+      check("plain drawer opens from the navbar toggler", await waitFor(() => $("#plainDrawer").open && $("#plainDrawer").matches(":modal")
+        && $("#plain-drawer-toggle").getAttribute("aria-expanded") === "true"));
+      $("#plain-drawer-close").click();
+      check("data-bs-dismiss closes the plain drawer", await waitFor(() => !$("#plainDrawer").open
+        && $("#plain-drawer-toggle").getAttribute("aria-expanded") === "false"));
+
+
+      // Tooltip.
+      const tt = $("#tt");
+      tt.scrollIntoView({ block: "center" });
+      tt.dispatchEvent(new PointerEvent("pointerenter", { pointerType: "mouse" }));
+      const ttBox = () => tt.shadowRoot.querySelector(".tooltip");
+      check("hover shows the tooltip in the top layer", await waitFor(() => ttBox()?.classList.contains("show") && ttBox().matches(":popover-open")));
+      check("tooltip above its trigger with the text", ttBox().dataset.bsPlacement === "top"
+        && Number.parseFloat(ttBox().style.top) + ttBox().offsetHeight <= tt.getBoundingClientRect().top + 1
+        && ttBox().querySelector(".tooltip-inner").textContent === "Hello");
+      check("tooltip token on host", style(ttBox().querySelector(".tooltip-inner")).backgroundColor === "rgb(7, 8, 9)",
+        style(ttBox().querySelector(".tooltip-inner")).backgroundColor);
+      check("trigger described by the tooltip", tt.getAttribute("aria-describedby") === ttBox().id);
+      tt.dispatchEvent(new PointerEvent("pointerleave", { pointerType: "mouse" }));
+      check("leaving hides it", await waitFor(() => !ttBox().classList.contains("show")));
+      check("a hidden tooltip box is gone", await waitFor(() => style(ttBox()).display === "none"), style(ttBox()).display);
+      inner($("#tt-html > ui-button"), "button").click();
+      const htmlBox = await waitFor(() => $("#tt-html").shadowRoot.querySelector(".tooltip.show")) && $("#tt-html").shadowRoot.querySelector(".tooltip-inner");
+      check("html sanitized", htmlBox && htmlBox.querySelector("b") && !htmlBox.querySelector("script")
+        && !htmlBox.querySelector("img")?.hasAttribute("onerror"), htmlBox?.innerHTML);
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+      check("Escape hides the tooltip", await waitFor(() => !$("#tt-html").shadowRoot.querySelector(".tooltip.show")));
+
+      // Popover.
+      inner($("#pop > ui-button"), "button").click();
+      const popBox = () => $("#pop").shadowRoot.querySelector(".popover");
+      check("click opens the popover with header and body", await waitFor(() => popBox()?.classList.contains("show"))
+        && popBox().querySelector(".popover-header").textContent === "Title" && popBox().querySelector(".popover-body").textContent === "Body");
+      check("popover below its trigger", popBox().dataset.bsPlacement === "bottom");
+      inner($("#pop2 > ui-button"), "button").click();
+      check("only one popover at a time", await waitFor(() => $("#pop2").shadowRoot.querySelector(".popover.show")
+        && !popBox().classList.contains("show")));
+      document.body.click();
+      check("click outside closes it", await waitFor(() => !$("#pop2").shadowRoot.querySelector(".popover.show")));
+      const closedBox = $("#pop2").shadowRoot.querySelector(".popover");
+      check("a closed popover box is gone (no invisible box that catches the pointer or extends its container)",
+        await waitFor(() => !closedBox.matches(":popover-open") && style(closedBox).display === "none"), style(closedBox).display);
+
+      // Plain tooltip markup.
+      $("#plain-tip").dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" }));
+      const plainBox = () => document.body.querySelector(":scope > .tooltip");
+      check("data API tooltip on plain markup", await waitFor(() => plainBox()?.classList.contains("show"))
+        && plainBox().textContent === "Plain title" && !$("#plain-tip").hasAttribute("title")
+        && plainBox().dataset.bsPlacement === "bottom");
+
+      // Toast.
+      const toastBox = () => inner($("#toast"), ".toast");
+      check("toast shows itself with header", await waitFor(() => toastBox()?.classList.contains("show"))
+        && inner($("#toast"), ".toast-header small").textContent === "now");
+      $("#toast-dismiss").click();
+      check("data-bs-dismiss hides and removes the toast", await waitFor(() => !$("#toast")));
+      check("autohide after the delay (kept with keep)", await waitFor(() => $("#toast-auto") && !inner($("#toast-auto"), ".toast").classList.contains("show"), 3000));
+
+      // Card.
+      const card = $("#themed-card").shadowRoot;
+      check("card renders filled parts only", card.querySelector(".card-header") && card.querySelector(".card-body")
+        && card.querySelector(".card-footer") && !card.querySelector(".card-img-top") && !card.querySelector(".list-group"));
+      const listCard = $("#list-card").shadowRoot;
+      check("list-only card has no body", !listCard.querySelector(".card-body") && listCard.querySelector(".list-group"));
+      const positions = [...$("#card-group").children].map((el) => el.getAttribute("group-position")).join(",");
+      check("card group positions", positions === "first,middle,last", positions);
+
+      // Accordion.
+      const acc = $("#acc");
+      const accItems = () => [...acc.shadowRoot.querySelectorAll("details.accordion-item")];
+      check("accordion renders one details per item, exclusive", accItems().length === 3
+        && accItems().every((d) => d.name && d.name === accItems()[0].name) && accItems()[0].open && !accItems()[1].open);
+      check("accordion theme class and host token", acc.shadowRoot.querySelector(".accordion.theme-success")
+        && style(accItems()[0].querySelector(".accordion-header")).paddingLeft === "33px");
+      check("rich heading slotted", $("#acc-rich").parentElement === acc && $("#acc-rich").assignedSlot?.name === "heading-1");
+      const accToggles = [];
+      acc.addEventListener("ui-accordion-item:toggle", (event) => accToggles.push(`${event.target.textContent.trim()}:${event.detail.open}`));
+      accItems()[1].querySelector("summary").click();
+      check("opening one closes the other and reflects open", await waitFor(() => acc.items[1].open && !acc.items[0].open
+        && accToggles.includes("Body two:true") && accToggles.includes("Body one:false")), accToggles.join(","));
+      acc.items[0].open = true;
+      check("open property opens the item", await waitFor(() => accItems()[0].open && !acc.items[1].open));
+      acc.openAll();
+      check("openAll opens every enabled item", await waitFor(() => accItems()[0].open && accItems()[1].open
+        && !accItems()[2].open && acc.hasAttribute("always-open") && !accItems()[0].name));
+      acc.closeAll();
+      check("closeAll closes all", await waitFor(() => accItems().every((d) => !d.open) && acc.items.every((i) => !i.open)));
+
+      // Carousel.
+      const car = $("#car");
+      const carRoot = car.shadowRoot;
+      const carButton = (selector) => carRoot.querySelector(selector);
+      check("carousel renders slides, controls and indicators", carRoot.querySelectorAll(".carousel-inner > .carousel-item").length === 3
+        && carRoot.querySelectorAll(".carousel-indicators [data-bs-slide-to]").length === 3 && carButton('[data-bs-slide="next"]'));
+      check("first slide active, prev disabled at the start (ends=stop)", carRoot.querySelector(".carousel-item.active")?.dataset.index === "0"
+        && carButton('[data-bs-slide="prev"]').disabled && !carButton('[data-bs-slide="next"]').disabled);
+      check("carousel token on host", carButton(".carousel-indicators .active").offsetWidth === Math.round(13 * 2.5)
+        || Math.abs(carButton(".carousel-indicators .active").getBoundingClientRect().width - 32.5) < 1,
+        String(carButton(".carousel-indicators .active").getBoundingClientRect().width));
+      const slid = [];
+      car.addEventListener("ui-carousel:slid", (event) => slid.push(`${event.detail.from}>${event.detail.to}:${event.detail.relatedTarget === car.items[event.detail.to]}`));
+      carButton('[data-bs-slide="next"]').click();
+      check("next scrolls to the second slide and fires slid", await waitFor(() => car.activeIndex === 1 && slid.includes("0>1:true")
+        && carButton('[data-bs-slide-to="1"]').classList.contains("active")), slid.join(","));
+      carButton('[data-bs-slide-to="2"]').click();
+      check("indicator jumps; next disabled at the end", await waitFor(() => car.activeIndex === 2
+        && carButton('[data-bs-slide="next"]').disabled && !carButton('[data-bs-slide="prev"]').disabled), `${car.activeIndex}`);
+      const cancel = (event) => event.preventDefault();
+      car.addEventListener("ui-carousel:slide", cancel);
+      car.to(0);
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      check("slide event is cancelable", car.activeIndex === 2);
+      car.removeEventListener("ui-carousel:slide", cancel);
+
+      const fade = $("#car-fade");
+      check("fade starts on the active item", fade.activeIndex === 1 && fade.shadowRoot.querySelector(".carousel.carousel-fade"));
+      fade.next();
+      check("fade wraps to the first slide", await waitFor(() => fade.activeIndex === 0
+        && fade.shadowRoot.querySelector('.carousel-item[data-index="0"]').classList.contains("active")));
+
+      // The seamless loop animates (no reduced motion) and frames: timers stand in for the frozen headless frames.
+      const loop = $("#car-loop");
+      const [realMatchMedia, realFrame] = [window.matchMedia, window.requestAnimationFrame];
+      window.matchMedia = () => ({ matches: false });
+      window.requestAnimationFrame = (callback) => setTimeout(() => callback(performance.now()), 16);
+      let cloneSeen = false;
+      const watchClone = new MutationObserver(() => { cloneSeen ||= Boolean(loop.querySelector("[data-carousel-clone]")); });
+      watchClone.observe(loop, { childList: true });
+      try {
+        loop.prev();
+        check("loop: prev from the first scrolls on through a clone to the last", await waitFor(() => loop.activeIndex === 1
+          && cloneSeen && !loop.querySelector("[data-carousel-clone]") && !loop.shadowRoot.querySelector(".carousel-item-clone")),
+          `${loop.activeIndex} ${cloneSeen}`);
+      } finally {
+        window.matchMedia = realMatchMedia;
+        window.requestAnimationFrame = realFrame;
+        watchClone.disconnect();
+      }
+
+      const play = $("#car-play");
+      check("autoplay advances and marks playing", await waitFor(() => play.activeIndex === 1
+        && play.shadowRoot.querySelector(".carousel").classList.contains("carousel-playing"), 3000));
+      play.shadowRoot.querySelector(".carousel-control-play-pause").click();
+      const pp = play.shadowRoot.querySelector(".carousel-control-play-pause");
+      check("pause button stops it", pp.classList.contains("paused") && pp.getAttribute("aria-label") === "Play"
+        && !play.shadowRoot.querySelector(".carousel").classList.contains("carousel-playing"));
+
+      $("#plain-car-to-1").click();
+      check("data API drives plain carousel markup", await waitFor(() => $("#plain-car .carousel-item:nth-child(2)").classList.contains("active")
+        && $("#plain-car-to-1").classList.contains("active")));
+
+      // Component tokens belong on the element: the host's own defaults shadow a wrapper's value (docs: Overview).
+      check("component token on a wrapper does not reach the component", style(inner($("#wrapped-token-button"), "button")).borderTopLeftRadius !== "11px");
+
+      // Chip.
+      const chipToggle = $("#chip-toggle");
+      const chipEl = chipToggle.shadowRoot.querySelector(".chip");
+      check("chip token on host and theme class", style(chipEl).paddingLeft === "21px" && chipEl.classList.contains("theme-success"));
+      let chipChanged = 0;
+      chipToggle.addEventListener("change", () => { chipChanged += 1; });
+      chipEl.click();
+      check("toggle chip toggles active with change and aria-pressed", await waitFor(() => chipToggle.active && chipChanged === 1
+        && chipToggle.shadowRoot.querySelector(".chip").classList.contains("active")
+        && chipToggle.shadowRoot.querySelector(".chip").getAttribute("aria-pressed") === "true"));
+      $("#chip-dismiss").shadowRoot.querySelector(".chip-dismiss").click();
+      check("dismissible chip removes itself", !$("#chip-dismiss"));
+
+      // Chip input.
+      const chips = $("#chips");
+      const chipInputEl = chips.shadowRoot.querySelector(".chip-input");
+      const chipNodes = () => [...chips.shadowRoot.querySelectorAll(".chip-input > .chip")];
+      check("chip input renders initial values with dismiss buttons", chipNodes().length === 2 && chipNodes()[0].querySelector(".chip-dismiss")
+        && style(chipInputEl).columnGap === "9px", style(chipInputEl).columnGap);
+      const ghost = chips.shadowRoot.querySelector(".form-ghost");
+      ghost.value = "C,";
+      ghost.dispatchEvent(new Event("input"));
+      check("separator adds a chip", chips.values.join() === "A,B,C" && ghost.value === "");
+      check("chip input submits every value", new FormData($("#chip-form")).getAll("tags").join() === "A,B,C");
+      check("max-chips rejects more", chips.add("D") === null && chips.values.length === 3);
+      chips.addEventListener("ui-chip-input:add", (event) => event.detail.value === "no" && event.preventDefault());
+      chips.remove("C");
+      check("add is cancelable, remove by value works", chips.add("no") === null && chips.values.join() === "A,B");
+      ghost.dispatchEvent(new KeyboardEvent("keydown", { key: "Backspace", bubbles: true }));
+      check("Backspace in the empty field selects the last chip", chips.selectedValues.join() === "B"
+        && chipNodes()[1].classList.contains("active"));
+      chipNodes()[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Backspace", bubbles: true }));
+      check("Backspace on the chip removes it and selects the neighbour", chips.values.join() === "A" && chips.selectedValues.join() === "A");
+      chips.add("B");
+      chips.add("C");
+      chipNodes()[0].click();
+      chipNodes()[2].dispatchEvent(new MouseEvent("click", { bubbles: true, shiftKey: true }));
+      check("Shift+click selects a range", chips.selectedValues.join() === "A,B,C");
+
+      const plainChips = $("#plain-chips");
+      const plainGhost = plainChips.querySelector(".form-ghost");
+      plainGhost.value = "Q";
+      plainGhost.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+      check("data-bs-chips on plain markup", [...plainChips.querySelectorAll(".chip")].map((c) => c.dataset.bsChipValue || c.firstChild.textContent).join() === "P,Q"
+        && plainChips.querySelector(".chip .chip-dismiss"));
+
+      // Table.
+      const tbl = $("#tbl");
+      const tblEl = tbl.table;
+      check("table moved into the shadow tree with its classes", tblEl.getRootNode() === tbl.shadowRoot
+        && ["table", "theme-success", "table-striped", "md:table-stacked", "mb-0"].every((c) => tblEl.classList.contains(c)), tblEl.className);
+      check("card and container wrapper for the stacked breakpoint", tbl.shadowRoot.querySelector('[part="wrapper"]').classList.contains("table-card")
+        && tbl.shadowRoot.querySelector('[part="wrapper"]').classList.contains("table-responsive"));
+      // The fixture is narrower than md, so the rows are stacked: stacked cells have twice the cell padding.
+      check("table token on host (stacked below md)", style(tblEl.querySelector("td")).paddingLeft === "34px"
+        && style(tblEl.querySelector("tbody tr")).display === "block", style(tblEl.querySelector("td")).paddingLeft);
+      const cells = [...tblEl.querySelectorAll("tbody td")].map((td) => td.dataset.cell).join();
+      check("stacked cells labelled from the headers", cells === "Name,Type,Name,Own", cells);
+      tblEl.tBodies[0].insertAdjacentHTML("beforeend", "<tr><td>c</td><td>z</td></tr>");
+      check("new rows get labels too", await waitFor(() => tblEl.querySelector("tbody tr:last-child td:last-child").dataset.cell === "Type"));
+      const headTable = $("#tbl-head").table;
+      check("table head tokens: colour and weight of the head cells", style(headTable.querySelector("th")).color === "rgb(9, 8, 7)"
+        && style(headTable.querySelector("th")).fontWeight === "500", style(headTable.querySelector("th")).color);
+      check("table token drops the last row's bottom border", style(headTable.querySelector("tbody tr:last-child td")).borderBottomWidth === "0px"
+        && style(headTable.querySelector("tbody tr:first-child td")).borderBottomWidth !== "0px",
+        style(headTable.querySelector("tbody tr:last-child td")).borderBottomWidth);
+      const totalCell = $("#tbl-total").table.querySelector("tfoot .table-total td");
+      check("table: a total row is bold with a stronger line above", Number(style(totalCell).fontWeight) >= 600
+        && parseFloat(style(totalCell).borderTopWidth) >= 2, `${style(totalCell).fontWeight} ${style(totalCell).borderTopWidth}`);
+      const iconTable = $("#tbl-icons").table;
+      const iconCell = iconTable.querySelector("tbody td:last-child");
+      check("icon column: header class copied to its cells, not to spanning cells", iconCell.classList.contains("table-icons")
+        && !iconTable.querySelector("td[colspan]").classList.contains("table-icons"));
+      check("icon column is as narrow as its buttons and does not wrap", style(iconCell).whiteSpace === "nowrap"
+        && style(iconCell).textAlign === "end" && iconCell.getBoundingClientRect().width < 120, iconCell.getBoundingClientRect().width);
+      iconTable.tBodies[0].insertAdjacentHTML("beforeend", "<tr><td>b</td><td></td></tr>");
+      check("icon column: new rows get the class too", await waitFor(() => iconTable.querySelector("tbody tr:last-child td:last-child").classList.contains("table-icons")));
+
+      // Card heading row, collapsible card, key figures.
+      const headCard = $("#head-card").shadowRoot;
+      check("card heading: header row with heading, icon slot and actions", headCard.querySelector('[part="heading"]')?.textContent === "Revenue"
+        && headCard.querySelector('[part="actions"] slot[name="actions"]')?.assignedElements()[0]?.id === "head-card-action"
+        && headCard.querySelector('[part="icon"]') !== null
+        && style(headCard.querySelector('[part="icon"]')).color === "rgb(4, 5, 6)");
+      const foldCard = $("#fold-card");
+      const foldToggle = foldCard.shadowRoot.querySelector('[part~="toggle"]');
+      check("collapsible card: folded shows only the header", foldToggle?.getAttribute("aria-expanded") === "false"
+        && foldCard.shadowRoot.querySelector(".card-body") === null);
+      let foldEvent = null;
+      foldCard.addEventListener("ui-card:toggle", (event) => { foldEvent = event.detail; }, { once: true });
+      foldToggle.click();
+      check("collapsible card: the toggle unfolds it and fires ui-card:toggle", await waitFor(() => !foldCard.hasAttribute("collapsed")
+        && foldEvent?.collapsed === false && foldCard.shadowRoot.querySelector('[part~="toggle"]').getAttribute("aria-expanded") === "true"
+        && foldCard.shadowRoot.querySelector(".card-body slot:not([name])")?.assignedElements()[0]?.id === "fold-body"));
+      const kpiA = $("#kpi-a").shadowRoot;
+      check("kpi: label, value, sub, variant, trend from a number, token on host", kpiA.querySelector('[part="label"]').textContent === "Total"
+        && kpiA.querySelector(".ui-kpi-text").textContent === "1'234" && kpiA.querySelector('[part="sub"]').textContent === "since May"
+        && kpiA.querySelector('[part="value"]').classList.contains("fg-success")
+        && kpiA.querySelector('[part="trend"]')?.getAttribute("aria-label") === "Rising"
+        && style(kpiA.querySelector('[part="kpi"]')).borderTopLeftRadius === "5px");
+      const kpiB = $("#kpi-b");
+      check("kpi: slotted value and sub, own size kept in a compact group, inverse trend is red", kpiB.getAttribute("size") === "lg"
+        && kpiB.shadowRoot.querySelector("slot:not([name])").assignedElements()[0]?.id === "kpi-b-value"
+        && kpiB.shadowRoot.querySelector('[part="trend"]').classList.contains("fg-danger"));
+      check("kpi group: compact makes the tiles small, gap token", $("#kpi-a").getAttribute("size") === "sm"
+        && style($("#kpis").shadowRoot.querySelector('[part="group"]')).columnGap === "9px");
+      $("#kpis").removeAttribute("compact");
+      check("kpi group: without compact the tiles grow again", await waitFor(() => !$("#kpi-a").hasAttribute("size")));
+
+      // Gallery.
+      const gal = $("#gal");
+      const galTiles = () => [...gal.shadowRoot.querySelectorAll(".ui-gallery-tile")];
+      check("gallery renders tiles from its items with captions and own token", galTiles().length === 3
+        && gal.shadowRoot.querySelectorAll(".ui-gallery-caption").length === 3 && gal.shadowRoot.querySelector(".ui-gallery-play")
+        && style(gal.shadowRoot.querySelector(".ui-gallery-grid")).columnGap === "11px");
+      const galEvents = [];
+      ["open", "close", "edit", "reorder"].forEach((name) => gal.addEventListener(`ui-gallery:${name}`, (event) => galEvents.push(name)));
+      galTiles()[1].click();
+      const lightbox = gal.shadowRoot.querySelector("dialog");
+      check("tile opens the lightbox (modal) with title and count", lightbox.open && lightbox.matches(":modal") && gal.index === 1
+        && gal.shadowRoot.querySelector("[data-count]").textContent === "2 / 3" && gal.shadowRoot.querySelector(".ui-gallery-title").textContent === "B");
+      lightbox.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+      check("arrow key shows the next item (video)", gal.index === 2 && gal.shadowRoot.querySelector("[data-stage] video"));
+      lightbox.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
+      check("Home shows the first", gal.index === 0);
+      gal.close();
+      check("close closes and fires the event", await waitFor(() => !lightbox.open && gal.index === -1 && galEvents.includes("close")));
+      gal.shadowRoot.querySelector('[data-edit="0"]').click();
+      gal.move(0, 2);
+      check("move reorders the children and fires reorder", await waitFor(() => [...gal.querySelectorAll("ui-gallery-item")].map((i) => i.getAttribute("item-id")).join() === "b,c,a"
+        && galEvents.includes("reorder") && galEvents.includes("edit")
+        && gal.shadowRoot.querySelector(".ui-gallery-caption").textContent === "B"), galEvents.join());
+
+      // Dropzone.
+      const dz = $("#dz");
+      const dzZone = () => dz.shadowRoot.querySelector(".ui-dropzone");
+      check("dropzone own token and required validity", style(dzZone()).borderTopLeftRadius === "13px" && !dz.checkValidity()
+        && dz.validity.valueMissing);
+      const txt = (name, size = 10) => new File(["x".repeat(size)], name, { type: "text/plain" });
+      const dzEvents = [];
+      ["files", "reject", "change"].forEach((name) => dz.addEventListener(`ui-dropzone:${name}`, (event) => dzEvents.push(name)));
+      const transfer = new DataTransfer();
+      transfer.items.add(txt("a.txt"));
+      transfer.items.add(txt("big.txt", 5000));
+      transfer.items.add(new File(["x"], "c.png", { type: "image/png" }));
+      dzZone().dispatchEvent(new DragEvent("drop", { dataTransfer: transfer, bubbles: true, cancelable: true }));
+      check("drop accepts, rejects with a message and lists the file", await waitFor(() => dz.files.map((f) => f.name).join() === "a.txt"
+        && dzEvents.join() === "reject,files,change" && dz.shadowRoot.querySelector(".invalid-feedback").textContent.includes("big.txt")
+        && dz.shadowRoot.querySelectorAll(".ui-dropzone-file").length === 1), dzEvents.join());
+      check("form field submits the files and is valid", new FormData($("#dz-form")).getAll("docs").map((f) => f.name).join() === "a.txt"
+        && dz.checkValidity());
+      dz.add([txt("b.txt"), txt("c.txt")]);
+      check("max-files counts the chosen files", await waitFor(() => dz.files.length === 2
+        && dz.shadowRoot.querySelector(".invalid-feedback").textContent.includes("at most 2")));
+      dz.shadowRoot.querySelector('[data-remove="0"]').click();
+      check("remove button removes a file", await waitFor(() => dz.files.map((f) => f.name).join() === "b.txt"));
+
+      // Grid.
+      const gridEl = $("#grid").shadowRoot.querySelector(".ui-grid");
+      const columns = style(gridEl).gridTemplateColumns.split(" ").length;
+      check("grid: container breakpoint columns, spacer gap, own token and span", columns === 3
+        && style(gridEl).columnGap === (() => {
+          const probe = document.body.appendChild(Object.assign(document.createElement("div"), { style: "width: var(--bs-spacer-3)" }));
+          const width = `${probe.getBoundingClientRect().width}px`;
+          probe.remove();
+          return width;
+        })()
+        && style(gridEl).rowGap === "7px" && $("#grid").children[1].getBoundingClientRect().width > $("#grid").children[0].getBoundingClientRect().width * 1.9,
+        `${style(gridEl).gridTemplateColumns} / ${style(gridEl).columnGap} / ${style(gridEl).rowGap}`);
+      $("#grid").setAttribute("columns-sm", "2");
+      check("grid keeps the page's own inline tokens when attributes change", await waitFor(() => style(gridEl).gridTemplateColumns.split(" ").length === 2)
+        && style(gridEl).rowGap === "7px");
+
+      // Grid editor.
+      const ged = $("#ged");
+      const gedRoot = ged.shadowRoot;
+      check("grid editor renders cards with v6 badge and buttons", gedRoot.querySelectorAll(".ui-grid-editor-item .card").length === 2
+        && gedRoot.querySelector(".badge.theme-primary") && gedRoot.querySelector(".btn-subtle.ui-grid-editor-control"));
+      let layout = null;
+      ged.addEventListener("ui-grid-editor:change", (event) => { layout = event.detail.layout; });
+      gedRoot.querySelector('[aria-label="Rechts verbinden"]').click();
+      check("label attribute and merge", await waitFor(() => layout && layout.areas.length === 1 && layout.areas[0].column_span === 2),
+        JSON.stringify(layout));
+      gedRoot.querySelector('[aria-label="Zeile einfügen"]').click();
+      check("add row", await waitFor(() => layout.rows_count === 2), JSON.stringify(layout));
+
+      // Richtext.
+      const rt = $("#rt");
+      check("richtext cleans the value attribute and submits the HTML", rt.value === "<p>Hi <b>bold</b></p>"
+        && new FormData($("#rt-form")).get("body") === "<p>Hi <b>bold</b></p>", rt.value);
+      check("richtext own token and label attribute", style(rt.shadowRoot.querySelector(".ui-richtext")).borderTopLeftRadius === "9px"
+        && rt.shadowRoot.querySelector('[data-cmd="bold"]').getAttribute("aria-label") === "Fett");
+      check("required: empty is invalid, content valid", !$("#rt-empty").checkValidity() && $("#rt-empty").validity.valueMissing && rt.checkValidity());
+      rt.editor.focus();
+      const caret = document.createRange();
+      caret.setStart(rt.editor.querySelector("b").firstChild, 2);
+      caret.collapse(true);
+      document.getSelection().removeAllRanges();
+      document.getSelection().addRange(caret);
+      check("bold tool pressed at a bold cursor", await waitFor(() => rt.shadowRoot.querySelector('[data-cmd="bold"]').getAttribute("aria-pressed") === "true"
+        && rt.shadowRoot.querySelector('[data-cmd="italic"]').getAttribute("aria-pressed") === "false"));
+
+      // Markdown editor and view (markdown-it loads on first use).
+      const mde = $("#mde");
+      check("markdown editor shows the value as text", await waitFor(() => mde.editor?.querySelector("strong")
+        && mde.editor.querySelector("ul[data-task] > li[data-checked='true']") && mde.editor.querySelector(".markdown-alert-note"), 5000),
+        mde.editor?.innerHTML);
+      check("markdown editor submits Markdown; relative image shown with base-url, kept in the value",
+        new FormData($("#mde-form")).get("note") === mde.value && mde.value.includes("![a](/uploads/a.png)")
+        && mde.editor.querySelector("img")?.getAttribute("src") === "https://git.example.com/p/uploads/a.png", mde.value);
+      check("markdown editor: own token, labels and translated alert title",
+        style(inner(mde, ".ui-mde")).borderTopLeftRadius === "11px"
+        && inner(mde, '[data-cmd="bold"]').getAttribute("aria-label") === "Fett"
+        && mde.editor.querySelector(".markdown-alert-title").textContent === "Hinweis",
+        `${style(inner(mde, ".ui-mde")).borderTopLeftRadius} ${mde.editor.querySelector(".markdown-alert-title")?.textContent}`);
+      check("markdown editor required", !$("#mde-empty").checkValidity() && mde.checkValidity());
+      const before = mde.value;
+      mde.mode = "markdown";
+      check("markdown mode: monospace source with the same Markdown", await waitFor(() => inner(mde, ".ui-mde-source")
+        && !inner(mde, ".ui-mde-source").hidden && inner(mde, ".ui-mde-source").value === before && mde.editor.hidden)
+        && /mono/i.test(style(inner(mde, ".ui-mde-source")).fontFamily), style(inner(mde, ".ui-mde-source")).fontFamily);
+      const source = inner(mde, ".ui-mde-source");
+      source.focus();
+      source.setSelectionRange(0, 0);
+      source.dispatchEvent(new KeyboardEvent("keydown", { key: "b", ctrlKey: true, bubbles: true, composed: true }));
+      check("markdown mode: Ctrl+B wraps", mde.value.startsWith("****"), mde.value.slice(0, 20));
+      source.value = "# Title\n\nplain";
+      source.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+      mde.mode = "text";
+      check("back to text renders the source", await waitFor(() => mde.editor.querySelector("h1")?.textContent === "Title" && !mde.editor.hidden),
+        mde.editor.innerHTML);
+      const para = mde.editor.querySelector("p");
+      const sel = document.createRange();
+      sel.selectNodeContents(para);
+      document.getSelection().removeAllRanges();
+      document.getSelection().addRange(sel);
+      inner(mde, '[data-cmd="bold"]').click();
+      check("bold tool in the text mode gives Markdown", await waitFor(() => mde.value === "# Title\n\n**plain**\n"), JSON.stringify(mde.value));
+      let attached = null;
+      mde.addEventListener("ui-markdown-editor:attach", (e) => { attached = e.detail; });
+      mde.uploadHandler = async (file) => ({ url: `/uploads/${file.name}`, name: file.name });
+      mde.value = "x";
+      await tick();
+      const dt = new DataTransfer();
+      dt.items.add(new File(["png"], "pic.png", { type: "image/png" }));
+      inner(mde, ".ui-mde-file").files = dt.files;
+      inner(mde, ".ui-mde-file").dispatchEvent(new Event("change"));
+      check("attachment: event, upload handler, image inserted", await waitFor(() => attached && mde.value.includes("![pic.png](/uploads/pic.png)")),
+        mde.value);
+      mde.addCommand({ id: "hello", label: "Hello", menus: ["plus"], markdown: "**hello**" });
+      inner(mde, '[data-cmd="more"]').click();
+      const more = inner(mde, '[data-pop="more"]');
+      check("plus menu: alerts, code block, section, line, contents and own command", await waitFor(() => more.matches(":popover-open"))
+        && ["alert-note", "alert-caution", "code-block", "details", "rule", "toc", "hello"].every((id) => more.querySelector(`[data-item="${id}"]`))
+        && !more.querySelector('[data-item*="mermaid"]'), more.innerHTML.slice(0, 200));
+      more.querySelector('[data-item="hello"]').click();
+      check("own command inserts its Markdown", await waitFor(() => mde.value.includes("**hello**")), mde.value);
+      const view = $("#md-view");
+      check("ui-markdown renders sanitised", await waitFor(() => view.body?.querySelector("h2#head"), 5000)
+        && !view.body.querySelector("a[href^='javascript'], [onerror]"), view.body?.innerHTML);
+
+      // Calendar (FullCalendar loads on first use).
+      const cal = $("#cal");
+      const ranges = [];
+      cal.addEventListener("ui-calendar:range", (event) => ranges.push(event.detail.view));
+      cal.source = async () => [{ id: "x", title: "Meeting", start: "2026-11-10T10:00", end: "2026-11-10T11:00", display: "block" }];
+      check("calendar renders the month with the source's event", await waitFor(() => cal.shadowRoot.querySelector(".ui-calendar-event")
+        && cal.title.includes("November 2026"), 5000), cal.title);
+      check("calendar own tokens: height and event colour", Math.round(cal.getBoundingClientRect().height) === 400
+        && style(cal.shadowRoot.querySelector(".ui-calendar-event")).backgroundColor === "rgb(1, 2, 3)",
+        `${cal.getBoundingClientRect().height} ${style(cal.shadowRoot.querySelector(".ui-calendar-event")).backgroundColor}`);
+      cal.next();
+      check("navigation fires ui-calendar:range", await waitFor(() => cal.title.includes("December 2026") && ranges.length > 0), cal.title);
+
+      // The calendar's language: the page's lang (no fixed German), the toolbar's texts per language or by attribute.
+      const buttons = (el) => [...el.shadowRoot.querySelectorAll("button")].map((b) => b.textContent.trim()).filter(Boolean);
+      check("calendar texts in English by locale", await waitFor(() => buttons(cal).includes("Month"), 5000)
+        && ["Agenda", "Day", "Week", "Month", "Today"].every((t) => buttons(cal).includes(t)), buttons(cal).join(","));
+      const calDe = $("#cal-de");
+      check("calendar in German from the nearest lang (de-CH)", await waitFor(() => buttons(calDe).includes("Monat"), 5000)
+        && calDe.locale === "de" && ["Woche", "Tag", "Heute"].every((t) => buttons(calDe).includes(t))
+        && calDe.title.includes("November 2026"), `${calDe.locale} ${buttons(calDe).join(",")} ${calDe.title}`);
+      const calLabels = $("#cal-labels");
+      check("calendar texts from *-label attributes", await waitFor(() => buttons(calLabels).includes("Semaine"), 5000)
+        && buttons(calLabels).includes("Now") && buttons(calLabels).includes("Month"), buttons(calLabels).join(","));
+
+      // Soft events in dark mode: tinted towards the dark background, the title in a light shade.
+      const calDark = $("#cal-dark");
+      calDark.source = async () => [{ id: "d", title: "Dark", start: "2026-11-10T10:00", end: "2026-11-10T11:00", color: "#ff0000" }];
+      const darkEvent = () => calDark.shadowRoot.querySelector(".ui-calendar-event");
+      const luminance = (rgb) => { const [r, g, b] = rgb.match(/\d+/g).map(Number); return (r * 299 + g * 587 + b * 114) / 1000; };
+      check("soft events in dark mode: dark background, light title", await waitFor(() => darkEvent(), 5000)
+        && luminance(style(darkEvent()).backgroundColor) < 90
+        && luminance(style(darkEvent().querySelector(".ui-calendar-soft__title")).color) > 120,
+        darkEvent() && `${style(darkEvent()).backgroundColor} / ${style(darkEvent().querySelector(".ui-calendar-soft__title") || darkEvent()).color}`);
+
+      // Range.
+      const rng = $("#rng");
+      const rngWrap = rng.shadowRoot.querySelector(".form-range");
+      check("range fill, bubble with format, ticks with labels", rngWrap.style.getPropertyValue("--bs-range-fill") === "0.5"
+        && rng.shadowRoot.querySelector(".form-range-bubble .tooltip-inner").textContent === "5!"
+        && [...rng.shadowRoot.querySelectorAll(".form-range-tick-label")].map((l) => l.textContent).join() === "Low,High"
+        && rngWrap.classList.contains("theme-success"));
+      const rngChanged = [];
+      rng.addEventListener("ui-range:changed", (event) => rngChanged.push(event.detail.value));
+      const rngInput = rng.shadowRoot.querySelector("input");
+      rngInput.value = "8";
+      rngInput.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+      check("input updates fill, bubble, form value and fires changed", rngWrap.style.getPropertyValue("--bs-range-fill") === "0.8"
+        && rng.shadowRoot.querySelector(".tooltip-inner").textContent === "8!" && rngChanged.includes(8)
+        && new FormData($("#rng-form")).get("vol") === "8");
+      rng.value = "2";
+      check("value from script updates the fill", rngWrap.style.getPropertyValue("--bs-range-fill") === "0.2");
+      check("plain .form-range gets fill and bubble", $("#plain-rng").style.getPropertyValue("--bs-range-fill") === "0.25"
+        && $("#plain-rng .form-range-bubble .tooltip-inner")?.textContent === "25");
+
+      // Toggler (data API).
+      $("#tg-self").click();
+      check("toggler toggles a class on itself", $("#tg-self").classList.contains("on"));
+      $("#tg-self").click();
+      check("and removes it again", !$("#tg-self").classList.contains("on"));
+      $("#tg-btn").click();
+      check("a component trigger toggles every target: class and attribute", $("#tg-a").classList.contains("red") && $("#tg-b").disabled);
+      $("#tg-a").addEventListener("ui-toggler:toggle", (event) => event.preventDefault(), { once: true });
+      $("#tg-btn").click();
+      check("ui-toggler:toggle is cancelable", $("#tg-a").classList.contains("red") && !$("#tg-b").disabled);
+
+      // Password strength.
+      const pw = $("#pw");
+      const pwLevels = [];
+      pw.addEventListener("ui-input:strength", (event) => pwLevels.push(event.detail.strength));
+      const pwInput = pw.shadowRoot.querySelector("input");
+      const typePw = (value) => { pwInput.value = value; pwInput.dispatchEvent(new Event("input", { bubbles: true, composed: true })); };
+      typePw("Abcdefgh1");
+      const meter = pw.shadowRoot.querySelector(".strength");
+      check("password strength: fair after four points, two segments, message", pw.strength === "fair" && meter.dataset.bsStrength === "fair"
+        && meter.querySelectorAll(".strength-segment.active").length === 2 && pw.shadowRoot.querySelector(".strength-text").textContent === "Fair");
+      typePw("Abcdefgh1!x?long");
+      check("strong with the own label and event", pw.strength === "strong" && pw.shadowRoot.querySelector(".strength-text").textContent === "Top"
+        && pwLevels.join() === "fair,strong" && meter.querySelectorAll(".active").length === 4, pwLevels.join());
+      const plainPw = $("#pw-plain-input");
+      plainPw.value = "abc";
+      plainPw.dispatchEvent(new Event("input", { bubbles: true }));
+      check("plain [data-bs-strength] meter rates its container's field", $("#pw-plain .strength").dataset.bsStrength === "weak"
+        && $("#pw-plain .strength-text").textContent === "Weak");
+
+      // OTP input.
+      const otp = $("#otp");
+      const otpSlots = () => [...otp.shadowRoot.querySelectorAll(".otp-slot")].map((slot) => slot.textContent).join("");
+      check("otp renders slots with a separator and the own token", otp.shadowRoot.querySelectorAll(".otp-slot").length === 4
+        && otp.shadowRoot.querySelectorAll(".otp-separator").length === 1
+        && style(otp.shadowRoot.querySelector(".otp-slots")).columnGap === "5px", style(otp.shadowRoot.querySelector(".otp-slots")).columnGap);
+      const otpEvents = [];
+      otp.addEventListener("ui-otp:complete", (event) => otpEvents.push(event.detail.value));
+      otp.setValue("1-2a3");
+      check("setValue sanitizes and draws the slots", otp.value === "123" && otpSlots() === "123" && !otp.checkValidity());
+      const otpInput = otp.shadowRoot.querySelector("input");
+      otpInput.focus();
+      otpInput.setSelectionRange(3, 3);
+      otpInput.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertText", data: "9", bubbles: true, cancelable: true }));
+      check("typing fills the slot, completes, submits and is valid", otp.value === "1239" && otpEvents.includes("1239")
+        && new FormData($("#otp-form")).get("code") === "1239" && otp.checkValidity(), `${otp.value} ${otpEvents}`);
+      otpInput.dispatchEvent(new InputEvent("beforeinput", { inputType: "deleteContentBackward", bubbles: true, cancelable: true }));
+      check("Backspace deletes before the caret", otp.value.length === 3, otp.value);
+      const plainOtpInput = $("#otp-plain input");
+      plainOtpInput.value = "4x56";
+      plainOtpInput.dispatchEvent(new Event("input", { bubbles: true }));
+      check("plain [data-bs-otp] renders masked slots", $("#otp-plain").classList.contains("otp-rendered")
+        && [...$("#otp-plain").querySelectorAll(".otp-slot")].map((s) => s.textContent).join("") === "•••" && plainOtpInput.value === "456");
+
+      // Datepicker (Vanilla Calendar Pro loads on first use).
+      const dpInline = $("#dp-inline");
+      const dpCal = () => dpInline.shadowRoot.querySelector('[data-vc="calendar"]');
+      check("inline datepicker renders the calendar with the preselected date", await waitFor(() => dpCal()
+        && dpCal().querySelector('[data-vc-date="2026-11-12"][data-vc-date-selected]'), 5000));
+      const selectedBtn = dpCal()?.querySelector('[data-vc-date="2026-11-12"] [data-vc-date-btn]');
+      check("datepicker token on host reaches the calendar", selectedBtn && style(selectedBtn).backgroundColor === "rgb(4, 5, 6)",
+        selectedBtn && style(selectedBtn).backgroundColor);
+      const dpChanges = [];
+      dpInline.addEventListener("ui-datepicker:change", (event) => dpChanges.push(event.detail.dates.join()));
+      dpCal()?.querySelector('[data-vc-date="2026-11-20"] [data-vc-date-btn]')?.click();
+      check("click picks a date: event, ISO form value", await waitFor(() => dpChanges.includes("2026-11-20")
+        && new FormData($("#dp-form")).get("when") === "2026-11-20"), dpChanges.join("|"));
+      const dpPopup = $("#dp-popup");
+      await waitFor(() => dpPopup.shadowRoot.querySelector('[data-vc="calendar"]'), 5000);
+      const dpField = dpPopup.shadowRoot.querySelector("input");
+      check("popup field shows the date formatted for the locale", dpField.value === new Date(2026, 2, 4).toLocaleDateString("de-CH"), dpField.value);
+      await dpPopup.show();
+      const popupCal = dpPopup.shadowRoot.querySelector('[data-vc="calendar"]');
+      const fieldRect = dpField.getBoundingClientRect();
+      check("popup opens below the field inside a positioned container", await waitFor(() => {
+        const rect = popupCal.getBoundingClientRect();
+        return !popupCal.hasAttribute("data-vc-calendar-hidden") && Math.abs(rect.left - fieldRect.left) < 3 && rect.top >= fieldRect.bottom - 1 && rect.top < fieldRect.bottom + 20;
+      }), JSON.stringify([popupCal.getBoundingClientRect(), fieldRect]));
+      await dpPopup.hide();
+
+      // Combobox.
+      const cb = $("#cb");
+      const cbRoot = cb.shadowRoot;
+      check("combobox shows the placeholder and renders slotted options", cbRoot.querySelector(".combobox-value").textContent === "Pick"
+        && cbRoot.querySelectorAll(".menu-item").length === 3 && cbRoot.querySelector('[data-bs-value="x"]').disabled);
+      cbRoot.querySelector(".combobox-toggle").click();
+      check("click opens the menu in the top layer", await waitFor(() => cbRoot.querySelector(".menu").matches(":popover-open.show")));
+      const cbSearch = cbRoot.querySelector(".combobox-search-input");
+      cbSearch.value = "zurich";
+      cbSearch.dispatchEvent(new Event("input", { bubbles: true }));
+      check("search filters accent-insensitively", cbRoot.querySelector('[data-bs-value="z"]').style.display === ""
+        && cbRoot.querySelector('[data-bs-value="a"]').style.display === "none");
+      const cbChanges = [];
+      cb.addEventListener("ui-combobox:change", (event) => cbChanges.push(event.detail.value));
+      cbRoot.querySelector('[data-bs-value="z"]').click();
+      check("choosing shows the label, closes, submits and fires change", await waitFor(() => !cbRoot.querySelector(".menu").classList.contains("show"))
+        && cbRoot.querySelector(".combobox-value").textContent === "Zurich" && cbChanges.join() === "z"
+        && new FormData($("#cb-form")).get("pick") === "z");
+      // Bootstrap marks the chosen option bold (and with a check), the token colours pressed / active items.
+      check("menu token on host reaches the menu items", style(cbRoot.querySelector(".menu-item.selected")).getPropertyValue("--bs-menu-item-active-bg").trim() === "rgb(7, 7, 7)"
+        && Number(style(cbRoot.querySelector(".menu-item.selected")).fontWeight) >= 600);
+      const cbm = $("#cb-multi");
+      check("multiple: initial values, count label, every value in the form", cbm.shadowRoot.querySelector(".combobox-value").textContent === "2 chosen"
+        && new FormData($("#cb-form")).getAll("many").join() === "a,b");
+      cbm.shadowRoot.querySelector('[data-bs-value="c"]').click();
+      check("multiple toggles an option", cbm.values.join() === "a,b,c" && new FormData($("#cb-form")).getAll("many").join() === "a,b,c");
+      $("#cb-plain").click();
+      $("#cb-plain").nextElementSibling.querySelector(".menu-item").click();
+      check("plain combobox markup with hidden input", $("#cb-plain").querySelector(".combobox-value").textContent === "P1"
+        && document.querySelector('input[name="plaincb"]').value === "p1");
+
+      // Nav overflow (data API on plain markup).
+      const no = $("#no");
+      const hiddenItems = () => [...no.querySelectorAll(".nav > .nav-item:not(.nav-overflow-item).d-none")];
+      check("narrow wrapper: items move into the More menu, keep stays", await waitFor(() => no.classList.contains("nav-overflow-initialized")
+        && hiddenItems().length > 3 && !no.querySelector(".nav-overflow-keep").classList.contains("d-none")
+        && !no.querySelector(".nav-overflow-item").classList.contains("d-none")
+        && no.querySelectorAll(".nav-overflow-menu > .menu-item").length >= 3), String(hiddenItems().length));
+      check("an item with a menu becomes a submenu with its own menu", no.querySelector(".nav-overflow-menu > .submenu > .menu .menu-item")?.textContent === "S1",
+        no.querySelector(".nav-overflow-menu")?.innerHTML.slice(0, 200));
+      no.querySelector(".nav-overflow-toggle").click();
+      check("the More toggle opens the menu", await waitFor(() => no.querySelector(".nav-overflow-menu").classList.contains("show")));
+      document.body.click();
+      $("#no-box").style.width = "2400px";
+      check("wide wrapper: everything back, More hidden", await waitFor(() => hiddenItems().length === 0
+        && no.querySelector(".nav-overflow-item").classList.contains("d-none")
+        && no.querySelector(".nav-item:nth-child(2) > .menu")?.textContent === "S1"));
+
+      // Spinner, placeholder, progress.
+      const spBorder = inner($("#sp-border"), ".spinner-border");
+      const spGrow = inner($("#sp-grow"), ".spinner-grow");
+      check("spinners: own animation each, token on host, status role", style(spBorder).animationName === "spinner-border"
+        && style(spGrow).animationName === "spinner-grow" && style(spBorder).width === "31px"
+        && spBorder.getAttribute("role") === "status" && spBorder.textContent === "Loading…" && spGrow.classList.contains("fg-danger"),
+        `${style(spBorder).animationName} ${style(spGrow).animationName} ${spBorder.getBoundingClientRect().width}`);
+      check("decorative spinner is hidden from screen readers", inner($("#sp-deco"), ".spinner-border").getAttribute("aria-hidden") === "true");
+      const phBox = inner($("#ph"), ".placeholder");
+      check("placeholder: columns width, size, animation, token", Math.round($("#ph").getBoundingClientRect().width) === 300
+        && phBox.classList.contains("placeholder-lg") && Boolean(inner($("#ph"), ".placeholder-wave"))
+        && style(phBox).getPropertyValue("--bs-placeholder-opacity-max").trim() === "0.5", `${$("#ph").getBoundingClientRect().width} ${style(phBox).opacity}`);
+      const pgBar = inner($("#pg"), ".progress-bar");
+      const pgTrack = inner($("#pg"), ".progress");
+      check("progress: aria values, width from value/max, label text, variant, token", pgTrack.getAttribute("aria-valuenow") === "30"
+        && pgTrack.getAttribute("aria-valuemax") === "60" && pgTrack.getAttribute("aria-label") === "Upload" && pgBar.style.width === "50%"
+        && pgBar.textContent === "50%" && pgBar.classList.contains("theme-success") && pgTrack.getBoundingClientRect().height === 23);
+      $("#pg").value = 60;
+      check("progress value property updates the bar", await waitFor(() => inner($("#pg"), ".progress-bar").style.width === "100%"));
+      const segments = $("#pg-stack").shadowRoot.querySelectorAll(".progress-stacked > .progress");
+      check("stacked progress renders one segment per child", segments.length === 2 && segments[1].style.width === "30%"
+        && segments[1].querySelector(".progress-bar.theme-info") && segments[0].getAttribute("aria-label") === "A");
+
+      // Avatar.
+      const avBox = inner($("#av"), ".avatar");
+      check("avatar: initials slotted, subtle theme, status with name, token size", avBox.classList.contains("theme-success")
+        && avBox.classList.contains("avatar-subtle") && avBox.getBoundingClientRect().width === 44
+        && inner($("#av"), ".avatar-status.status-busy").getAttribute("aria-label") === "Busy");
+      const stackAvatars = [...$("#avs").children];
+      check("stack: size passed on (not over an own size), ring, overlap except the last", await waitFor(() => stackAvatars[0].getAttribute("size") === "lg"
+        && stackAvatars[2].getAttribute("size") === "xs" && inner(stackAvatars[0], ".avatar").classList.contains("ui-avatar-stacked")
+        && parseFloat(style(inner(stackAvatars[0], ".avatar")).marginLeft) < 0 && style(inner(stackAvatars[2], ".avatar")).marginLeft === "0px"),
+        stackAvatars.map((a) => `${a.getAttribute("size")}:${style(inner(a, ".avatar")).marginLeft}`).join());
+
+      // Pagination.
+      const pgnRoot = $("#pgn").shadowRoot;
+      const pgnTexts = () => [...pgnRoot.querySelectorAll(".page-link")].map((link) => link.textContent).join(" ");
+      check("pagination: window with gaps, active page, token", pgnTexts() === "Previous 1 … 9 10 11 … 20 Next"
+        && pgnRoot.querySelector(".page-item.active .page-link").getAttribute("aria-current") === "page"
+        && pgnRoot.querySelector(".page-link").getBoundingClientRect().height === 41, pgnTexts());
+      const pgnPages = [];
+      $("#pgn").addEventListener("ui-pagination:change", (event) => pgnPages.push(event.detail.page));
+      pgnRoot.querySelector('[data-page="11"]').click();
+      check("click on a page fires change and moves current", await waitFor(() => $("#pgn").current === 11 && pgnTexts().includes("10 11 12")), pgnTexts());
+      $("#pgn").addEventListener("ui-pagination:change", (event) => event.preventDefault(), { once: true });
+      pgnRoot.querySelector('[data-page="20"]').click();
+      check("change is cancelable", $("#pgn").current === 11 && pgnPages.join() === "11,20");
+      const linkRoot = $("#pgn-link").shadowRoot;
+      check("links from the pattern, icons with names, disabled previous", linkRoot.querySelector('a[data-page="2"]').getAttribute("href") === "?p=2"
+        && linkRoot.querySelector('.page-item.disabled [aria-label="Previous"]') && linkRoot.querySelector('[aria-label="Next"]').textContent === "»");
+
+      // Stepper.
+      const stpItems = () => [...$("#stp").shadowRoot.querySelectorAll(".stepper-item")];
+      check("stepper: current marks steps active, aria-current, variant, numbered circle with token size", stpItems().map((i) => i.classList.contains("active")).join() === "true,true,false"
+        && stpItems()[1].getAttribute("aria-current") === "step" && stpItems()[2].classList.contains("theme-danger")
+        && style(stpItems()[0], "::before").width === "27px" && style(stpItems()[0], "::before").content.includes("counter"),
+        style(stpItems()[0], "::before").content);
+      $("#stp").current = 3;
+      check("current property moves the progress", await waitFor(() => stpItems().every((item) => item.classList.contains("active"))));
+      const clickItems = [...$("#stp-click").shadowRoot.querySelectorAll(".stepper-item")];
+      const selected = [];
+      $("#stp-click").addEventListener("ui-stepper:select", (event) => selected.push(event.detail.index));
+      clickItems[0].click();
+      clickItems[1].click();
+      check("clickable steps: buttons, disabled ignored, link steps, horizontal", clickItems[0].localName === "button" && clickItems[1].disabled
+        && clickItems[2].localName === "a" && selected.join() === "0"
+        && $("#stp-click").shadowRoot.querySelector(".stepper.stepper-horizontal"), selected.join());
+
+      // Scrollspy (data API; set up on load).
+      const activeLink = () => [...$("#ss-nav").querySelectorAll(".nav-link.active")].map((a) => a.textContent).join();
+      check("scrollspy: the first section is active at the top", await waitFor(() => activeLink() === "1", 3000), activeLink());
+      const ssEvents = [];
+      $("#ss-box").addEventListener("ui-scrollspy:activate", (event) => ssEvents.push(event.detail.relatedTarget.textContent));
+      // Headless virtual time delivers no observer callbacks or scroll events after scrolling: update() computes the same.
+      const { plainScrollSpy } = await import("{{ webcomponents_url('modules/bootstrap/scrollspy.js') }}");
+      $("#ss-box").scrollTop = $("#ss-3").offsetTop - 5;
+      plainScrollSpy($("#ss-box")).update();
+      check("scrolling activates the section past the line and fires activate", await waitFor(() => activeLink() === "3" && ssEvents.includes("3"), 3000), activeLink());
+      $("#ss-box").scrollTop = $("#ss-box").scrollHeight;
+      plainScrollSpy($("#ss-box")).update();
+      check("at the bottom the last section is active", await waitFor(() => activeLink() === "4", 3000), activeLink());
+      $("#ss-box2").scrollTop = $("#ssl-2").offsetTop - $("#ss-box2").offsetTop + 2;
+      plainScrollSpy($("#ss-box2")).update();
+      check("component links (ui-list-group-item href) get active", await waitFor(() => $("#ss-list").children[1].hasAttribute("active")
+        && !$("#ss-list").children[0].hasAttribute("active"), 3000));
+
+      // Validation like Bootstrap 6: client feedback only inside data-bs-validate.
+      const leave = (id) => inner($(id), "input").dispatchEvent(new FocusEvent("blur"));
+      const marked = (id, cls) => inner($(id), "input").classList.contains(cls);
+      leave("#v-none-in");
+      check("without data-bs-validate: no feedback after leaving, but invalid for the form", !marked("#v-none-in", "is-invalid")
+        && !$("#v-none-in").checkValidity() && !$("#v-none").checkValidity());
+      leave("#v-on-in");
+      check("with data-bs-validate: is-invalid and the message after leaving", marked("#v-on-in", "is-invalid")
+        && inner($("#v-on-in"), '[part="feedback"]').textContent === "Pflichtfeld" && !marked("#v-on-ok", "is-valid"));
+      check("a check is not marked before a submit attempt", !inner($("#v-on-check"), "input").classList.contains("is-invalid"));
+      $("#v-on").requestSubmit();
+      check("a submit attempt (novalidate) shows the feedback of every control", inner($("#v-on-check"), "input").classList.contains("is-invalid")
+        && !marked("#v-on-ok", "is-invalid") && !marked("#v-on-ok", "is-valid"));
+      leave("#v-valid-in");
+      check("data-bs-validate=valid also marks valid fields", marked("#v-valid-in", "is-valid"));
+      check("validate() shows feedback also without data-bs-validate", !$("#v-none-in").validate() && marked("#v-none-in", "is-invalid"));
+    }
+
+    run()
+      .catch((error) => check("no exception", false, error?.stack || error))
+      .finally(() => { document.getElementById("results").textContent = JSON.stringify(results); });
+  </script>
+</body>
+</html>

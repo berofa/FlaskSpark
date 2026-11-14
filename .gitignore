@@ -54,6 +54,8 @@ cover/
 # Translations
 *.mo
 *.pot
+# The core's compiled catalogues ship with the package (scripts/core-i18n)
+!flaskspark/core/locales/*/LC_MESSAGES/*.mo
 
 # Django stuff:
 *.log

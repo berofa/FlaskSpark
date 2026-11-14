@@ -58,28 +58,21 @@ def test_disabled_by_default(project):
     assert MODULE_ENTRY not in html
 
 
-def test_enabled_loads_bootstrap6_and_the_module_from_the_snapshot(project):
+def test_enabled_serves_bootstrap6_and_the_module_from_the_package(project):
     client = _app(project, VENDOR_INCLUDE_WEBCOMPONENTS=True).test_client()
     html = client.get("/").get_data(as_text=True)
 
-    assert f'href="/static/vendor/webcomponents/{BOOTSTRAP_CSS}"' in html
-    assert f'<script type="module" src="/static/vendor/webcomponents/{MODULE_ENTRY}"></script>' in html
+    assert BOOTSTRAP_CSS in html and "/webcomponents/" in html
+    assert f"/{MODULE_ENTRY}" in html
     # The page CSS comes before the app's own stylesheet, so the app can override it.
     assert html.index(BOOTSTRAP_CSS) < html.index("styles/app.min.css")
     for filename in (BOOTSTRAP_CSS, MODULE_ENTRY, "modules/bootstrap/ui-alert/ui-alert.js"):
-        assert client.get(f"/static/vendor/webcomponents/{filename}").status_code == 200, filename
+        assert client.get(f"/webcomponents/{filename}").status_code == 200, filename
 
 
-def test_an_installed_webcomponents_blueprint_takes_precedence(project):
-    app = _app(project, VENDOR_INCLUDE_WEBCOMPONENTS=True)
-    app.register_blueprint(Blueprint("webcomponents", __name__, static_folder=str(project), static_url_path="/wc"))
+def test_the_snapshot_is_gone(project):
+    from pathlib import Path
 
-    html = app.test_client().get("/").get_data(as_text=True)
+    import flaskspark
 
-    assert f'href="/wc/{BOOTSTRAP_CSS}"' in html
-    assert f'src="/wc/{MODULE_ENTRY}"' in html
-
-
-def test_cannot_be_combined_with_bootstrap5(project):
-    with pytest.raises(SystemExit):
-        _app(project, VENDOR_INCLUDE_WEBCOMPONENTS=True, VENDOR_INCLUDE_BOOTSTRAP=True)
+    assert not (Path(flaskspark.__file__).parent / "static" / "vendor" / "webcomponents").exists()

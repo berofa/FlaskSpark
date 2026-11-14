@@ -1,0 +1,43 @@
+{
+  "name": "ui-markdown-editor",
+  "description": "A form field for Markdown: «Text» (formatted, toolbar like GitLab's editor, «/» and «+» commands, extensible) and «Markdown» (monospace source); the value is always Markdown, converted with the rules of flaskspark.markdown; attachments through an event or an upload handler.",
+  "elements": [
+    "ui-markdown-editor"
+  ],
+  "entry": "ui-markdown-editor.js",
+  "files": [
+    "ui-markdown-editor.js",
+    "editor-commands.js",
+    "editor-icons.js",
+    "ui-markdown-editor.css",
+    "ui-markdown-editor.document.css"
+  ],
+  "requires": [
+    "ui-markdown"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-markdown-editor-",
+        "file": "ui-markdown-editor.css"
+      }
+    ],
+    "descriptions": {
+      "--ui-markdown-editor-color": "Text colour.",
+      "--ui-markdown-editor-bg": "Background.",
+      "--ui-markdown-editor-border-width": "Border width.",
+      "--ui-markdown-editor-border-color": "Border colour.",
+      "--ui-markdown-editor-radius": "Corner radius.",
+      "--ui-markdown-editor-padding-y": "Vertical padding of the text.",
+      "--ui-markdown-editor-padding-x": "Horizontal padding of the text.",
+      "--ui-markdown-editor-toolbar-bg": "Background of the toolbar.",
+      "--ui-markdown-editor-tool-active-bg": "Background of a pressed tool.",
+      "--ui-markdown-editor-placeholder-color": "Colour of the placeholder.",
+      "--ui-markdown-editor-disabled-bg": "Background when disabled.",
+      "--ui-markdown-editor-invalid-border-color": "Border colour when invalid.",
+      "--ui-markdown-editor-source-font": "Font of the Markdown source (monospace).",
+      "--ui-markdown-editor-source-font-size": "Font size of the Markdown source."
+    }
+  }
+}

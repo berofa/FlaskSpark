@@ -10,6 +10,7 @@ import os
 from authlib.integrations.flask_client import OAuth
 from flask import Blueprint, redirect, request, session, url_for
 from flask_login import login_required, login_user, logout_user
+from werkzeug.routing import BuildError
 
 from flaskspark import db
 from flaskspark.helpers.login_provider import AbstractLoginProvider
@@ -112,7 +113,7 @@ class OAuthLoginProvider(AbstractLoginProvider):
             if token:
                 user_id = token.get("id") if isinstance(token, dict) else None
                 if user_id:
-                    user = User.query.get(user_id)
+                    user = db.session.get(User, user_id)
                     if user:
                         return user
                 user_info = User.verify_oauth_token(token)
@@ -213,7 +214,7 @@ class OAuthLoginProvider(AbstractLoginProvider):
             }
 
             login_user(user)
-            return redirect(session.pop("next", None) or url_for("home"))
+            return redirect(_local_path(session.pop("next", None)) or _home_url())
 
         @auth_blueprint.route("/auth/logout")
         @login_required
@@ -226,9 +227,37 @@ class OAuthLoginProvider(AbstractLoginProvider):
             """
             logout_user()
             session.clear()
-            return redirect(url_for("home"))
+            return redirect(_home_url())
 
         self.app.register_blueprint(auth_blueprint)
+
+
+def _home_url() -> str:
+    """
+    The app's start page: the endpoint "home", else "/" (apps whose start page has another endpoint).
+
+    Returns:
+        str: URL of the start page.
+    """
+    try:
+        return url_for("home")
+    except BuildError:
+        return "/"
+
+
+def _local_path(target: str | None) -> str | None:
+    """
+    A redirect target after the sign-in, only when it stays on this site (a path, not "//host" or a URL).
+
+    Args:
+        target (str | None): The requested target ("next").
+
+    Returns:
+        str | None: The target or None.
+    """
+    if target and target.startswith("/") and not target.startswith("//") and "\\" not in target:
+        return target
+    return None
 
 
 def _extract_names_from_username(username: str):

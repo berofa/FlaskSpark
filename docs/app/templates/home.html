@@ -1,0 +1,22 @@
+{# Overview: the concept, with live examples. Data from docs/app/pages/home.py. #}
+{% extends "layouts/main.html" %}
+{% from "components/_macros.html" import demo %}
+
+{% block content %}
+  <section class="docs-section">
+    <div class="docs-section__intro">
+      <p class="docs-kicker">Overview</p>
+      <h2 class="text-4xl mb-3">{{ page.title }}</h2>
+      <p class="text-lg fg-3 mb-0">{{ page.summary }}</p>
+    </div>
+  </section>
+
+  <nav class="docs-toc" aria-label="On this page">
+    {% for section in page.sections %}<a href="#{{ section.id }}">{{ section.title }}</a>{% endfor %}
+  </nav>
+
+  {% if page.css %}<style>{{ page.css | safe }}</style>{% endif %}
+  {% for section in page.sections %}
+    {{ demo(section) }}
+  {% endfor %}
+{% endblock %}

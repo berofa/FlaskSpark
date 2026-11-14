@@ -1,0 +1,1465 @@
+# English translations of flaskspark.core (FlaskSpark).
+# Updated with scripts/core-i18n.
+# The source texts are English: every msgstr stays empty.
+msgid ""
+msgstr ""
+"Project-Id-Version: FlaskSpark \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-14 09:35+0100\n"
+"PO-Revision-Date: 2026-11-13 16:19+0100\n"
+"Last-Translator: FlaskSpark\n"
+"Language: en\n"
+"Language-Team: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#, python-format
+msgid "%(age)s ago"
+msgstr ""
+
+#, python-format
+msgid "%(area)s for %(role)s"
+msgstr ""
+
+#, python-format
+msgid ""
+"%(down)s of %(nodes)s nodes do not answer (%(names)s). The cluster runs on with the others; without a majority the "
+"message bus stops."
+msgstr ""
+
+#, python-format
+msgid "%(label)s is missing."
+msgstr ""
+
+#, python-format
+msgid "%(label)s is not a valid server name."
+msgstr ""
+
+#, python-format
+msgid "%(label)s is too long (at most %(n)s characters)."
+msgstr ""
+
+#, python-format
+msgid "%(label)s is too long."
+msgstr ""
+
+#, python-format
+msgid "%(label)s must be a whole number."
+msgstr ""
+
+#, python-format
+msgid "%(label)s must be an address starting with https:// (or http://)."
+msgstr ""
+
+#, python-format
+msgid "%(label)s must be between %(min)s and %(max)s."
+msgstr ""
+
+#, python-format
+msgid "%(label)s: %(count)s instances"
+msgstr ""
+
+#, python-format
+msgid "%(label)s: no heartbeat"
+msgstr ""
+
+#, python-format
+msgid "%(label)s: reports errors"
+msgstr ""
+
+#, python-format
+msgid "%(label)s: unknown choice."
+msgstr ""
+
+#, python-format
+msgid "%(n)s findings"
+msgstr ""
+
+#, python-format
+msgid "%(n)s folders"
+msgstr ""
+
+#, python-format
+msgid "%(n)s in the last minute"
+msgstr ""
+
+#, python-format
+msgid "%(n)s items removed."
+msgstr ""
+
+#, python-format
+msgid "%(n)s loaded"
+msgstr ""
+
+#, python-format
+msgid "%(n)s requests in the last minute found their service away"
+msgstr ""
+
+#, python-format
+msgid "%(n)s rows"
+msgstr ""
+
+#, python-format
+msgid "%(n)s waiting"
+msgstr ""
+
+#, python-format
+msgid "%(open)s requests, %(ws)s WebSockets"
+msgstr ""
+
+#, python-format
+msgid "%(provider)s does not offer %(type)s."
+msgstr ""
+
+#, python-format
+msgid "%(streams)s streams, %(size)s MiB"
+msgstr ""
+
+#, python-format
+msgid "%(title)s (late, %(time)s)"
+msgstr ""
+
+#, python-format
+msgid "%(title)s (still)"
+msgstr ""
+
+#, python-format
+msgid "%(up)s/%(all)s nodes"
+msgstr ""
+
+#, python-format
+msgid ""
+"%(waiting)s notifications wait in the queue, the oldest for %(minutes)s min: the notifications service delivers "
+"nothing. They go out once it runs again (valid for a day)."
+msgstr ""
+
+msgid "(not added)"
+msgstr ""
+
+msgid "1 finding"
+msgstr ""
+
+msgid "1 item removed."
+msgstr ""
+
+msgid "1 problem"
+msgstr ""
+
+msgid "1 row"
+msgstr ""
+
+msgid "1 warning"
+msgstr ""
+
+msgid "Access"
+msgstr ""
+
+msgid "Access of an area that is gone"
+msgstr ""
+
+msgid "Access token"
+msgstr ""
+
+msgid "Account"
+msgstr ""
+
+msgid "Account connected."
+msgstr ""
+
+msgid "Account not found."
+msgstr ""
+
+msgid "Account removed (the data on the servers stays)."
+msgstr ""
+
+msgid "Account saved."
+msgstr ""
+
+msgid "Account switched off."
+msgstr ""
+
+msgid "Account switched on."
+msgstr ""
+
+msgid "Accounts"
+msgstr ""
+
+msgid "Accounts need a sign-in."
+msgstr ""
+
+msgid "Add a column"
+msgstr ""
+
+msgid "Add a row"
+msgstr ""
+
+msgid "Address"
+msgstr ""
+
+msgid "Administrators may always use everything."
+msgstr ""
+
+msgid "Alert"
+msgstr ""
+
+msgid ""
+"An account is one sign-in (user name and password) with everything its server offers. The password is stored "
+"encrypted; the data stays on the servers. A new account is kept only if every chosen service signs in."
+msgstr ""
+
+msgid "Ask an administrator if you need it."
+msgstr ""
+
+msgid "At least one service must stay (else remove the account)."
+msgstr ""
+
+msgid "Attach a file"
+msgstr ""
+
+msgid "Back to the default of config.yaml"
+msgstr ""
+
+msgid "Backup"
+msgstr ""
+
+#, python-format
+msgid "Backup: %(files)s"
+msgstr ""
+
+msgid "Bold (Ctrl+B)"
+msgstr ""
+
+msgid "Browser default"
+msgstr ""
+
+msgid "Bulleted list"
+msgstr ""
+
+msgid "Calendars (CalDAV)"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Cancelled."
+msgstr ""
+
+msgid "Caution"
+msgstr ""
+
+msgid "Changed here"
+msgstr ""
+
+msgid "Channels"
+msgstr ""
+
+msgid "Check the certificate"
+msgstr ""
+
+msgid "Choose at least one service of the account."
+msgstr ""
+
+msgid "Choose at least one service."
+msgstr ""
+
+msgid "Clean up"
+msgstr ""
+
+msgid "Clean up all"
+msgstr ""
+
+#, python-format
+msgid "Clean-up failed: %(error)s"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Code block"
+msgstr ""
+
+msgid "Collapsible section"
+msgstr ""
+
+msgid "Colour mode"
+msgstr ""
+
+msgid "Colour mode: dark"
+msgstr ""
+
+msgid "Colour mode: light"
+msgstr ""
+
+msgid "Colour mode: system"
+msgstr ""
+
+msgid "Commands"
+msgstr ""
+
+msgid "Connect"
+msgstr ""
+
+msgid "Connect account"
+msgstr ""
+
+#, python-format
+msgid "Connected as %(name)s"
+msgstr ""
+
+msgid "Connecting…"
+msgstr ""
+
+#, python-format
+msgid "Connection failed: %(errors)s"
+msgstr ""
+
+msgid "Connection lost."
+msgstr ""
+
+#, python-format
+msgid "Connection works: %(results)s"
+msgstr ""
+
+msgid "Connections"
+msgstr ""
+
+msgid "Contacts (CardDAV)"
+msgstr ""
+
+msgid "Core"
+msgstr ""
+
+msgid "Dark"
+msgstr ""
+
+msgid "Data"
+msgstr ""
+
+msgid "Database"
+msgstr ""
+
+msgid "Default"
+msgstr ""
+
+#, python-format
+msgid "Default (%(value)s)"
+msgstr ""
+
+#, python-format
+msgid "Default: %(value)s"
+msgstr ""
+
+#, python-brace-format
+msgid "Default: {value}"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Delete the column"
+msgstr ""
+
+msgid "Delete the row"
+msgstr ""
+
+msgid "Delete the table"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Dismiss"
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "Drop images, videos or documents here or click"
+msgstr ""
+
+msgid "E-mail"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+#, python-brace-format
+msgid "Edit «{name}»"
+msgstr ""
+
+msgid "Editing mode"
+msgstr ""
+
+msgid "Encryption"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "Failing"
+msgstr ""
+
+msgid "File deleted."
+msgstr ""
+
+msgid "File not found."
+msgstr ""
+
+msgid "Finding"
+msgstr ""
+
+#, python-format
+msgid "Fine again since %(now)s (since %(first)s)."
+msgstr ""
+
+msgid "FlaskSpark's record of the module (when it comes back, it starts afresh)"
+msgstr ""
+
+msgid "Folder"
+msgstr ""
+
+msgid "Formatting"
+msgstr ""
+
+msgid "From the sign-in"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "GitLab"
+msgstr ""
+
+#, python-format
+msgid "GitLab: %(error)s"
+msgstr ""
+
+msgid "Guardian"
+msgstr ""
+
+msgid "Guardian can't check"
+msgstr ""
+
+#, python-format
+msgid "Guardian: %(title)s"
+msgstr ""
+
+msgid "HH:MM or «off»"
+msgstr ""
+
+msgid "Heading 1"
+msgstr ""
+
+msgid "Heading 2"
+msgstr ""
+
+msgid "Heading 3"
+msgstr ""
+
+msgid "Heading 4"
+msgstr ""
+
+msgid "Heading 5"
+msgstr ""
+
+msgid "Heading 6"
+msgstr ""
+
+msgid "Heartbeat"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "Horizontal line"
+msgstr ""
+
+msgid "Image"
+msgstr ""
+
+msgid "Important"
+msgstr ""
+
+msgid "Insert"
+msgstr ""
+
+msgid "Instance"
+msgstr ""
+
+msgid "Instances"
+msgstr ""
+
+msgid "Invalid key."
+msgstr ""
+
+msgid "Invitation not found."
+msgstr ""
+
+msgid "Invited"
+msgstr ""
+
+msgid "It cannot be undone, except from the backup FlaskSpark makes first (its name follows after the clean-up)."
+msgstr ""
+
+msgid "Italic (Ctrl+I)"
+msgstr ""
+
+msgid "Joined already (leave first to join with another account)."
+msgstr ""
+
+msgid "Joined."
+msgstr ""
+
+msgid "Kept for your account, on every device."
+msgstr ""
+
+msgid "Kind"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Language (e.g. python)"
+msgstr ""
+
+msgid "Language of the pages"
+msgstr ""
+
+msgid "Language: browser default"
+msgstr ""
+
+msgid "Last backup"
+msgstr ""
+
+msgid "Last check"
+msgstr ""
+
+msgid "Leave empty to keep it."
+msgstr ""
+
+msgid "Leave empty to keep the password."
+msgstr ""
+
+msgid "Left."
+msgstr ""
+
+msgid "Light"
+msgstr ""
+
+msgid "Link (Ctrl+K)"
+msgstr ""
+
+msgid "Link address"
+msgstr ""
+
+msgid "Live channel"
+msgstr ""
+
+msgid "Loaded"
+msgstr ""
+
+msgid "Loading…"
+msgstr ""
+
+msgid "Mail (IMAP)"
+msgstr ""
+
+msgid "Markdown"
+msgstr ""
+
+msgid "Memory"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "Mirror"
+msgstr ""
+
+msgid "Module no longer delivered"
+msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "More"
+msgstr ""
+
+msgid "NATS"
+msgstr ""
+
+msgid "NATS nodes down"
+msgstr ""
+
+msgid "NATS not reachable"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Navigation"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "No GitLab API at this address."
+msgstr ""
+
+msgid "No access"
+msgstr ""
+
+msgid "No account connected yet."
+msgstr ""
+
+msgid "No files."
+msgstr ""
+
+#, python-format
+msgid "No instance of the service %(name)s reports in the service directory (not running, hanging or without NATS)."
+msgstr ""
+
+#, python-format
+msgid ""
+"No instance of the service %(name)s reports in the service directory (not running, hanging or without NATS). Last "
+"heartbeat %(minutes)s min ago from %(host)s."
+msgstr ""
+
+msgid "No matching command"
+msgstr ""
+
+msgid "No module uses accounts of the application."
+msgstr ""
+
+msgid "No role to share this with."
+msgstr ""
+
+msgid "No settings."
+msgstr ""
+
+msgid "No sign-in: everyone may use everything."
+msgstr ""
+
+msgid "No users yet."
+msgstr ""
+
+msgid "No values."
+msgstr ""
+
+msgid "Nodes"
+msgstr ""
+
+msgid "None (unencrypted)"
+msgstr ""
+
+msgid "Normal text"
+msgstr ""
+
+msgid "Not found."
+msgstr ""
+
+msgid "Not left over (any more): reload the page."
+msgstr ""
+
+msgid "Not reachable"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Nothing changed."
+msgstr ""
+
+msgid "Nothing chosen."
+msgstr ""
+
+msgid "Nothing found at this address."
+msgstr ""
+
+msgid "Nothing left over."
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Notifications pile up"
+msgstr ""
+
+msgid "Numbered list"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Only the owner can share this."
+msgstr ""
+
+msgid "Only who joins sees it."
+msgstr ""
+
+msgid "Open connections"
+msgstr ""
+
+msgid "Open in the browser"
+msgstr ""
+
+#, python-brace-format
+msgid "Open {title}"
+msgstr ""
+
+msgid "Own server"
+msgstr ""
+
+#, python-format
+msgid "PID %(pid)s on %(host)s"
+msgstr ""
+
+msgid "Pages"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Personal settings of a module that is gone"
+msgstr ""
+
+msgid "Port"
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "Problem"
+msgstr ""
+
+msgid "Process"
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
+msgid "Provider"
+msgstr ""
+
+msgid "Queue"
+msgstr ""
+
+msgid "Quote"
+msgstr ""
+
+msgid "Really delete?"
+msgstr ""
+
+msgid "Really remove?"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "Remove for good?"
+msgstr ""
+
+msgid "Removed"
+msgstr ""
+
+msgid "Requests"
+msgstr ""
+
+msgid "Required"
+msgstr ""
+
+#, python-format
+msgid "Resolved: %(title)s"
+msgstr ""
+
+msgid "Restarts by systemd"
+msgstr ""
+
+msgid "Role"
+msgstr ""
+
+#, python-format
+msgid "Role of %(user)s"
+msgstr ""
+
+msgid "Router"
+msgstr ""
+
+msgid "Routes"
+msgstr ""
+
+msgid "SSL/TLS"
+msgstr ""
+
+msgid "STARTTLS"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Saved"
+msgstr ""
+
+msgid "Saved, takes effect now."
+msgstr ""
+
+msgid "Saved."
+msgstr ""
+
+#, python-format
+msgid "Saved. Takes effect after a restart of: %(services)s"
+msgstr ""
+
+msgid "Saving…"
+msgstr ""
+
+#, python-format
+msgid "Secure connection failed: %(error)s"
+msgstr ""
+
+msgid "Sending (SMTP)"
+msgstr ""
+
+msgid "Server (IMAP)"
+msgstr ""
+
+msgid "Server (SMTP)"
+msgstr ""
+
+msgid "Server not found."
+msgstr ""
+
+#, python-format
+msgid "Server not reachable: %(error)s"
+msgstr ""
+
+msgid "Service directory"
+msgstr ""
+
+msgid "Service directory not readable"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid "Setting no module defines"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Several at once"
+msgstr ""
+
+#, python-brace-format
+msgid "Several at once, at most {size} each"
+msgstr ""
+
+msgid "Share"
+msgstr ""
+
+#, python-brace-format
+msgid "Share «{name}»"
+msgstr ""
+
+msgid "Shared with every user of a role (also later ones), never with yourself."
+msgstr ""
+
+msgid "Shared with no one."
+msgstr ""
+
+msgid "Shared with you"
+msgstr ""
+
+msgid "Sharing needs a sign-in."
+msgstr ""
+
+msgid "Sharing saved."
+msgstr ""
+
+msgid "Show all services"
+msgstr ""
+
+msgid "Show problems only"
+msgstr ""
+
+msgid "Show the whole message"
+msgstr ""
+
+msgid "Sign out"
+msgstr ""
+
+#, python-format
+msgid "Sign-in failed: %(error)s"
+msgstr ""
+
+msgid "Sign-in refused (the access token is wrong, expired or revoked)."
+msgstr ""
+
+msgid "Sign-in refused (user name or password wrong)."
+msgstr ""
+
+#, python-format
+msgid "Sign-in refused: %(error)s"
+msgstr ""
+
+msgid "Signed in"
+msgstr ""
+
+#, python-format
+msgid "Since %(time)s: %(message)s"
+msgstr ""
+
+msgid "Slow consumers"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "State directory of a module that is gone"
+msgstr ""
+
+msgid "Status not available"
+msgstr ""
+
+msgid "Status of the services"
+msgstr ""
+
+msgid "Storage not available"
+msgstr ""
+
+msgid "Strikethrough"
+msgstr ""
+
+msgid "Switch off"
+msgstr ""
+
+msgid "Switch off only for a server of your own with a self-signed certificate."
+msgstr ""
+
+msgid "Switch on"
+msgstr ""
+
+msgid "System"
+msgstr ""
+
+msgid "Table"
+msgstr ""
+
+msgid "Table no module describes"
+msgstr ""
+
+msgid "Table of contents"
+msgstr ""
+
+msgid "Task list"
+msgstr ""
+
+msgid "Test the connection"
+msgstr ""
+
+msgid "Testing…"
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+msgid "Text style"
+msgstr ""
+
+msgid "The access token may not read the API (scope read_api or api)."
+msgstr ""
+
+msgid "The address of the GitLab instance, without /api/v4."
+msgstr ""
+
+#, python-format
+msgid "The checks fail: %(error)s"
+msgstr ""
+
+msgid "The defaults come from config.yaml; an empty field takes the default again."
+msgstr ""
+
+msgid "The file is empty."
+msgstr ""
+
+#, python-format
+msgid "The file is too large (at most %(size)s)."
+msgstr ""
+
+msgid "The file is too large."
+msgstr ""
+
+msgid "The file storage is not available. Please try again later."
+msgstr ""
+
+msgid "The order is not readable."
+msgstr ""
+
+msgid "The role comes from the sign-in (the identity provider's groups). An area without the right is invisible and closed."
+msgstr ""
+
+msgid "The role of each user. Changes apply at once."
+msgstr ""
+
+#, python-format
+msgid "The server answered %(status)s, not as a %(service)s server."
+msgstr ""
+
+msgid "The server did not answer in time."
+msgstr ""
+
+#, python-format
+msgid "The service %(name)s may run only once, but %(count)s instances report: %(instances)s."
+msgstr ""
+
+#, python-format
+msgid "The service %(name)s runs, but reports that it can't work (%(instances)s)."
+msgstr ""
+
+msgid "The services are not readable."
+msgstr ""
+
+#, python-format
+msgid "The services can't be watched: %(error)s (NATS without JetStream?)."
+msgstr ""
+
+#, python-format
+msgid "The services' message bus does not answer (%(error)s)."
+msgstr ""
+
+msgid "The shares are not readable."
+msgstr ""
+
+#, python-brace-format
+msgid "The user name is the one you signed in with: {user}."
+msgstr ""
+
+msgid "The value is too large."
+msgstr ""
+
+msgid "The value must be an object."
+msgstr ""
+
+#, python-format
+msgid "There is an account «%(name)s» already."
+msgstr ""
+
+msgid ""
+"These accounts belong to the application, not to a person: the modules' services use them for everyone. Only admins "
+"see and change them."
+msgstr ""
+
+msgid "This deletes:"
+msgstr ""
+
+msgid "This provider is only for personal accounts."
+msgstr ""
+
+msgid "This type of account is not available to you."
+msgstr ""
+
+msgid "Tip"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Unknown action."
+msgstr ""
+
+msgid "Unknown kind of item to share."
+msgstr ""
+
+msgid "Unknown migration revision"
+msgstr ""
+
+msgid "Unknown permission (read or write)."
+msgstr ""
+
+msgid "Unknown provider."
+msgstr ""
+
+msgid "Unknown role (or it may not use this)."
+msgstr ""
+
+msgid "Unknown role or area."
+msgstr ""
+
+msgid "Unknown role."
+msgstr ""
+
+#, python-format
+msgid "Unknown setting: %(path)s"
+msgstr ""
+
+msgid "Unknown type of account."
+msgstr ""
+
+msgid "Unknown user."
+msgstr ""
+
+#, python-brace-format
+msgid "Upload failed ({status})."
+msgstr ""
+
+#, python-brace-format
+msgid "Upload failed: {name}"
+msgstr ""
+
+msgid "Uploading works again once the storage is back."
+msgstr ""
+
+#, python-brace-format
+msgid "Uploading {name} …"
+msgstr ""
+
+msgid "Used by"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "User name"
+msgstr ""
+
+msgid "User name and password are needed."
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "Video"
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Web"
+msgstr ""
+
+msgid "What"
+msgstr ""
+
+msgid ""
+"What modules the application no longer delivers left behind, and settings nothing uses any more. FlaskSpark never "
+"removes them by itself; whatever is removed here is first backed up."
+msgstr ""
+
+msgid "When a share ends, who had joined sees a notice once."
+msgstr ""
+
+msgid "Which role may use which area. Changes apply at once."
+msgstr ""
+
+#, python-format
+msgid "You are no longer part of «%(name)s» (shared by %(owner)s)."
+msgstr ""
+
+msgid "You can't change your own role."
+msgstr ""
+
+msgid "You may not use this page."
+msgstr ""
+
+msgid "Your role does not give you access to any part of this application yet."
+msgstr ""
+
+#, python-format
+msgid "access of the area %(area)s for every role (%(rows)s)"
+msgstr ""
+
+msgid "always everything"
+msgstr ""
+
+msgid "an earlier history: run «db adopt»"
+msgstr ""
+
+msgid "answers"
+msgstr ""
+
+msgid "answers, but without a heartbeat"
+msgstr ""
+
+msgid "comma separated"
+msgstr ""
+
+msgid "connected"
+msgstr ""
+
+msgid "current"
+msgstr ""
+
+#, python-format
+msgid "current (%(n)s database backups)"
+msgstr ""
+
+msgid "declined"
+msgstr ""
+
+#, python-format
+msgid "directory %(path)s with everything in it (%(size)s)"
+msgstr ""
+
+msgid "empty"
+msgstr ""
+
+msgid "invited"
+msgstr ""
+
+msgid "item"
+msgstr ""
+
+msgid "items"
+msgstr ""
+
+msgid "joined"
+msgstr ""
+
+msgid "lags behind"
+msgstr ""
+
+#, python-format
+msgid "last %(age)s ago"
+msgstr ""
+
+#, python-format
+msgid "last seen in version %(version)s"
+msgstr ""
+
+msgid "leader"
+msgstr ""
+
+#, python-format
+msgid "migration revision %(rev)s"
+msgstr ""
+
+#, python-format
+msgid "module %(module)s"
+msgstr ""
+
+msgid "no backup yet"
+msgstr ""
+
+msgid "no findings"
+msgstr ""
+
+msgid "no heartbeat"
+msgstr ""
+
+msgid "no heartbeats yet"
+msgstr ""
+
+#, python-format
+msgid "no longer checks (last %(age)s ago)"
+msgstr ""
+
+#, python-format
+msgid "no longer delivered: %(name)s — its tables are kept"
+msgstr ""
+
+msgid "no tables left"
+msgstr ""
+
+msgid "none"
+msgstr ""
+
+msgid "none configured"
+msgstr ""
+
+#, python-format
+msgid "none for %(age)s (%(host)s)"
+msgstr ""
+
+msgid "not answering"
+msgstr ""
+
+msgid "not available: no service directory, work queue or leadership"
+msgstr ""
+
+#, python-format
+msgid "not loaded: %(why)s"
+msgstr ""
+
+#, python-format
+msgid "not migrated: %(names)s"
+msgstr ""
+
+msgid "not reachable"
+msgstr ""
+
+msgid "not readable"
+msgstr ""
+
+#, python-format
+msgid "not running (%(state)s)"
+msgstr ""
+
+msgid "not shared"
+msgstr ""
+
+msgid "not tested"
+msgstr ""
+
+msgid "nothing waiting"
+msgstr ""
+
+msgid "off"
+msgstr ""
+
+msgid "on"
+msgstr ""
+
+msgid "on request only"
+msgstr ""
+
+#, python-format
+msgid "personal setting %(key)s of every user (%(rows)s)"
+msgstr ""
+
+msgid "read"
+msgstr ""
+
+msgid "reports errors"
+msgstr ""
+
+#, python-format
+msgid "revisions of no known module: %(revisions)s"
+msgstr ""
+
+msgid "running"
+msgstr ""
+
+#, python-format
+msgid "running for %(age)s"
+msgstr ""
+
+#, python-brace-format
+msgid "shared by {owner}"
+msgstr ""
+
+msgid "sign-in failed"
+msgstr ""
+
+msgid "standby"
+msgstr ""
+
+#, python-format
+msgid "stored setting %(path)s"
+msgstr ""
+
+msgid "switched off"
+msgstr ""
+
+#, python-format
+msgid "systemd on this host (service directory: %(why)s)"
+msgstr ""
+
+#, python-format
+msgid "table %(name)s (%(rows)s)"
+msgstr ""
+
+#, python-format
+msgid "the oldest for %(age)s"
+msgstr ""
+
+msgid "tile failed"
+msgstr ""
+
+msgid "unknown"
+msgstr ""
+
+msgid "waiting"
+msgstr ""
+
+msgid "write"
+msgstr ""
+
+#, python-brace-format
+msgid "{columns} × {rows}"
+msgstr ""
+
+#, python-brace-format
+msgid "{n} problems"
+msgstr ""
+
+#, python-brace-format
+msgid "{n} running"
+msgstr ""
+
+#, python-brace-format
+msgid "{n} warnings"
+msgstr ""
+
+#, python-brace-format
+msgid "{percent} of {size}"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: a number expected"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: a time HH:MM or «off» expected"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: a whole number expected"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: between %(min)s and %(max)s"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: invalid"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: not one of the choices"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: on or off expected"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: valid JSON expected (a list or an object)"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: values expected, separated by commas"
+msgstr ""
+
+#, python-format
+msgid "«%(label)s»: whole numbers expected, separated by commas"
+msgstr ""
+
+#, python-format
+msgid "«%(name)s» is no longer shared by %(owner)s."
+msgstr ""
+
+#, python-format
+msgid "«%(title)s» uploaded."
+msgstr ""
+
+msgid ""
+"«From the sign-in» takes the role the identity provider gives at every sign-in. A role chosen here applies at once "
+"and stays after later sign-ins, until it is set back. Users appear after their first sign-in."
+msgstr ""
+

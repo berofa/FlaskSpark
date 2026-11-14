@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FlaskSpark"
-version = "0.1.2"
-description = "FlaskSpark is a lightweight and customizable Flask boilerplate designed to ignite your web application development process."
+version = "0.2.0"
+description = "Flask boilerplate and runtime for modular apps: modules, services over NATS, live data, themes and Bootstrap 6 web components."
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
   { name = "berofa" }
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
   "authlib",
   "flask>=2.0",
@@ -22,25 +22,77 @@ dependencies = [
   "flask-session",
   "flask-sqlalchemy",
   "libsass",
+  "markdown-it-py[linkify]>=3.0",
+  "nh3>=0.2.15",
   "python-dotenv",
   "rcssmin",
   "requests",
   "rjsmin",
 ]
 
+[project.urls]
+Homepage = "https://github.com/berofa/FlaskSpark"
+Issues = "https://github.com/berofa/FlaskSpark/issues"
+
 [project.optional-dependencies]
+# The core of modular apps (flaskspark.core): modules, themes, database API, services over NATS, push, router.
+core = [
+  "aiohttp>=3.9",
+  "alembic>=1.13",
+  "cachelib>=0.13",
+  "cryptography>=42",
+  "gunicorn>=22",
+  "httpx>=0.27",
+  "nats-py>=2.7",
+  "pyyaml>=6.0",
+  "sqlalchemy>=2.0",
+]
+# Thumbnails of attachments (flaskspark.core.attachments): images (Pillow), HEIC photos (pillow-heif), the first page
+# of PDFs (pypdfium2). Without them attachments work, only without thumbnails.
+files = [
+  "pillow>=10",
+  "pillow-heif>=0.16",
+  "pypdfium2>=4",
+]
 dev = [
   "pytest",
 ]
+
+[project.scripts]
+# The command line of an application on flaskspark.core (needs the extra "core"); an app may add an alias of its own.
+flaskspark = "flaskspark.core.cli:main"
+
+[project.entry-points."babel.extractors"]
+# Browser scripts with template literals (pybabel: `[flaskspark_js: **/static/**.js]` in babel.cfg).
+flaskspark_js = "flaskspark.core.i18n_extract:extract_js"
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["flaskspark*"]
+include = ["flaskspark*", "webcomponents*"]
 
 [tool.setuptools.package-data]
 flaskspark = [
   "templates/**/*.html",
   "static/**/*",
+  "core/web/templates/**/*.html",
+  "core/web/static/**/*",
+  "core/themes/**/*",
+  # The migrations of the core (its histories "core" and "signin") and Alembic's environment for every module's.
+  "core/db/alembic/*",
+  "core/db/versions/*.py",
+  "core/db/versions_signin/*.py",
+  # The core's catalogue: the sources and the compiled catalogues (scripts/core-i18n), so a pip install translates.
+  "core/locales/*/LC_MESSAGES/*.po",
+  "core/locales/*/LC_MESSAGES/*.mo",
+]
+# The web components: browser assets only (served by their blueprint, exported for apps without Python).
+webcomponents = [
+  "core/*.js",
+  "core/*.css",
+  "modules/**/*.js",
+  "modules/**/*.json",
+  "modules/**/*.css",
+  "vendor/**/*",
 ]

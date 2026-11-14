@@ -1,0 +1,9 @@
+# FlaskSpark's neutral theme: used when config.yaml names no theme of the app (theme: default).
+title: FlaskSpark
+short_name: FlaskSpark
+logo: logo.svg
+logo_dark: logo-dark.svg
+favicon: favicon.svg
+theme_color: "#f8fafc"
+theme_color_dark: "#0f1115"
+default_mode: system

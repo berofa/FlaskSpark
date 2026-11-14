@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Customizing checks</title>
+  <link rel="stylesheet" href="{{ webcomponents_url('vendor/bootstrap6/css/bootstrap.min.css') }}">
+  <script type="module" src="{{ webcomponents_url('modules/bootstrap/bootstrap.js') }}"></script>
+  <script type="module" src="{{ webcomponents_url('modules/calendar/calendar.js') }}"></script>
+  <style>
+    {% for demo in demos %}{{ demo.css | safe }}
+    {% endfor %}
+    body { width: 1000px; }
+  </style>
+</head>
+<body>
+  {% for demo in demos %}
+    <section data-demo="{{ demo.name }}" data-selector="{{ demo.selector }}" data-tokens="{{ demo.tokens }}">
+      <div data-copy="custom">{{ demo.html | safe }}</div>
+      <div data-copy="plain">{{ demo.plain | safe }}</div>
+    </section>
+  {% endfor %}
+  <pre id="results">pending</pre>
+  <script type="module">
+    const results = [];
+    const tick = () => new Promise((resolve) => setTimeout(resolve, 50));
+    const PROPS = ["color", "background-color", "background-image", "border-top-left-radius", "border-top-color", "border-top-style",
+      "border-left-width", "padding-top", "padding-left", "padding-right", "width", "height", "font-weight", "font-size", "box-shadow",
+      "column-gap", "row-gap", "transition-duration", "transform", "opacity", "min-height", "grid-template-columns", "flex-basis",
+      "backdrop-filter", "aspect-ratio"];
+
+    /** The look of an element and everything it renders (light children, shadow tree, nested components). */
+    function signature(element, tokens, out = [], depth = 0) {
+      if (depth > 12) return out;
+      const computed = getComputedStyle(element);
+      // the tokens as every element sees them: they must arrive inside the shadow tree, where Bootstrap reads them
+      out.push([...PROPS, ...tokens].map((name) => computed.getPropertyValue(name)).join("|"));
+      for (const pseudo of ["::before", "::after", "::backdrop"]) {
+        try {
+          const p = getComputedStyle(element, pseudo);
+          out.push(`${pseudo}${p.getPropertyValue("background-color")}|${p.getPropertyValue("backdrop-filter")}|${p.getPropertyValue("transform")}`);
+        } catch { /* not supported */ }
+      }
+      if (element.shadowRoot) [...element.shadowRoot.children].forEach((child) => signature(child, tokens, out, depth + 1));
+      [...element.children].forEach((child) => signature(child, tokens, out, depth + 1));
+      return out;
+    }
+
+    async function run() {
+      const tags = [...new Set([...document.querySelectorAll("*")].map((el) => el.localName).filter((n) => n.startsWith("ui-")))];
+      await Promise.all(tags.map((tag) => customElements.whenDefined(tag)));
+      for (let i = 0; i < 100 && [...document.querySelectorAll(tags.join(","))].some((el) => "hasRendered" in el && !el.hasRendered); i += 1) await tick();
+      // tooltips and popovers render their box only while shown
+      document.querySelectorAll("ui-tooltip, ui-popover").forEach((el) => el.show?.());
+      for (let i = 0; i < 60; i += 1) await tick(); // FullCalendar and the boxes
+      for (const section of document.querySelectorAll("[data-demo]")) {
+        const name = section.dataset.demo;
+        const selector = section.dataset.selector;
+        const custom = section.querySelector('[data-copy="custom"]');
+        const plain = section.querySelector('[data-copy="plain"]');
+        const target = custom.querySelector(selector) || (custom.firstElementChild?.matches(selector) ? custom.firstElementChild : null);
+        if (!target) {
+          results.push({ name: `${name}: demo element found`, ok: false, detail: selector });
+          continue;
+        }
+        const all = [...custom.querySelectorAll("*")];
+        const twin = [...plain.querySelectorAll("*")][all.indexOf(target)];
+        const tokens = [...section.dataset.tokens.split(" ")].filter(Boolean);
+        // the inner elements (not the element itself, which the rule sets anyway) must see the tokens and look different
+        const inner = (element) => signature(element, tokens).slice(1).join("\n");
+        const differs = twin && inner(target) !== inner(twin);
+        results.push({ name: `${name}: the customized tokens change the component`, ok: Boolean(differs), detail: selector });
+      }
+    }
+
+    run()
+      .catch((error) => results.push({ name: "no exception", ok: false, detail: String(error?.stack || error) }))
+      .finally(() => { document.getElementById("results").textContent = JSON.stringify(results); });
+  </script>
+</body>
+</html>

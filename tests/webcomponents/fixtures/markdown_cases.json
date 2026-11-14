@@ -1,0 +1,160 @@
+{
+  "_comment": "Shared by tests/test_markdown.py (flaskspark.markdown) and tests/webcomponents/js/markdown.test.js (ui-markdown/markdown.js): both must give these results.",
+  "render": [
+    {
+      "name": "emphasis, strikethrough, code",
+      "md": "**bold** *it* ~~gone~~ `x < y`",
+      "contains": ["<strong>bold</strong>", "<em>it</em>", "<s>gone</s>", "<code>x &lt; y</code>"]
+    },
+    {
+      "name": "autolinks get rel",
+      "md": "see https://example.com and www.example.org or me@example.com",
+      "contains": [
+        "<a href=\"https://example.com\" rel=\"noopener noreferrer\">https://example.com</a>",
+        "<a href=\"http://www.example.org\" rel=\"noopener noreferrer\">www.example.org</a>",
+        "<a href=\"mailto:me@example.com\" rel=\"noopener noreferrer\">me@example.com</a>"
+      ]
+    },
+    {
+      "name": "table with alignment",
+      "md": "| a | b | c |\n| :-- | :-: | --: |\n| 1 | 2 | 3 |",
+      "contains": ["<table>", "<th style=\"text-align:left\">a</th>", "<th style=\"text-align:center\">b</th>", "<td style=\"text-align:right\">3</td>"]
+    },
+    {
+      "name": "task list",
+      "md": "- [ ] open\n- [x] done\n- plain",
+      "contains": ["<ul class=\"contains-task-list\">", "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled=\"\"> open</li>", "checked=\"\"> done", "<li>plain</li>"]
+    },
+    {
+      "name": "task list in an ordered list",
+      "md": "1. [x] first",
+      "contains": ["<ol class=\"contains-task-list\">", "checked=\"\"> first"]
+    },
+    {
+      "name": "alert with the default title",
+      "md": "> [!note]\n> Read this.",
+      "contains": ["<div class=\"markdown-alert markdown-alert-note\">", "<p class=\"markdown-alert-title\">Note</p>", "<p>Read this.</p>"],
+      "absent": ["<blockquote>"]
+    },
+    {
+      "name": "alert with a custom title, upper case marker",
+      "md": "> [!WARNING] Mind the gap\n> Text",
+      "contains": ["markdown-alert-warning", "<p class=\"markdown-alert-title\">Mind the gap</p>"]
+    },
+    {
+      "name": "alert titles translated",
+      "md": "> [!tip]\n> x",
+      "options": {"alert_titles": {"tip": "Tipp"}},
+      "contains": ["<p class=\"markdown-alert-title\">Tipp</p>"]
+    },
+    {
+      "name": "unknown alert type stays a quote",
+      "md": "> [!danger]\n> x",
+      "contains": ["<blockquote>"]
+    },
+    {
+      "name": "table of contents and heading ids",
+      "md": "[[_TOC_]]\n\n# Über uns\n\n## Ziel & Zweck\n\n## Ziel & Zweck\n\n# Ende",
+      "contains": [
+        "<nav class=\"markdown-toc\"><ul><li><a href=\"#über-uns\" rel=\"noopener noreferrer\">Über uns</a><ul><li><a href=\"#ziel-zweck\" rel=\"noopener noreferrer\">Ziel &amp; Zweck</a></li><li><a href=\"#ziel-zweck-1\" rel=\"noopener noreferrer\">Ziel &amp; Zweck</a></li></ul></li><li><a href=\"#ende\" rel=\"noopener noreferrer\">Ende</a></li></ul></nav>",
+        "<h1 id=\"über-uns\">Über uns</h1>",
+        "<h2 id=\"ziel-zweck-1\">"
+      ]
+    },
+    {
+      "name": "[TOC] works as well",
+      "md": "[TOC]\n\n## A",
+      "contains": ["<nav class=\"markdown-toc\">", "href=\"#a\""]
+    },
+    {
+      "name": "code block keeps its language; mermaid and plantuml are not drawn",
+      "md": "```mermaid\ngraph TD; A-->B\n```\n\n```plantuml\n@startuml\nA -> B\n@enduml\n```",
+      "contains": ["<pre><code class=\"language-mermaid\">graph TD; A--&gt;B\n</code></pre>", "<code class=\"language-plantuml\">@startuml"],
+      "absent": ["<svg"]
+    },
+    {
+      "name": "collapsible section",
+      "md": "<details>\n<summary>More</summary>\n\nHidden *text*\n\n</details>",
+      "contains": ["<details>", "<summary>More</summary>", "<p>Hidden <em>text</em></p>", "</details>"]
+    },
+    {
+      "name": "base url for relative links and images",
+      "md": "![a](/uploads/x/a.png) [doc](docs/readme.md) [top](#top) [abs](https://example.org/a)",
+      "options": {"base_url": "https://git.example.com/group/project/"},
+      "contains": [
+        "src=\"https://git.example.com/group/project/uploads/x/a.png\"",
+        "href=\"https://git.example.com/group/project/docs/readme.md\"",
+        "href=\"#top\"",
+        "href=\"https://example.org/a\""
+      ]
+    },
+    {
+      "name": "line breaks with breaks",
+      "md": "a\nb",
+      "options": {"breaks": true},
+      "contains": ["a<br>"]
+    }
+  ],
+  "xss": [
+    {"name": "script block", "md": "<script>alert(1)</script>\n\nok"},
+    {"name": "script inline", "md": "a <script>alert(1)</script> b"},
+    {"name": "event handler", "md": "<img src=\"x.png\" onerror=\"alert(1)\"><p onclick=\"alert(1)\">x</p>"},
+    {"name": "javascript link", "md": "[x](javascript:alert(1))"},
+    {"name": "javascript link raw", "md": "<a href=\"javascript:alert(1)\">x</a>"},
+    {"name": "javascript link with entities", "md": "<a href=\"&#106;avascript&#58;alert(1)\">x</a>"},
+    {"name": "javascript link with a tab", "md": "<a href=\"java&#9;script:alert(1)\">x</a>"},
+    {"name": "javascript link upper case and spaces", "md": "<a href=\"  JAVASCRIPT:alert(1)\">x</a>"},
+    {"name": "vbscript and data links", "md": "<a href=\"vbscript:msgbox(1)\">x</a> <a href=\"data:text/html,<script>alert(1)</script>\">y</a>"},
+    {"name": "data image", "md": "![x](data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=)"},
+    {"name": "iframe and object", "md": "<iframe src=\"https://evil.example\"></iframe><object data=\"x\"></object><embed src=\"x\">"},
+    {"name": "style element and attribute", "md": "<style>body{display:none}</style><p style=\"position:fixed\">x</p>"},
+    {"name": "svg with script", "md": "<svg><script>alert(1)</script><a xlink:href=\"javascript:alert(1)\">x</a></svg>"},
+    {"name": "form and input", "md": "<form action=\"https://evil.example\"><input type=\"password\" name=\"p\"><button>go</button></form>"},
+    {"name": "meta refresh and base", "md": "<meta http-equiv=\"refresh\" content=\"0;url=https://evil.example\"><base href=\"https://evil.example/\">"},
+    {"name": "math and noscript", "md": "<math><mtext><table><mglyph><style><img src=x onerror=alert(1)>"},
+    {"name": "class and id injection", "md": "<div class=\"btn btn-danger fixed-top\" id=\"x\">x</div>"},
+    {"name": "a broken tag", "md": "<img src=x onerror=alert(1)//"},
+    {"name": "javascript in a reference link", "md": "[x][r]\n\n[r]: javascript:alert(1)"},
+    {"name": "javascript in an autolink", "md": "<javascript:alert(1)>"},
+    {"name": "rewrite returning javascript", "md": "![x](a.png)", "options": {"rewrite": "javascript"}}
+  ],
+  "roundtrip": [
+    "# Title\n\nSome **bold**, *italic*, ~~struck~~ and `code`.\n",
+    "Line one\\\nline two\n",
+    "- one\n- two\n  - nested\n- three\n",
+    "1. first\n\n2. second\n\n   more of the second\n\n3. third\n",
+    "- [ ] open\n- [x] done\n",
+    "> quoted\n>\n> second paragraph\n",
+    "> [!NOTE]\n> Read this.\n",
+    "> [!WARNING] Mind the gap\n> Careful.\n",
+    "| a | b |\n| :--- | ---: |\n| 1 | 2 \\| 3 |\n",
+    "```python\nprint(\"hi\")\n```\n",
+    "````\n```\nnested fence\n```\n````\n",
+    "<details>\n<summary>More</summary>\n\nHidden *text*\n\n</details>\n",
+    "[[_TOC_]]\n\n## A\n\n## B\n",
+    "[a link](https://example.com \"Title\") and https://example.com and ![img](https://example.com/a.png)\n",
+    "Escaped \\*stars\\* and \\_under\\_ and snake_case and \\[brackets\\]\n",
+    "\\# not a heading\n\n\\- not a list\n\n1\\. not a list\n",
+    "---\n",
+    "- a\n\n<!-- -->\n\n- b\n"
+  ],
+  "to_markdown": [
+    {"name": "browser formatting tags", "html": "<p><b>bold</b> <i>it</i> <strike>s</strike> <u>u</u></p>", "md": "**bold** *it* ~~s~~ <u>u</u>\n"},
+    {"name": "spaces move out of emphasis", "html": "<p>a<strong> b </strong>c</p>", "md": "a **b** c\n"},
+    {"name": "editor divs and trailing br", "html": "<div>one</div><div>two<br></div><p><br></p>", "md": "one\n\ntwo\n"},
+    {"name": "editor task list", "html": "<ul data-task=\"\"><li data-checked=\"true\">done</li><li data-checked=\"false\">open</li></ul>", "md": "- [x] done\n- [ ] open\n"},
+    {"name": "table without thead", "html": "<table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>x<br>y</td></tr></table>", "md": "| a | b |\n| --- | --- |\n| 1 | x<br>y |\n"},
+    {"name": "code with backticks", "html": "<p><code>a`b</code></p>", "md": "``a`b``\n"},
+    {"name": "nbsp and whitespace", "html": "<p>a&nbsp;&nbsp;b\n  c</p>", "md": "a b c\n"},
+    {"name": "html text is escaped", "html": "<p>&lt;b&gt; is not bold &amp;amp; 1 &lt; 2</p>", "md": "\\<b> is not bold \\&amp; 1 < 2\n"},
+    {"name": "link with parentheses", "html": "<p><a href=\"https://example.com/a_(b\">x</a></p>", "md": "[x](<https://example.com/a_(b>)\n"},
+    {"name": "image with size stays html", "html": "<p><img src=\"/a.png\" alt=\"A\" width=\"20\"></p>", "md": "<img src=\"/a.png\" alt=\"A\" width=\"20\">\n"},
+    {"name": "alert with translated title", "html": "<div class=\"markdown-alert markdown-alert-tip\"><p class=\"markdown-alert-title\">Tipp</p><p>x</p></div>", "options": {"alert_titles": {"tip": "Tipp"}}, "md": "> [!TIP]\n> x\n"},
+    {"name": "open details", "html": "<details open=\"\"><summary>S &amp; T</summary><p>x</p></details>", "md": "<details open>\n<summary>S &amp; T</summary>\n\nx\n\n</details>\n"},
+    {"name": "heading with a trailing hash", "html": "<h2>C#</h2>", "md": "## C\\#\n"},
+    {"name": "scripts give nothing", "html": "<p>a<script>alert(1)</script>b</p>", "md": "ab\n"},
+    {"name": "an editor's original URLs", "html": "<p><img src=\"https://h/p/uploads/a.png\" data-md-src=\"/uploads/a.png\" alt=\"a\"> <a href=\"https://h/p/x\" data-md-href=\"x\">x</a></p>", "md": "![a](/uploads/a.png) [x](x)\n"},
+    {"name": "editor's empty table cells", "html": "<table><thead><tr><th><br></th><th>b<br></th></tr></thead><tbody><tr><td><br></td><td>x</td></tr></tbody></table>", "md": "|  | b |\n| --- | --- |\n|  | x |\n"},
+    {"name": "empty", "html": "<p><br></p>", "md": ""}
+  ]
+}

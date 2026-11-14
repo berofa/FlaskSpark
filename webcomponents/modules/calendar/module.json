@@ -1,0 +1,11 @@
+{
+  "name": "calendar",
+  "description": "Calendar views (month, week, day, agenda) on FullCalendar, themed with Bootstrap's CSS tokens.",
+  "entry": "calendar.js",
+  "files": [
+    "calendar.js"
+  ],
+  "vendor": [
+    "fullcalendar"
+  ]
+}

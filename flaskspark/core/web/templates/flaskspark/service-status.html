@@ -1,0 +1,3 @@
+{#- The status of the services (flaskspark.core.status, GET /api/status/services) in the sidebar's footer, for admins. #}
+<ui-service-status src="{{ url_for('api_status_services') }}" interval="30" topic="ev.all.services"></ui-service-status>
+<script type="module" src="{{ url_for('static', filename='flaskspark/js/ui-service-status.js') }}"></script>

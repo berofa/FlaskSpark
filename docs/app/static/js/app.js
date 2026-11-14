@@ -1,0 +1,55 @@
+function setupCopyButtons() {
+  document.querySelectorAll("[data-copy-code]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const block = button.closest(".docs-code-block");
+      const code = block?.querySelector("code");
+      if (!code) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(code.textContent || "");
+        const originalLabel = button.textContent;
+        button.textContent = "Copied";
+        window.setTimeout(() => {
+          button.textContent = originalLabel || "Copy";
+        }, 1200);
+      } catch {
+        button.textContent = "Copy failed";
+      }
+    });
+  });
+}
+
+function setupGridEditorOutputs() {
+  document.querySelectorAll("[data-grid-editor-output]").forEach((outputNode) => {
+    const targetId = outputNode.getAttribute("data-grid-editor-output");
+    const editor = targetId ? document.getElementById(targetId) : null;
+    if (!editor) {
+      return;
+    }
+
+    const render = (layout) => {
+      outputNode.textContent = JSON.stringify(layout, null, 2);
+    };
+
+    editor.addEventListener("ui-grid-editor:change", (event) => {
+      render(event.detail.layout);
+    });
+
+    const initialScript = editor.querySelector("script[type='application/json']");
+    if (initialScript) {
+      try {
+        const config = JSON.parse(initialScript.textContent || "{}");
+        render(config.layout || {});
+      } catch {
+        render({});
+      }
+    }
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  setupCopyButtons();
+  setupGridEditorOutputs();
+});

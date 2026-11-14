@@ -1,0 +1,47 @@
+{
+  "name": "ui-calendar",
+  "description": "Calendar with month, week, day and agenda views; events come from an async source per visible range.",
+  "elements": [
+    "ui-calendar"
+  ],
+  "entry": "ui-calendar.js",
+  "files": [
+    "ui-calendar.js",
+    "locale.js",
+    "ui-calendar.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-calendar-",
+        "file": "ui-calendar.css"
+      }
+    ],
+    "descriptions": {
+      "--ui-calendar-height": "Height of the calendar.",
+      "--ui-calendar-font-size": "Font size.",
+      "--ui-calendar-event-font-size": "Font size of the soft events.",
+      "--ui-calendar-color": "Text colour.",
+      "--ui-calendar-muted-color": "Muted text (e.g. other months' days).",
+      "--ui-calendar-faint-color": "Faint text.",
+      "--ui-calendar-bg": "Background.",
+      "--ui-calendar-border-color": "Grid lines.",
+      "--ui-calendar-strong-border-color": "Strong lines (e.g. the hour lines).",
+      "--ui-calendar-today-bg": "Background of today.",
+      "--ui-calendar-weekend-bg": "Background of Saturday and Sunday.",
+      "--ui-calendar-highlight-bg": "Background of a selection.",
+      "--ui-calendar-now-color": "The line of the current time.",
+      "--ui-calendar-event-bg": "Default event colour.",
+      "--ui-calendar-event-color": "Default event text colour.",
+      "--ui-calendar-background-event-bg": "Colour of background events.",
+      "--ui-calendar-button-bg": "Toolbar buttons: background.",
+      "--ui-calendar-button-border-color": "Toolbar buttons: border.",
+      "--ui-calendar-button-color": "Toolbar buttons: text.",
+      "--ui-calendar-button-active-bg": "Active view button: background.",
+      "--ui-calendar-button-active-color": "Active view button: text.",
+      "--ui-calendar-focus-color": "Focus outline of the buttons.",
+      "--ui-calendar-error-color": "Colour of a loading error."
+    }
+  }
+}

@@ -1,0 +1,160 @@
+{% extends "layouts/framework.html" %}
+{#- The layout of flaskspark.core: sidebar navigation (docked from lg on, a drawer behind the hamburger below), the theme's
+    branding, colour mode (system/light/dark) and language in the sidebar's footer. Pages fill `content`, their scripts
+    go into `page_scripts`. Everything about the brand comes from the theme (theme.yaml, theme.css). -#}
+
+{% block title %}{% block page_title %}{{ _("Home") }}{% endblock %} · {{ app_title }}{% endblock %}
+
+{% block flaskspark_head_assets %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='flaskspark/vendor/bootstrap-icons/bootstrap-icons.min.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='flaskspark/css/frame.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ url_for('theme.static', filename='theme.css') }}" type="text/css">
+  {% block page_styles %}{% endblock %}
+  {#- Modules import shared code as "webcomponents/…" (the installed package), the core's JS as "flaskspark/…", the
+      public JS of a module as "modules/<name>/…" (its web/static/public/<name>/) and the app's own JS as "app/…" (the
+      app package's static/app/). #}
+  <script type="importmap">{"imports": {"webcomponents/": "{{ url_for('webcomponents.static', filename='x')[:-1] }}", "flaskspark/": "{{ url_for('static', filename='flaskspark/js/x')[:-1] }}", "modules/": "{{ url_for('static', filename='public/x')[:-1] }}", "app/": "{{ url_for('static', filename='app/x')[:-1] }}"}}</script>
+  {#- Icons by name in the web components (e.g. <ui-card icon="…">): Bootstrap Icons' sprite. #}
+  <meta name="ui-icon-sprite" content="{{ url_for('static', filename='flaskspark/vendor/bootstrap-icons/bootstrap-icons.svg') }}">
+  <link rel="icon" href="{{ url_for('theme.static', filename='images/' ~ theme.favicon) }}">
+  {% if theme.apple_touch_icon %}<link rel="apple-touch-icon" href="{{ url_for('theme.static', filename='images/' ~ theme.apple_touch_icon) }}">{% endif %}
+  {% if theme.manifest_file %}<link rel="manifest" href="{{ url_for('theme.static', filename='images/' ~ theme.manifest_file) }}">
+  {%- elif theme.manifest is mapping %}<link rel="manifest" href="{{ url_for('theme.manifest') }}">{% endif %}
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="{{ theme.theme_color }}">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="{{ theme.theme_color_dark }}">
+  <meta name="apple-mobile-web-app-title" content="{{ theme.short_name }}">
+  {#- The translations of the page's module (or the parts the page names: {% set i18n_modules = ["notes", "core"] %})
+      for flaskspark/i18n.js: t() and nt() know them without asking the server. #}
+  {#- Only with the core's context (an app that renders this layout with a context of its own gets no catalogue). #}
+  {% if i18n_catalogue is defined and i18n_page_parts is defined %}
+    {% set i18n_parts = i18n_modules if i18n_modules is defined else i18n_page_parts() %}
+    <script type="application/json" id="flaskspark-i18n">{{ i18n_catalogue(i18n_parts) | tojson }}</script>
+  {% endif %}
+  {#- The stored colour mode before the first paint; webcomponents' theme.js takes over afterwards. #}
+  <script>
+    (() => {
+      document.documentElement.lang = "{{ language }}";  {#- FlaskSpark's framework.html says "en" #}
+      let mode = "{{ theme.default_mode }}";
+      try { mode = localStorage.getItem("ui-theme") || mode; } catch (e) {}
+      const resolved = mode === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : mode;
+      document.documentElement.setAttribute("data-bs-theme", resolved);
+      document.documentElement.classList.add(resolved === "dark" ? "theme-dark" : "theme-light");
+      try { if (!localStorage.getItem("ui-theme")) localStorage.setItem("ui-theme", "{{ theme.default_mode }}"); } catch (e) {}
+    })();
+  </script>
+{% endblock %}
+
+{% block body_attrs %}class="app-body" data-theme="{{ theme.name }}" data-i18n-endpoint="{{ url_for('flaskspark_i18n') }}"{% endblock %}
+
+{% block app_body %}
+  {% set logo = url_for('theme.static', filename='images/' ~ theme.logo) %}
+  {% set logo_dark = url_for('theme.static', filename='images/' ~ theme.logo_dark) %}
+  {% macro brand(cls="") %}
+    <img src="{{ logo }}" alt="{{ app_title }}" class="brand-logo brand-logo--light {{ cls }}">
+    <img src="{{ logo_dark }}" alt="{{ app_title }}" class="brand-logo brand-logo--dark {{ cls }}">
+  {% endmacro %}
+  <div class="app-frame">
+    <aside class="app-sidebar-wrap" aria-label="{{ _('Navigation') }}">
+      <ui-drawer id="app-nav" class="app-sidebar" responsive="lg" close-label="{{ _('Close') }}">
+        <span slot="heading" class="app-drawer-brand">{{ brand() }}</span>
+        <div class="app-sidebar-inner">
+          <a class="brand-link app-sidebar-brand" href="/" title="{{ app_title }}">{{ brand() }}</a>
+          <nav class="app-nav" aria-label="{{ _('Pages') }}">
+            {% if home_entry %}
+              <a class="app-nav-link{% if request.path == '/' %} active{% endif %}" href="/"{% if request.path == '/' %} aria-current="page"{% endif %}>
+                <i class="bi bi-house" aria-hidden="true"></i><span>{{ _("Home") }}</span>
+              </a>
+            {% endif %}
+            {% for group in navigation %}
+              <div class="app-nav-group">{{ group.label }}</div>
+              {% for item in group["items"] %}
+                {% set current = item.href == nav_active %}
+                <a class="app-nav-link{% if current %} active{% endif %}" href="{{ item.href }}"{% if current %} aria-current="page"{% endif %}>
+                  {% if item.icon %}<i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>{% endif %}<span>{{ item.label }}</span>
+                  {% for badge in item.badges %}<span class="badge rounded-pill theme-primary app-nav-badge" data-nav-badge="{{ badge }}" hidden></span>{% endfor %}
+                </a>
+              {% endfor %}
+            {% endfor %}
+          </nav>
+          <div class="app-sidebar-footer">
+            {% if can("admin") %}{% include "flaskspark/service-status.html" %}{% endif %}
+            {% block sidebar_footer %}{% endblock %}
+            <ui-button-group size="sm" label="{{ _('Colour mode') }}">
+              <ui-button class="nav-btn app-mode-btn" variant="secondary" outline data-theme-value="system" title="{{ _('System') }}" label="{{ _('Colour mode: system') }}"><i class="bi bi-circle-half" aria-hidden="true"></i></ui-button>
+              <ui-button class="nav-btn app-mode-btn" variant="secondary" outline data-theme-value="light" title="{{ _('Light') }}" label="{{ _('Colour mode: light') }}"><i class="bi bi-sun" aria-hidden="true"></i></ui-button>
+              <ui-button class="nav-btn app-mode-btn" variant="secondary" outline data-theme-value="dark" title="{{ _('Dark') }}" label="{{ _('Colour mode: dark') }}"><i class="bi bi-moon" aria-hidden="true"></i></ui-button>
+            </ui-button-group>
+            {% if locales | length > 1 %}
+              <ui-button-group size="sm" label="{{ _('Language') }}">
+                {% for code in locales %}
+                  <ui-button class="nav-btn app-lang-btn{% if code == language_cookie %} active{% endif %}" variant="secondary" outline
+                             href="{{ url_for('set_language', code=code, next=request.full_path.rstrip('?')) }}"
+                             title="{{ code | upper }}" label="{{ _('Language') }}: {{ code | upper }}"{% if code == language_cookie %} aria-pressed="true"{% endif %}>{{ code | upper }}</ui-button>
+                {% endfor %}
+                <ui-button class="nav-btn app-lang-btn{% if language_cookie == 'system' %} active{% endif %}" variant="secondary" outline
+                           href="{{ url_for('set_language', code='system', next=request.full_path.rstrip('?')) }}"
+                           title="{{ _('Browser default') }}" label="{{ _('Language: browser default') }}"><i class="bi bi-globe2" aria-hidden="true"></i></ui-button>
+              </ui-button-group>
+            {% endif %}
+            {% if admin_links or access.signed_in or profile_link %}
+              {#- The admins' pages (e.g. «Settings») and the signed-in user with «Sign out». #}
+              <div class="app-sidebar-account">
+                {% if access.signed_in and access.user_name() %}
+                  <span class="app-sidebar-user small text-truncate" data-signed-in-user><i class="bi bi-person-circle" aria-hidden="true"></i> {{ access.user_name() }}</span>
+                {% endif %}
+                <ui-button-group size="sm" label="{{ _('Account') }}">
+                  {% if profile_link %}
+                    <ui-button class="nav-btn{% if request.path == profile_link %} active{% endif %}" variant="secondary" outline href="{{ profile_link }}" title="{{ _('Profile') }}" label="{{ _('Profile') }}" data-profile-link><i class="bi bi-person-gear" aria-hidden="true"></i></ui-button>
+                  {% endif %}
+                  {% for link in admin_links %}
+                    <ui-button class="nav-btn{% if request.path == link.href %} active{% endif %}" variant="secondary" outline href="{{ link.href }}" title="{{ link.label }}" label="{{ link.label }}"><i class="bi bi-{{ link.icon }}" aria-hidden="true"></i></ui-button>
+                  {% endfor %}
+                  {% if access.signed_in %}
+                    <ui-button class="nav-btn" variant="secondary" outline href="{{ access.logout_url }}" title="{{ _('Sign out') }} ({{ access.user_name() }})" label="{{ _('Sign out') }}" data-sign-out><i class="bi bi-box-arrow-right" aria-hidden="true"></i></ui-button>
+                  {% endif %}
+                </ui-button-group>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </ui-drawer>
+    </aside>
+
+    <div class="app-content">
+      <header class="app-topbar">
+        <ui-button class="nav-btn" variant="secondary" outline size="sm" data-bs-toggle="drawer" data-bs-target="#app-nav" title="{{ _('Menu') }}" label="{{ _('Menu') }}">
+          <i class="bi bi-list" aria-hidden="true"></i>
+        </ui-button>
+        <a class="brand-link" href="/" title="{{ app_title }}">{{ brand() }}</a>
+      </header>
+
+      <main class="container-fluid app-main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ui-toast-container placement="top-end">
+              {% for category, message in messages %}
+                <ui-toast variant="{{ 'danger' if category == 'error' else category }}" delay="{{ 4000 if category == 'success' else 8000 }}">{{ message }}</ui-toast>
+              {% endfor %}
+            </ui-toast-container>
+          {% endif %}
+        {% endwith %}
+        {% block page_header %}{% endblock %}
+        {% block content %}{% endblock %}
+      </main>
+      {% if theme.footer %}<footer class="app-footer">{{ theme.footer }}</footer>{% endif %}
+    </div>
+  </div>
+
+  {#- What the modules add to every page (Module.LAYOUT): dialogs, scripts of the navigation. #}
+  {% for template in module_layouts %}{% include template %}{% endfor %}
+{% endblock %}
+
+{#- Flashes are toasts above; FlaskSpark's plain version is not needed. #}
+{% block flaskspark_body_end %}{% endblock %}
+{#- No asset bundle (ASSETS_ENABLE off): the core's script is an ES module. #}
+{% block flaskspark_scripts %}{% endblock %}
+
+{% block app_scripts %}
+  <script type="module" src="{{ url_for('static', filename='flaskspark/js/app.js') }}"></script>
+  {% block page_scripts %}{% endblock %}
+{% endblock %}

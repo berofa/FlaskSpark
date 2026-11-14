@@ -1,0 +1,47 @@
+/* ui-tabs (Bootstrap 6 nav + tab plugin): layout of navigation, actions and panes. */
+:host {
+  display: block;
+}
+
+.ui-tabs-header {
+  display: flex;
+  /* In a card the header is also a .card-header, which Bootstrap 6 lays out as a column. */
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* The tabs share the line with the actions: many tabs wrap inside the navigation, the actions move below only
+   when less than 12rem would be left for the tabs. */
+.ui-tabs-header > .nav {
+  flex: 1 1 12rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.ui-tabs-header > .ui-tabs-actions {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
+
+/* Beside the panes: vertical pills or a list group. */
+.ui-tabs-side {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) 2fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.ui-tabs-side > .ui-tabs-header {
+  align-items: stretch;
+}
+
+.tab-content:not(.card-body) {
+  padding-top: 1rem;
+}
+
+.ui-tabs-side > .tab-content {
+  padding-top: 0;
+}

@@ -71,6 +71,36 @@ def test_module_views_templates_and_static(project):
     assert client.get("/static/app.txt").get_data(as_text=True) == "app static"
 
 
+def test_a_fallback_view_gives_way_to_another_view_on_its_url(project):
+    _write(project / "mods" / "demo" / "web" / "views" / "default.py", textwrap.dedent('''
+        from flaskspark.views.flaskspark_method_view import FlaskSparkMethodView
+
+
+        class DefaultHome(FlaskSparkMethodView):
+            url = "/"
+            endpoint = "default_home"
+            fallback = True
+
+            def get(self):
+                return "default home"
+
+
+        class DefaultOther(FlaskSparkMethodView):
+            url = "/other"
+            endpoint = "default_other"
+            fallback = True
+
+            def get(self):
+                return "default other"
+    '''))
+    app = _app(project, modules=["mods.demo.web"])
+    endpoints = {r.endpoint for r in app.url_map.iter_rules()}
+    assert "default_home" not in endpoints and "default_other" in endpoints
+    client = app.test_client()
+    assert client.get("/").get_data(as_text=True) == "app home"
+    assert client.get("/other").get_data(as_text=True) == "default other"
+
+
 def test_app_static_wins_over_module_static(project):
     _write(project / "app" / "static" / "demo" / "demo.js", "app wins")
     app = _app(project, modules=["mods.demo.web"])

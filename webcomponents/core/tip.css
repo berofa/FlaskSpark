@@ -1,0 +1,29 @@
+/* Tooltip and popover boxes of core/tip.js in the top layer (popover="manual"): placed in viewport pixels. */
+.tooltip[popover],
+.popover[popover] {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  overflow: visible;
+}
+
+/* Hidden (out of the top layer after the fade): gone. Bootstrap's .tooltip / .popover { display: block } would
+   otherwise beat the browser's [popover] { display: none }, leaving an invisible box that catches the pointer
+   (and, inside a container with a filter or transform, makes it scroll). */
+.tooltip[popover]:not(:popover-open),
+.popover[popover]:not(:popover-open) {
+  display: none;
+}
+
+/* The tooltip box itself is transparent (its .tooltip-inner has the colours); the popover keeps its own. */
+.tooltip[popover] {
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+}
+
+.tooltip-arrow,
+.popover-arrow {
+  position: absolute;
+}

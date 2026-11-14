@@ -1,0 +1,61 @@
+/* ui-badge (Bootstrap 6): plain CSS on top of the shared Bootstrap copy (shadow-styles.js). */
+:host {
+  display: inline-flex;
+  vertical-align: baseline;
+}
+
+/* Bootstrap hides .badge:empty; the inner badge always holds a slot, so check the host. */
+:host(:empty) {
+  display: none;
+}
+
+.badge {
+  /* color="…": a free colour as the badge's theme colour. The script sets --ui-badge-color, the text on the fill
+     (--ui-badge-contrast) and how much black (light) or white (dark) its text and line need on the page. */
+  &.ui-badge-color {
+    --ui-badge-text: light-dark(
+      color-mix(in srgb, var(--ui-badge-color), #000 var(--ui-badge-text-shade, 0%)),
+      color-mix(in srgb, var(--ui-badge-color), #fff var(--ui-badge-text-tint, 25%)));
+    --ui-badge-line: light-dark(
+      color-mix(in srgb, var(--ui-badge-color), #000 var(--ui-badge-line-shade, 0%)),
+      color-mix(in srgb, var(--ui-badge-color), #fff var(--ui-badge-line-tint, 15%)));
+    --bs-theme-bg: var(--ui-badge-color);
+    --bs-theme-contrast: var(--ui-badge-contrast, var(--bs-white));
+    --bs-theme-fg: var(--ui-badge-text);
+    --bs-theme-border: var(--ui-badge-line);
+    --bs-theme-bg-subtle: color-mix(in srgb, var(--ui-badge-color) 14%, var(--bs-bg-body));
+
+    /* filled: an edge only where the fill alone would vanish on the page (very light or very dark colours) */
+    &:not(.badge-subtle, .badge-outline, .ui-badge-scoped) {
+      border-color: light-dark(
+        color-mix(in srgb, var(--ui-badge-color), #000 var(--ui-badge-line-shade, 0%)),
+        color-mix(in srgb, var(--ui-badge-color), #fff var(--ui-badge-edge-tint, 0%)));
+    }
+  }
+
+  /* scope="…": split like a scoped label in GitLab. The scope filled, the value on the page's background, one frame
+     around both (its radius only outside: the fill is clipped). */
+  &.ui-badge-scoped {
+    gap: 0;
+    align-items: stretch;
+    padding: 0;
+    overflow: hidden;
+    color: var(--bs-theme-fg, var(--bs-fg-2));
+    background-color: var(--bs-bg-body);
+    border-color: var(--ui-badge-line, var(--bs-theme-bg, var(--bs-secondary-bg)));
+
+    & > .ui-badge-scope,
+    & > .ui-badge-value {
+      display: inline-flex;
+      gap: var(--bs-badge-gap);
+      align-items: center;
+      padding-block: var(--bs-badge-padding-y);
+      padding-inline: var(--bs-badge-padding-x);
+    }
+
+    & > .ui-badge-scope {
+      color: var(--bs-theme-contrast, var(--bs-secondary-contrast));
+      background-color: var(--bs-theme-bg, var(--bs-secondary-bg));
+    }
+  }
+}

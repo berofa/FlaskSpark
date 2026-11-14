@@ -1,0 +1,104 @@
+/* ui-richtext: the content of the editable area (light DOM, where shadow styles cannot reach). */
+@layer components {
+  ui-richtext .ui-richtext-editor p,
+  ui-richtext .ui-richtext-editor ul,
+  ui-richtext .ui-richtext-editor ol,
+  ui-richtext .ui-richtext-editor blockquote {
+    margin: 0 0 0.5em;
+  }
+
+  ui-richtext .ui-richtext-editor ul,
+  ui-richtext .ui-richtext-editor ol {
+    padding-inline-start: 1.5em;
+  }
+
+  ui-richtext .ui-richtext-editor blockquote {
+    padding-inline-start: 0.75em;
+    color: var(--ui-richtext-quote-color);
+    border-inline-start: 3px solid var(--ui-richtext-quote-border);
+  }
+
+  ui-richtext .ui-richtext-editor :is(h1, h2, h3, h4) {
+    margin: 0.25em 0 0.5em;
+    font-size: 1.15em;
+    font-weight: 600;
+  }
+
+  ui-richtext .ui-richtext-editor pre {
+    margin: 0 0 0.5em;
+    padding: 0.5em 0.75em;
+    font-family: var(--bs-font-monospace, monospace);
+    font-size: 0.875em;
+    white-space: pre-wrap;
+    background: var(--bs-bg-2);
+    border-radius: var(--bs-radius-3, 0.25rem);
+  }
+
+  ui-richtext .ui-richtext-editor code {
+    font-size: 0.875em;
+  }
+
+  ui-richtext .ui-richtext-editor hr {
+    margin: 0.75em 0;
+  }
+
+  /* checklist: a box left of each item (drawn, the item carries data-checked; a click on it ticks) */
+  ui-richtext .ui-richtext-editor ul[data-task] {
+    padding-inline-start: 0.25em;
+    list-style: none;
+  }
+
+  ui-richtext .ui-richtext-editor ul[data-task] > li {
+    position: relative;
+    padding-inline-start: 1.6em;
+  }
+
+  ui-richtext .ui-richtext-editor ul[data-task] > li::before {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.2em;
+    box-sizing: border-box;
+    width: 1.1em;
+    height: 1.1em;
+    font-size: 0.9em;
+    line-height: 1;
+    color: var(--bs-bg-body, #fff);
+    text-align: center;
+    cursor: pointer;
+    content: "";
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.25em;
+  }
+
+  ui-richtext .ui-richtext-editor ul[data-task] > li[data-checked="true"]::before {
+    content: "✓";
+    background: var(--bs-primary-base, #0d6efd);
+    border-color: var(--bs-primary-base, #0d6efd);
+  }
+
+  ui-richtext .ui-richtext-editor ul[data-task] > li[data-checked="true"] {
+    color: var(--bs-fg-3);
+  }
+
+  ui-richtext .ui-richtext-editor table {
+    margin: 0 0 0.5em;
+    border-collapse: collapse;
+  }
+
+  ui-richtext .ui-richtext-editor :is(th, td) {
+    min-width: 4em;
+    padding: 0.25em 0.5em;
+    text-align: start;
+    vertical-align: top;
+    border: 1px solid var(--bs-border-color);
+  }
+
+  ui-richtext .ui-richtext-editor th {
+    font-weight: 600;
+    background: var(--bs-bg-2);
+  }
+
+  ui-richtext .ui-richtext-editor a {
+    color: var(--ui-richtext-link-color);
+  }
+}

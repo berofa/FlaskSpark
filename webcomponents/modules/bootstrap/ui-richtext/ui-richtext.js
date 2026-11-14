@@ -1,0 +1,503 @@
+import { registerComponent } from "../../../core/registry.js";
+import { ShadowComponentElement } from "../../../core/shadow-component-element.js";
+import { escapeHtml } from "../../../core/escape.js";
+import { BOOTSTRAP_SHADOW_STYLES } from "../shadow-styles.js";
+
+const svg = (path) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">${path}</svg>`;
+
+// Bootstrap Icons 1.11 (MIT): type-bold, type-italic, type-underline, type-strikethrough, list-ul, list-ol, quote,
+// link-45deg, slash-circle (unlink), eraser; for the attribute markdown type-h2, code-slash, code-square, hr,
+// ui-checks, table, chevron-bar-down, chevron-bar-right.
+const TOOLS = [
+  ["bold", "Bold (Ctrl+B)", svg('<path d="M8.21 13c2.106 0 3.412-1.087 3.412-2.823 0-1.306-.984-2.283-2.324-2.386v-.055a2.176 2.176 0 0 0 1.852-2.14c0-1.51-1.162-2.46-3.014-2.46H3.843V13zM5.908 4.674h1.696c.963 0 1.517.451 1.517 1.244 0 .834-.629 1.32-1.73 1.32H5.908V4.673zm0 6.788V8.598h1.73c1.217 0 1.88.492 1.88 1.415 0 .943-.643 1.449-1.832 1.449H5.907z"/>')],
+  ["italic", "Italic (Ctrl+I)", svg('<path d="M7.991 11.674 9.53 4.455c.123-.595.246-.71 1.347-.807l.11-.52H7.211l-.11.52c1.06.096 1.128.212 1.005.807L6.57 11.674c-.123.595-.246.71-1.346.806l-.11.52h3.774l.11-.52c-1.06-.095-1.129-.211-1.006-.806z"/>')],
+  ["underline", "Underline (Ctrl+U)", svg('<path d="M5.313 3.136h-1.23V9.54c0 2.105 1.47 3.623 3.917 3.623s3.917-1.518 3.917-3.623V3.136h-1.23v6.323c0 1.49-.978 2.57-2.687 2.57s-2.687-1.08-2.687-2.57zM12.5 15h-9v-1h9z"/>')],
+  ["strikeThrough", "Strikethrough", svg('<path d="M6.333 5.686c0 .31.083.581.27.814H5.166a2.8 2.8 0 0 1-.099-.76c0-1.627 1.436-2.768 3.48-2.768 1.969 0 3.39 1.175 3.445 2.85h-1.23c-.11-1.08-.964-1.743-2.25-1.743-1.23 0-2.18.602-2.18 1.607zm2.194 7.478c-2.153 0-3.589-1.107-3.705-2.81h1.23c.144 1.06 1.129 1.703 2.544 1.703 1.34 0 2.31-.705 2.31-1.675 0-.827-.547-1.374-1.914-1.675L8.046 8.5H1v-1h14v1h-3.504c.468.437.675.994.675 1.697 0 1.826-1.436 2.967-3.644 2.967"/>')],
+  ["insertUnorderedList", "Bulleted list", svg('<path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>')],
+  ["insertOrderedList", "Numbered list", svg('<path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5"/><path d="M1.713 11.865v-.474H2c.217 0 .363-.137.363-.317 0-.185-.158-.31-.361-.31-.223 0-.367.152-.373.31h-.59c.016-.467.373-.787.986-.787.588-.002.954.291.957.703a.595.595 0 0 1-.492.594v.033a.615.615 0 0 1 .569.631c.003.533-.502.8-1.051.8-.656 0-1-.37-1.008-.794h.582c.008.178.186.306.422.309.254 0 .424-.145.422-.35-.002-.195-.155-.348-.414-.348h-.3zm-.004-4.699h-.604v-.035c0-.408.295-.844.958-.844.583 0 .96.326.96.756 0 .389-.257.617-.476.848l-.537.572v.03h1.054V9H1.143v-.395l.957-.99c.138-.142.293-.304.293-.508 0-.18-.147-.32-.342-.32a.33.33 0 0 0-.342.338zM2.564 5h-.635V2.924h-.031l-.598.42v-.567l.629-.443h.635z"/>')],
+  ["quote", "Quote", svg('<path d="M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388q0-.527.062-1.054.093-.558.31-.992t.559-.683q.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 9 7.558V11a1 1 0 0 0 1 1zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612q0-.527.062-1.054.094-.558.31-.992.217-.434.559-.683.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 3 7.558V11a1 1 0 0 0 1 1z"/>')],
+  ["link", "Link (Ctrl+K)", svg('<path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/>')],
+  ["unlink", "Remove link", svg('<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M11.354 4.646a.5.5 0 0 0-.708 0l-6 6a.5.5 0 0 0 .708.708l6-6a.5.5 0 0 0 0-.708"/>')],
+  ["removeFormat", "Clear formatting", svg('<path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z"/>')],
+  ["heading", "Heading", svg('<path d="M7.495 13V3.201H6.174v4.15H1.32V3.2H0V13h1.32V8.513h4.854V13h1.32Zm3.174-7.071v-.05c0-.934.66-1.752 1.801-1.752 1.005 0 1.76.639 1.76 1.651 0 .898-.582 1.58-1.12 2.19l-3.69 4.2V13h6.331v-1.149h-4.458v-.079L13.9 8.786c.919-1.048 1.666-1.874 1.666-3.101C15.565 4.149 14.35 3 12.499 3 10.46 3 9.384 4.393 9.384 5.879v.05h1.285Z"/>')],
+  ["code", "Code", svg('<path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/>')],
+  ["codeBlock", "Code block", svg('<path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/><path d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0zm2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0z"/>')],
+  ["insertHorizontalRule", "Horizontal line", svg('<path d="M12 3H4a1 1 0 0 0-1 1v2.5H2V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2.5h-1V4a1 1 0 0 0-1-1M2 9.5h1V12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V9.5h1V12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm-1.5-2a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1z"/>')],
+  ["taskList", "Checklist", svg('<path d="M7 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zM2 1a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 8a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2zm.854-3.646a.5.5 0 0 1-.708 0l-1-1a.5.5 0 1 1 .708-.708l.646.647 1.646-1.647a.5.5 0 1 1 .708.708zm0 8a.5.5 0 0 1-.708 0l-1-1a.5.5 0 0 1 .708-.708l.646.647 1.646-1.647a.5.5 0 0 1 .708.708zM7 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm0-5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>')],
+  ["table", "Table", svg('<path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 2h-4v3h4zm0 4h-4v3h4zm0 4h-4v3h3a1 1 0 0 0 1-1zm-5 3v-3H6v3zm-5 0v-3H1v2a1 1 0 0 0 1 1zm-4-4h4V8H1zm0-4h4V4H1zm5-3v3h4V4zm4 4H6v3h4z"/>')],
+  ["tableRow", "Add a row", svg('<path fill-rule="evenodd" d="M3.646 4.146a.5.5 0 0 1 .708 0L8 7.793l3.646-3.647a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708zM1 11.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5"/>')],
+  ["tableColumn", "Add a column", svg('<path fill-rule="evenodd" d="M4.146 3.646a.5.5 0 0 0 0 .708L7.793 8l-3.647 3.646a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708 0zM11.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5"/>')],
+];
+// Label attributes of the tools (bold-label, …) and the commands whose state the toolbar shows.
+const TOOL_ATTRIBUTES = { bold: "bold", italic: "italic", underline: "underline", strikeThrough: "strikethrough",
+  insertUnorderedList: "bullets", insertOrderedList: "numbers", quote: "quote", link: "link", unlink: "unlink",
+  removeFormat: "clear", heading: "heading", code: "code", codeBlock: "code-block", insertHorizontalRule: "rule", taskList: "checklist", table: "table",
+  tableRow: "row", tableColumn: "column" };
+const STATEFUL = ["bold", "italic", "underline", "strikeThrough", "insertUnorderedList", "insertOrderedList"];
+const GROUPS = [["bold", "italic", "underline", "strikeThrough"], ["insertUnorderedList", "insertOrderedList", "quote"],
+  ["link", "unlink"], ["removeFormat"]];
+// With the attribute markdown: only what Markdown has (no underline), plus heading, code, code block, checklist,
+// table (with a row or a column more while in one) and a line.
+const MARKDOWN_GROUPS = [["heading", "bold", "italic", "strikeThrough", "code"],
+  ["insertUnorderedList", "insertOrderedList", "taskList", "quote", "codeBlock"], ["table", "tableRow", "tableColumn"],
+  ["link", "unlink", "insertHorizontalRule"], ["removeFormat"]];
+// Tools that show by a class whether the cursor is in their block or element (no command state for them).
+const MARKED = { quote: "blockquote", heading: "h1, h2, h3, h4", codeBlock: "pre", code: "code", taskList: "ul[data-task]",
+  table: "table" };
+// Tools that only work inside a table (disabled elsewhere).
+const IN_TABLE = ["tableRow", "tableColumn"];
+const TASK_LI = "ul[data-task] > li";
+
+/** A new table: a header row and `rows` rows of `columns` empty cells (at least one each). */
+export function tableHtml(columns = 3, rows = 2) {
+  const cols = Math.max(1, columns);
+  const cells = (tag) => `<tr>${`<${tag}><br></${tag}>`.repeat(cols)}</tr>`;
+  return `<table><thead>${cells("th")}</thead><tbody>${cells("td").repeat(Math.max(1, rows))}</tbody></table>`;
+}
+
+/** The groups of tools of the toolbar: the default set, or with markdown only formats that Markdown can express. */
+export function toolGroups(markdown = false) {
+  return (markdown ? MARKDOWN_GROUPS : GROUPS).map((group) => [...group]);
+}
+
+// What stays of pasted HTML: structure and simple markup, no styles, classes, scripts or frames.
+const KEEP = new Set(["P", "DIV", "BR", "B", "STRONG", "I", "EM", "U", "S", "STRIKE", "DEL", "UL", "OL", "LI", "BLOCKQUOTE",
+  "A", "H1", "H2", "H3", "H4", "PRE", "CODE", "SPAN", "TABLE", "THEAD", "TBODY", "TR", "TD", "TH", "HR", "SUB", "SUP"]);
+const DROP = new Set(["SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED", "FORM", "INPUT", "BUTTON", "SELECT", "TEXTAREA",
+  "META", "LINK", "HEAD", "TITLE", "SVG", "MATH", "NOSCRIPT", "TEMPLATE", "IMG", "VIDEO", "AUDIO", "CANVAS"]);
+
+/** Pasted or given HTML reduced to what the editor keeps (links only http(s) and mailto). */
+export function cleanHtml(html) {
+  const doc = new DOMParser().parseFromString(`<body>${html || ""}</body>`, "text/html");
+  const walk = (node) => {
+    for (const child of [...node.childNodes]) {
+      if (child.nodeType === Node.COMMENT_NODE) {
+        child.remove();
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        if (child.tagName === "INPUT" && child.type === "checkbox" && child.closest("li")) { // a task list (GitLab, GitHub)
+          const li = child.closest("li");
+          li.setAttribute("data-checked", String(child.checked || child.hasAttribute("checked")));
+          li.parentElement?.setAttribute("data-task", "");
+        }
+        if (DROP.has(child.tagName)) {
+          child.remove();
+          continue;
+        }
+        walk(child);
+        if (!KEEP.has(child.tagName)) {
+          child.replaceWith(...child.childNodes);
+          continue;
+        }
+        for (const attr of [...child.attributes]) {
+          const keep = (child.tagName === "A" && attr.name === "href" && /^(https?:|mailto:)/i.test(attr.value.trim()))
+            || (child.tagName === "UL" && attr.name === "data-task")
+            || (child.tagName === "LI" && attr.name === "data-checked" && ["true", "false"].includes(attr.value));
+          if (!keep) child.removeAttribute(attr.name);
+        }
+      }
+    }
+  };
+  walk(doc.body);
+  return doc.body.innerHTML;
+}
+
+/**
+ * <ui-richtext>: formatted text (bold, italic, underline, strikethrough, lists, quote, links) as a form-associated
+ * custom element; the value is HTML.
+ *
+ * Not a Bootstrap component: a Bootstrap 6 form field (label, help, feedback) around a frame like .form-control,
+ * themed with --ui-richtext-* tokens.
+ *
+ * Attributes:
+ * - name, value (initial HTML), label, help, placeholder, rows (height in lines, default 8), disabled, required,
+ *   error (a message shown as invalid).
+ * - prefix: the label as a text attached on the left (like an input group of <ui-input prefix>), instead of above.
+ * - markdown: only the formats Markdown has (no underline), plus heading, inline code, code block, checklist
+ *   (<ul data-task> with <li data-checked="true|false">, a click on the box ticks it), table (a header row; while in
+ *   one a row or a column more) and horizontal line, e.g. for text that is converted to Markdown when saved.
+ * - Texts: bold-label, italic-label, underline-label, strikethrough-label, bullets-label, numbers-label,
+ *   quote-label, link-label, unlink-label, clear-label, heading-label, code-label, code-block-label, rule-label,
+ *   checklist-label, table-label, row-label, column-label,
+ *   toolbar-label ("Formatting"), link-prompt.
+ *
+ * The toolbar is in the shadow tree; the editable area is a light-DOM child (a [contenteditable] in the slot), so the
+ * browser's editing commands and selection work in every browser. Pasted HTML is reduced to structure and simple
+ * markup (cleanHtml: no styles, classes, images, scripts). Ctrl+B/I/U as usual; «Link» asks for the address.
+ *
+ * Properties: value (HTML; set by script it is taken as it is, the value attribute and pasted HTML are cleaned),
+ * text (the plain text), editor (the editable element), focus(), form.
+ * Events: input (bubbles, from the editable area), change (bubbles) when it lost the focus after a change.
+ * The tools of the formatting at the cursor are pressed (aria-pressed).
+ * CSS parts: field, label, prefix, frame, toolbar, group, tool, help, feedback. The editable area is styled through ::slotted;
+ * its content (quote, lists, paragraphs, links) by the document stylesheet ui-richtext.document.css.
+ */
+export class UiRichtext extends ShadowComponentElement {
+  static formAssociated = true;
+  static stylesheets = [...BOOTSTRAP_SHADOW_STYLES, new URL("./ui-richtext.css", import.meta.url).href];
+  static documentStylesheet = new URL("./ui-richtext.document.css", import.meta.url).href;
+  static observedAttributes = ["label", "help", "placeholder", "rows", "disabled", "required", "error", "toolbar-label",
+    "prefix", "markdown",
+    ...Object.values(TOOL_ATTRIBUTES).map((name) => `${name}-label`)];
+
+  #internals;
+  #editor = null;
+  #pending = null; // the value set before the editor existed
+  #changed = false;
+  #formDisabled = false;
+  #onSelection = () => this.#updateTools();
+
+  constructor() {
+    super();
+    this.#internals = this.attachInternals();
+  }
+
+  get editor() {
+    return this.#editor;
+  }
+
+  get form() {
+    return this.#internals.form;
+  }
+
+  get name() {
+    return this.getAttribute("name") || "";
+  }
+
+  get value() {
+    return this.#editor ? this.#editor.innerHTML : this.#pending ?? this.getAttribute("value") ?? "";
+  }
+
+  set value(html) {
+    if (this.#editor) {
+      this.#editor.innerHTML = String(html ?? "");
+      this.#sync();
+    } else {
+      this.#pending = String(html ?? "");
+    }
+  }
+
+  get text() {
+    return this.#editor ? this.#editor.innerText : "";
+  }
+
+  focus(options) {
+    this.#editor?.focus(options);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener("selectionchange", this.#onSelection);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener("selectionchange", this.#onSelection);
+  }
+
+  get #disabled() {
+    return this.hasAttribute("disabled") || this.#formDisabled;
+  }
+
+  render() {
+    const label = this.getAttribute("label");
+    const help = this.getAttribute("help");
+    const error = this.getAttribute("error");
+    const prefix = this.getAttribute("prefix");
+    const tools = toolGroups(this.hasAttribute("markdown")).map((group) => `<div class="ui-richtext-group" part="group" role="group">${group.map((cmd) => {
+      const [, fallback, icon] = TOOLS.find(([k]) => k === cmd);
+      const title = this.getAttribute(`${TOOL_ATTRIBUTES[cmd]}-label`) || fallback;
+      const pressed = STATEFUL.includes(cmd) ? ' aria-pressed="false"' : "";
+      const off = this.#disabled || IN_TABLE.includes(cmd);
+      return `<button type="button" class="btn-icon btn-sm btn-text ui-richtext-tool" part="tool" data-cmd="${cmd}" `
+        + `title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}"${pressed}${off ? " disabled" : ""}>${icon}</button>`;
+    }).join("")}</div>`).join("");
+    const frame = `<div class="ui-richtext${error ? " is-invalid" : ""}${this.#disabled ? " is-disabled" : ""}${prefix ? " has-prefix" : ""}" part="frame">`
+      + `<div class="ui-richtext-toolbar" part="toolbar" role="toolbar" aria-label="${escapeHtml(this.getAttribute("toolbar-label") || "Formatting")}">${tools}</div>`
+      + "<slot></slot></div>";
+    return `<div class="form-field" part="field">`
+      + `${label ? `<div class="form-label" part="label">${escapeHtml(label)}</div>` : ""}`
+      + (prefix ? `<div class="ui-richtext-attached"><span class="input-group-text ui-richtext-prefix" part="prefix">${escapeHtml(prefix)}</span>${frame}</div>` : frame)
+      + `${help ? `<div class="form-text" part="help">${escapeHtml(help)}</div>` : ""}`
+      + `<div class="invalid-feedback" part="feedback"${error ? ' style="display: block"' : ""}>${escapeHtml(error || "")}</div></div>`;
+  }
+
+  afterRender() {
+    if (!this.#editor) {
+      this.#editor = this.querySelector(":scope > [contenteditable]") || document.createElement("div");
+      if (!this.#editor.isConnected) {
+        this.#editor.className = "ui-richtext-editor";
+        // a value given by script stays as it is (the host app's own markup); the attribute's is cleaned
+        this.#editor.innerHTML = this.#pending ?? cleanHtml(this.getAttribute("value") ?? "");
+        this.append(this.#editor);
+      }
+      this.#pending = null;
+      this.#editor.addEventListener("input", (e) => {
+        // Enter in a checklist: the browser copies the item's attributes, the new item starts unticked
+        if (e.inputType === "insertParagraph") this.#at(TASK_LI)?.setAttribute("data-checked", "false");
+        this.#changed = true;
+        this.#sync();
+      });
+      this.#editor.addEventListener("mousedown", (e) => this.#tick(e));
+      this.#editor.addEventListener("blur", () => {
+        if (this.#changed) {
+          this.#changed = false;
+          this.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      });
+      this.#editor.addEventListener("paste", (e) => this.#paste(e));
+      this.#editor.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { // Ctrl+K: a link, as in most editors
+          e.preventDefault();
+          this.#run("link");
+        }
+      });
+    }
+    const rows = Math.max(2, Number(this.getAttribute("rows")) || 8);
+    this.#editor.style.minHeight = `${rows * 1.5}em`;
+    this.#editor.setAttribute("contenteditable", this.#disabled ? "false" : "true");
+    this.#editor.setAttribute("role", "textbox");
+    this.#editor.setAttribute("aria-multiline", "true");
+    const label = this.getAttribute("label") || this.getAttribute("prefix") || this.getAttribute("aria-label");
+    if (label) this.#editor.setAttribute("aria-label", label);
+    if (this.hasAttribute("placeholder")) this.#editor.dataset.placeholder = this.getAttribute("placeholder");
+    const help = this.shadowRoot.querySelector(".form-text");
+    if (help) this.#editor.setAttribute("aria-description", help.textContent);
+    // the toolbar keeps the editor's selection: no focus on mousedown
+    this.shadowRoot.querySelector(".ui-richtext-toolbar").addEventListener("mousedown", (e) => e.preventDefault());
+    this.shadowRoot.querySelector(".ui-richtext-toolbar").addEventListener("click", (e) => {
+      const tool = e.composedPath().find((n) => n instanceof Element && n.dataset?.cmd);
+      if (tool) this.#run(tool.dataset.cmd);
+    });
+    this.#sync();
+  }
+
+  #run(cmd) {
+    this.#editor.focus();
+    if (cmd === "link") {
+      const href = prompt(this.getAttribute("link-prompt") || "Link address (https://… or mailto:…):", "https://");
+      if (!href || !/^(https?:\/\/.+|mailto:.+)/i.test(href.trim())) return;
+      if (document.getSelection()?.isCollapsed) {
+        document.execCommand("insertHTML", false, `<a href="${escapeHtml(href.trim())}">${escapeHtml(href.trim())}</a>`);
+      } else {
+        document.execCommand("createLink", false, href.trim());
+      }
+    } else if (cmd === "quote") {
+      this.#quote();
+    } else if (cmd === "heading" || cmd === "codeBlock") { // a block toggled: into a heading / code block, or back
+      const inside = this.#at(MARKED[cmd]);
+      document.execCommand("formatBlock", false, inside ? "<p>" : cmd === "heading" ? "<h2>" : "<pre>");
+    } else if (cmd === "code") {
+      this.#code();
+    } else if (cmd === "taskList") {
+      this.#taskList();
+    } else if (cmd === "table") {
+      document.execCommand("insertHTML", false, `${tableHtml()}<p><br></p>`);
+    } else if (cmd === "tableRow" || cmd === "tableColumn") {
+      this.#grow(cmd);
+    } else {
+      document.execCommand(cmd, false, null);
+    }
+    this.#changed = true;
+    this.#sync();
+    this.#editor.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  /** The blocks of the selection into a quote, or out of it when they are in one. By hand: formatBlock with
+   *  «blockquote» works differently in every browser (Firefox leaves it out). */
+  #quote() {
+    const sel = document.getSelection();
+    if (!sel?.rangeCount || !this.#editor.contains(sel.anchorNode)) return;
+    const range = sel.getRangeAt(0);
+    const top = (node) => { // the child of the editor the node is in
+      let n = node;
+      while (n && n.parentNode !== this.#editor) n = n.parentNode;
+      return n;
+    };
+    const inside = (node) => (node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement)?.closest?.("blockquote");
+    const quote = inside(range.startContainer);
+    if (quote && this.#editor.contains(quote)) { // out of the quote: its content in its place
+      const first = quote.firstChild;
+      const last = quote.lastChild;
+      quote.replaceWith(...quote.childNodes);
+      if (first) {
+        const r = document.createRange();
+        r.setStartBefore(first);
+        r.setEndAfter(last);
+        sel.removeAllRanges();
+        sel.addRange(r);
+      }
+      return;
+    }
+    let start = top(range.startContainer);
+    let end = top(range.endContainer);
+    if (!start) { // the editor itself (empty, or the cursor between its children)
+      const block = document.createElement("p");
+      block.innerHTML = "<br>";
+      this.#editor.append(block);
+      start = end = block;
+    }
+    const blockquote = document.createElement("blockquote");
+    this.#editor.insertBefore(blockquote, start);
+    for (let n = start; n; ) {
+      const next = n.nextSibling;
+      blockquote.append(n);
+      if (n === end) break;
+      n = next;
+    }
+    const r = document.createRange();
+    r.selectNodeContents(blockquote);
+    r.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(r);
+  }
+
+  /** The element around the cursor matching selector, inside the editor; null without one. */
+  #at(selector) {
+    const node = document.getSelection()?.anchorNode;
+    const element = node?.nodeType === Node.ELEMENT_NODE ? node : node?.parentElement;
+    const found = element?.closest?.(selector);
+    return found && this.#editor.contains(found) ? found : null;
+  }
+
+  /** A checklist: the list at the cursor becomes one (or a plain list again); without a list a new one. */
+  #taskList() {
+    let list = this.#at("ul, ol");
+    if (list?.hasAttribute("data-task")) {
+      list.removeAttribute("data-task");
+      for (const li of list.children) li.removeAttribute("data-checked");
+      return;
+    }
+    if (!list || list.tagName === "OL") {
+      document.execCommand("insertUnorderedList", false, null);
+      list = this.#at("ul");
+    }
+    if (!list) return;
+    list.setAttribute("data-task", "");
+    for (const li of list.children) if (!li.hasAttribute("data-checked")) li.setAttribute("data-checked", "false");
+  }
+
+  /** A click on the box of a checklist item (left of its text) ticks or unticks it. */
+  #tick(e) {
+    const li = e.target.closest?.(TASK_LI);
+    if (!li || li !== e.target || this.#disabled) return;
+    const box = parseFloat(getComputedStyle(li).paddingInlineStart) || 24;
+    if (e.clientX - li.getBoundingClientRect().left > box) return;
+    e.preventDefault();
+    li.setAttribute("data-checked", String(li.getAttribute("data-checked") !== "true"));
+    this.#changed = true;
+    this.#sync();
+    this.#editor.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  /** A row below the current one, or a column right of the current cell (in every row). */
+  #grow(cmd) {
+    const cell = this.#at("td, th");
+    if (!cell) return;
+    const row = cell.parentElement;
+    if (cmd === "tableRow") {
+      const next = document.createElement("tr");
+      next.innerHTML = "<td><br></td>".repeat(row.children.length);
+      if (row.parentElement.tagName === "THEAD") {
+        const body = row.closest("table").tBodies[0] || row.closest("table").createTBody();
+        body.prepend(next);
+      } else {
+        row.after(next);
+      }
+      return;
+    }
+    const index = [...row.children].indexOf(cell);
+    for (const tr of cell.closest("table").rows) {
+      const fresh = document.createElement(tr.parentElement.tagName === "THEAD" ? "th" : "td");
+      fresh.innerHTML = "<br>";
+      tr.children[index] ? tr.children[index].after(fresh) : tr.append(fresh);
+    }
+  }
+
+  /** Inline code: the selection into <code>, or the code around the cursor back to text. */
+  #code() {
+    const inside = this.#at("code");
+    if (inside && !inside.closest("pre")) {
+      inside.replaceWith(...inside.childNodes);
+      return;
+    }
+    const sel = document.getSelection();
+    if (!sel?.rangeCount) return;
+    const text = sel.toString() || "code";
+    document.execCommand("insertHTML", false, `<code>${escapeHtml(text)}</code>`);
+  }
+
+  #paste(e) {
+    const html = e.clipboardData?.getData("text/html");
+    const text = e.clipboardData?.getData("text/plain");
+    if (!html && !text) return;
+    e.preventDefault();
+    const clean = html ? cleanHtml(html) : escapeHtml(text).replace(/\r?\n/g, "<br>");
+    document.execCommand("insertHTML", false, clean);
+  }
+
+  /** The tools of the formatting at the cursor look pressed. */
+  #updateTools() {
+    const selection = document.getSelection();
+    if (!this.#editor || !selection?.anchorNode || !this.#editor.contains(selection.anchorNode)) return;
+    for (const cmd of STATEFUL) {
+      let state = false;
+      try {
+        state = document.queryCommandState(cmd);
+      } catch {
+        state = false;
+      }
+      this.shadowRoot.querySelector(`[data-cmd="${cmd}"]`)?.setAttribute("aria-pressed", String(state));
+    }
+    const element = selection.anchorNode.nodeType === Node.ELEMENT_NODE ? selection.anchorNode : selection.anchorNode.parentElement;
+    for (const [cmd, selector] of Object.entries(MARKED)) {
+      this.shadowRoot.querySelector(`[data-cmd="${cmd}"]`)?.classList.toggle("active", Boolean(element?.closest(selector)));
+    }
+    const inTable = Boolean(element?.closest("td, th"));
+    for (const cmd of IN_TABLE) {
+      const tool = this.shadowRoot.querySelector(`[data-cmd="${cmd}"]`);
+      if (tool) tool.disabled = this.#disabled || !inTable;
+    }
+  }
+
+  #sync() {
+    if (!this.#editor) return;
+    const empty = !this.#editor.textContent.trim() && !this.#editor.querySelector("img, li, blockquote, table, hr");
+    this.#editor.classList.toggle("is-empty", empty);
+    this.#internals.setFormValue(this.#editor.innerHTML);
+    const error = this.getAttribute("error");
+    if (error) {
+      this.#internals.setValidity({ customError: true }, error, this.#editor);
+    } else if (this.hasAttribute("required") && empty) {
+      this.#internals.setValidity({ valueMissing: true }, "Pflichtfeld", this.#editor);
+    } else {
+      this.#internals.setValidity({});
+    }
+    this.#updateTools();
+  }
+
+  get validity() {
+    return this.#internals.validity;
+  }
+
+  checkValidity() {
+    return this.#internals.checkValidity();
+  }
+
+  reportValidity() {
+    return this.#internals.reportValidity();
+  }
+
+  formResetCallback() {
+    if (this.#editor) {
+      this.#editor.innerHTML = cleanHtml(this.getAttribute("value") || "");
+      this.#sync();
+    }
+  }
+
+  formDisabledCallback(disabled) {
+    this.#formDisabled = disabled;
+    this.requestRender();
+  }
+}
+
+registerComponent("ui-richtext", UiRichtext);

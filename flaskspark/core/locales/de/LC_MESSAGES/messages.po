@@ -1,0 +1,1486 @@
+# German translations of flaskspark.core (FlaskSpark).
+# Updated with scripts/core-i18n.
+# Swiss Standard German: always «ss», never «ß»; the user is addressed with
+# «du».
+msgid ""
+msgstr ""
+"Project-Id-Version: FlaskSpark \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-14 09:35+0100\n"
+"PO-Revision-Date: 2026-11-13 16:19+0100\n"
+"Last-Translator: FlaskSpark\n"
+"Language: de\n"
+"Language-Team: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#, python-format
+msgid "%(age)s ago"
+msgstr "vor %(age)s"
+
+#, python-format
+msgid "%(area)s for %(role)s"
+msgstr "%(area)s für %(role)s"
+
+#, python-format
+msgid ""
+"%(down)s of %(nodes)s nodes do not answer (%(names)s). The cluster runs on with the others; without a majority the "
+"message bus stops."
+msgstr ""
+"%(down)s von %(nodes)s Knoten antworten nicht (%(names)s). Der Cluster läuft mit den anderen weiter; ohne Mehrheit "
+"steht der Nachrichtenbus still."
+
+#, python-format
+msgid "%(label)s is missing."
+msgstr "%(label)s fehlt."
+
+#, python-format
+msgid "%(label)s is not a valid server name."
+msgstr "%(label)s ist kein gültiger Servername."
+
+#, python-format
+msgid "%(label)s is too long (at most %(n)s characters)."
+msgstr "%(label)s ist zu lang (höchstens %(n)s Zeichen)."
+
+#, python-format
+msgid "%(label)s is too long."
+msgstr "%(label)s ist zu lang."
+
+#, python-format
+msgid "%(label)s must be a whole number."
+msgstr "%(label)s muss eine ganze Zahl sein."
+
+#, python-format
+msgid "%(label)s must be an address starting with https:// (or http://)."
+msgstr "%(label)s muss eine Adresse sein, die mit https:// (oder http://) beginnt."
+
+#, python-format
+msgid "%(label)s must be between %(min)s and %(max)s."
+msgstr "%(label)s muss zwischen %(min)s und %(max)s liegen."
+
+#, python-format
+msgid "%(label)s: %(count)s instances"
+msgstr "%(label)s: %(count)s Instanzen"
+
+#, python-format
+msgid "%(label)s: no heartbeat"
+msgstr "%(label)s: kein Lebenszeichen"
+
+#, python-format
+msgid "%(label)s: reports errors"
+msgstr "%(label)s: meldet Fehler"
+
+#, python-format
+msgid "%(label)s: unknown choice."
+msgstr "%(label)s: unbekannte Auswahl."
+
+#, python-format
+msgid "%(n)s findings"
+msgstr "%(n)s Befunde"
+
+#, python-format
+msgid "%(n)s folders"
+msgstr "%(n)s Ordner"
+
+#, python-format
+msgid "%(n)s in the last minute"
+msgstr "%(n)s in der letzten Minute"
+
+#, python-format
+msgid "%(n)s items removed."
+msgstr "%(n)s Einträge entfernt."
+
+#, python-format
+msgid "%(n)s loaded"
+msgstr "%(n)s geladen"
+
+#, python-format
+msgid "%(n)s requests in the last minute found their service away"
+msgstr "%(n)s Anfragen fanden in der letzten Minute ihren Dienst nicht vor"
+
+#, python-format
+msgid "%(n)s rows"
+msgstr "%(n)s Zeilen"
+
+#, python-format
+msgid "%(n)s waiting"
+msgstr "%(n)s wartend"
+
+#, python-format
+msgid "%(open)s requests, %(ws)s WebSockets"
+msgstr "%(open)s Anfragen, %(ws)s WebSockets"
+
+#, python-format
+msgid "%(provider)s does not offer %(type)s."
+msgstr "%(provider)s bietet %(type)s nicht an."
+
+#, python-format
+msgid "%(streams)s streams, %(size)s MiB"
+msgstr "%(streams)s Streams, %(size)s MiB"
+
+#, python-format
+msgid "%(title)s (late, %(time)s)"
+msgstr "%(title)s (verspätet, %(time)s)"
+
+#, python-format
+msgid "%(title)s (still)"
+msgstr "%(title)s (weiterhin)"
+
+#, python-format
+msgid "%(up)s/%(all)s nodes"
+msgstr "%(up)s/%(all)s Knoten"
+
+#, python-format
+msgid ""
+"%(waiting)s notifications wait in the queue, the oldest for %(minutes)s min: the notifications service delivers "
+"nothing. They go out once it runs again (valid for a day)."
+msgstr ""
+"%(waiting)s Benachrichtigungen warten in der Warteschlange, die älteste seit %(minutes)s Min.: Der "
+"Benachrichtigungsdienst stellt nichts zu. Sie gehen raus, sobald er wieder läuft (gültig für einen Tag)."
+
+msgid "(not added)"
+msgstr "(nicht hinzugefügt)"
+
+msgid "1 finding"
+msgstr "1 Befund"
+
+msgid "1 item removed."
+msgstr "1 Eintrag entfernt."
+
+msgid "1 problem"
+msgstr "1 Problem"
+
+msgid "1 row"
+msgstr "1 Zeile"
+
+msgid "1 warning"
+msgstr "1 Warnung"
+
+msgid "Access"
+msgstr "Zugriff"
+
+msgid "Access of an area that is gone"
+msgstr "Zugriff auf einen Bereich, den es nicht mehr gibt"
+
+msgid "Access token"
+msgstr "Access Token"
+
+msgid "Account"
+msgstr "Konto"
+
+msgid "Account connected."
+msgstr "Konto verbunden."
+
+msgid "Account not found."
+msgstr "Konto nicht gefunden."
+
+msgid "Account removed (the data on the servers stays)."
+msgstr "Konto entfernt (die Daten auf den Servern bleiben)."
+
+msgid "Account saved."
+msgstr "Konto gespeichert."
+
+msgid "Account switched off."
+msgstr "Konto ausgeschaltet."
+
+msgid "Account switched on."
+msgstr "Konto eingeschaltet."
+
+msgid "Accounts"
+msgstr "Konten"
+
+msgid "Accounts need a sign-in."
+msgstr "Konten gibt es nur mit Anmeldung."
+
+msgid "Add a column"
+msgstr "Spalte einfügen"
+
+msgid "Add a row"
+msgstr "Zeile einfügen"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Administrators may always use everything."
+msgstr "Administratoren dürfen immer alles nutzen."
+
+msgid "Alert"
+msgstr "Hinweisbox"
+
+msgid ""
+"An account is one sign-in (user name and password) with everything its server offers. The password is stored "
+"encrypted; the data stays on the servers. A new account is kept only if every chosen service signs in."
+msgstr ""
+"Ein Konto ist eine Anmeldung (Benutzername und Passwort) mit allem, was sein Server anbietet. Das Passwort wird "
+"verschlüsselt gespeichert; die Daten bleiben auf den Servern. Ein neues Konto bleibt nur, wenn sich jeder gewählte "
+"Dienst anmelden kann."
+
+msgid "Ask an administrator if you need it."
+msgstr "Wende dich an einen Administrator, wenn du ihn brauchst."
+
+msgid "At least one service must stay (else remove the account)."
+msgstr "Mindestens ein Dienst muss bleiben (sonst das Konto entfernen)."
+
+msgid "Attach a file"
+msgstr "Datei anhängen"
+
+msgid "Back to the default of config.yaml"
+msgstr "Zurück zum Standardwert aus config.yaml"
+
+msgid "Backup"
+msgstr "Backup"
+
+#, python-format
+msgid "Backup: %(files)s"
+msgstr "Backup: %(files)s"
+
+msgid "Bold (Ctrl+B)"
+msgstr "Fett (Strg+B)"
+
+msgid "Browser default"
+msgstr "Browser-Standard"
+
+msgid "Bulleted list"
+msgstr "Aufzählung"
+
+msgid "Calendars (CalDAV)"
+msgstr "Kalender (CalDAV)"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Cancelled."
+msgstr "Abgebrochen."
+
+msgid "Caution"
+msgstr "Achtung"
+
+msgid "Changed here"
+msgstr "Hier geändert"
+
+msgid "Channels"
+msgstr "Kanäle"
+
+msgid "Check the certificate"
+msgstr "Zertifikat prüfen"
+
+msgid "Choose at least one service of the account."
+msgstr "Wähle mindestens einen Dienst des Kontos."
+
+msgid "Choose at least one service."
+msgstr "Wähle mindestens einen Dienst."
+
+msgid "Clean up"
+msgstr "Aufräumen"
+
+msgid "Clean up all"
+msgstr "Alles aufräumen"
+
+#, python-format
+msgid "Clean-up failed: %(error)s"
+msgstr "Aufräumen fehlgeschlagen: %(error)s"
+
+msgid "Close"
+msgstr "Schliessen"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Code block"
+msgstr "Codeblock"
+
+msgid "Collapsible section"
+msgstr "Aufklappbarer Abschnitt"
+
+msgid "Colour mode"
+msgstr "Farbmodus"
+
+msgid "Colour mode: dark"
+msgstr "Farbmodus: dunkel"
+
+msgid "Colour mode: light"
+msgstr "Farbmodus: hell"
+
+msgid "Colour mode: system"
+msgstr "Farbmodus: System"
+
+msgid "Commands"
+msgstr "Befehle"
+
+msgid "Connect"
+msgstr "Verbinden"
+
+msgid "Connect account"
+msgstr "Konto verbinden"
+
+#, python-format
+msgid "Connected as %(name)s"
+msgstr "Verbunden als %(name)s"
+
+msgid "Connecting…"
+msgstr "Verbinde…"
+
+#, python-format
+msgid "Connection failed: %(errors)s"
+msgstr "Verbindung fehlgeschlagen: %(errors)s"
+
+msgid "Connection lost."
+msgstr "Verbindung abgebrochen."
+
+#, python-format
+msgid "Connection works: %(results)s"
+msgstr "Verbindung klappt: %(results)s"
+
+msgid "Connections"
+msgstr "Verbindungen"
+
+msgid "Contacts (CardDAV)"
+msgstr "Kontakte (CardDAV)"
+
+msgid "Core"
+msgstr "Kern"
+
+msgid "Dark"
+msgstr "Dunkel"
+
+msgid "Data"
+msgstr "Daten"
+
+msgid "Database"
+msgstr "Datenbank"
+
+msgid "Default"
+msgstr "Standard"
+
+#, python-format
+msgid "Default (%(value)s)"
+msgstr "Standard (%(value)s)"
+
+#, python-format
+msgid "Default: %(value)s"
+msgstr "Standard: %(value)s"
+
+#, python-brace-format
+msgid "Default: {value}"
+msgstr "Standard: {value}"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Delete the column"
+msgstr "Spalte löschen"
+
+msgid "Delete the row"
+msgstr "Zeile löschen"
+
+msgid "Delete the table"
+msgstr "Tabelle löschen"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Dismiss"
+msgstr "Ausblenden"
+
+msgid "Download"
+msgstr "Herunterladen"
+
+msgid "Drop images, videos or documents here or click"
+msgstr "Bilder, Videos oder Dokumente hierher ziehen oder klicken"
+
+msgid "E-mail"
+msgstr "E-Mail"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#, python-brace-format
+msgid "Edit «{name}»"
+msgstr "«{name}» bearbeiten"
+
+msgid "Editing mode"
+msgstr "Bearbeitungsmodus"
+
+msgid "Encryption"
+msgstr "Verschlüsselung"
+
+msgid "Error"
+msgstr "Fehler"
+
+msgid "Failing"
+msgstr "Fehlerhaft"
+
+msgid "File deleted."
+msgstr "Datei gelöscht."
+
+msgid "File not found."
+msgstr "Datei nicht gefunden."
+
+msgid "Finding"
+msgstr "Befund"
+
+#, python-format
+msgid "Fine again since %(now)s (since %(first)s)."
+msgstr "Wieder in Ordnung seit %(now)s (seit %(first)s)."
+
+msgid "FlaskSpark's record of the module (when it comes back, it starts afresh)"
+msgstr "FlaskSparks Vermerk zum Modul (kommt es zurück, beginnt es von vorn)"
+
+msgid "Folder"
+msgstr "Ordner"
+
+msgid "Formatting"
+msgstr "Formatierung"
+
+msgid "From the sign-in"
+msgstr "Von der Anmeldung"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "GitLab"
+msgstr "GitLab"
+
+#, python-format
+msgid "GitLab: %(error)s"
+msgstr "GitLab: %(error)s"
+
+msgid "Guardian"
+msgstr "Wächter"
+
+msgid "Guardian can't check"
+msgstr "Wächter kann nicht prüfen"
+
+#, python-format
+msgid "Guardian: %(title)s"
+msgstr "Wächter: %(title)s"
+
+msgid "HH:MM or «off»"
+msgstr "HH:MM oder «off»"
+
+msgid "Heading 1"
+msgstr "Überschrift 1"
+
+msgid "Heading 2"
+msgstr "Überschrift 2"
+
+msgid "Heading 3"
+msgstr "Überschrift 3"
+
+msgid "Heading 4"
+msgstr "Überschrift 4"
+
+msgid "Heading 5"
+msgstr "Überschrift 5"
+
+msgid "Heading 6"
+msgstr "Überschrift 6"
+
+msgid "Heartbeat"
+msgstr "Lebenszeichen"
+
+msgid "Home"
+msgstr "Start"
+
+msgid "Horizontal line"
+msgstr "Trennlinie"
+
+msgid "Image"
+msgstr "Bild"
+
+msgid "Important"
+msgstr "Wichtig"
+
+msgid "Insert"
+msgstr "Einfügen"
+
+msgid "Instance"
+msgstr "Instanz"
+
+msgid "Instances"
+msgstr "Instanzen"
+
+msgid "Invalid key."
+msgstr "Ungültiger Schlüssel."
+
+msgid "Invitation not found."
+msgstr "Einladung nicht gefunden."
+
+msgid "Invited"
+msgstr "Eingeladen"
+
+msgid "It cannot be undone, except from the backup FlaskSpark makes first (its name follows after the clean-up)."
+msgstr ""
+"Das lässt sich nicht rückgängig machen, ausser aus dem Backup, das FlaskSpark vorher anlegt (sein Name folgt nach dem"
+" Aufräumen)."
+
+msgid "Italic (Ctrl+I)"
+msgstr "Kursiv (Strg+I)"
+
+msgid "Joined already (leave first to join with another account)."
+msgstr "Bereits dabei (für ein anderes Konto zuerst austreten)."
+
+msgid "Joined."
+msgstr "Beigetreten."
+
+msgid "Kept for your account, on every device."
+msgstr "Gilt für dein Konto, auf jedem Gerät."
+
+msgid "Kind"
+msgstr "Art"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Language (e.g. python)"
+msgstr "Sprache (z.B. python)"
+
+msgid "Language of the pages"
+msgstr "Sprache der Seiten"
+
+msgid "Language: browser default"
+msgstr "Sprache: Browser-Standard"
+
+msgid "Last backup"
+msgstr "Letztes Backup"
+
+msgid "Last check"
+msgstr "Letzte Prüfung"
+
+msgid "Leave empty to keep it."
+msgstr "Leer lassen, um es zu behalten."
+
+msgid "Leave empty to keep the password."
+msgstr "Leer lassen, um das Passwort zu behalten."
+
+msgid "Left."
+msgstr "Ausgetreten."
+
+msgid "Light"
+msgstr "Hell"
+
+msgid "Link (Ctrl+K)"
+msgstr "Link (Strg+K)"
+
+msgid "Link address"
+msgstr "Adresse des Links"
+
+msgid "Live channel"
+msgstr "Live-Kanal"
+
+msgid "Loaded"
+msgstr "Geladen"
+
+msgid "Loading…"
+msgstr "Lädt…"
+
+msgid "Mail (IMAP)"
+msgstr "Mail (IMAP)"
+
+msgid "Markdown"
+msgstr "Markdown"
+
+msgid "Memory"
+msgstr "Speicher"
+
+msgid "Menu"
+msgstr "Menü"
+
+msgid "Mirror"
+msgstr "Spiegel"
+
+msgid "Module no longer delivered"
+msgstr "Modul, das nicht mehr mitgeliefert wird"
+
+msgid "Modules"
+msgstr "Module"
+
+msgid "More"
+msgstr "Mehr"
+
+msgid "NATS"
+msgstr "NATS"
+
+msgid "NATS nodes down"
+msgstr "NATS-Knoten ausgefallen"
+
+msgid "NATS not reachable"
+msgstr "NATS nicht erreichbar"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Navigation"
+msgstr "Navigation"
+
+msgid "Next"
+msgstr "Weiter"
+
+msgid "No"
+msgstr "Nein"
+
+msgid "No GitLab API at this address."
+msgstr "Unter dieser Adresse gibt es keine GitLab-API."
+
+msgid "No access"
+msgstr "Kein Zugriff"
+
+msgid "No account connected yet."
+msgstr "Noch kein Konto verbunden."
+
+msgid "No files."
+msgstr "Keine Dateien."
+
+#, python-format
+msgid "No instance of the service %(name)s reports in the service directory (not running, hanging or without NATS)."
+msgstr "Keine Instanz des Dienstes %(name)s meldet sich im Dienstverzeichnis (läuft nicht, hängt oder ohne NATS)."
+
+#, python-format
+msgid ""
+"No instance of the service %(name)s reports in the service directory (not running, hanging or without NATS). Last "
+"heartbeat %(minutes)s min ago from %(host)s."
+msgstr ""
+"Keine Instanz des Dienstes %(name)s meldet sich im Dienstverzeichnis (läuft nicht, hängt oder ohne NATS). Letztes "
+"Lebenszeichen vor %(minutes)s Min. von %(host)s."
+
+msgid "No matching command"
+msgstr "Kein passender Befehl"
+
+msgid "No module uses accounts of the application."
+msgstr "Kein Modul verwendet Konten der App."
+
+msgid "No role to share this with."
+msgstr "Keine Rolle, mit der sich das teilen lässt."
+
+msgid "No settings."
+msgstr "Keine Einstellungen."
+
+msgid "No sign-in: everyone may use everything."
+msgstr "Keine Anmeldung: Alle dürfen alles nutzen."
+
+msgid "No users yet."
+msgstr "Noch keine Benutzer."
+
+msgid "No values."
+msgstr "Keine Werte."
+
+msgid "Nodes"
+msgstr "Knoten"
+
+msgid "None (unencrypted)"
+msgstr "Keine (unverschlüsselt)"
+
+msgid "Normal text"
+msgstr "Normaler Text"
+
+msgid "Not found."
+msgstr "Nicht gefunden."
+
+msgid "Not left over (any more): reload the page."
+msgstr "Nicht (mehr) übrig: lade die Seite neu."
+
+msgid "Not reachable"
+msgstr "Nicht erreichbar"
+
+msgid "Note"
+msgstr "Hinweis"
+
+msgid "Nothing changed."
+msgstr "Nichts geändert."
+
+msgid "Nothing chosen."
+msgstr "Nichts ausgewählt."
+
+msgid "Nothing found at this address."
+msgstr "Unter dieser Adresse wurde nichts gefunden."
+
+msgid "Nothing left over."
+msgstr "Nichts übrig."
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+msgid "Notifications pile up"
+msgstr "Benachrichtigungen stauen sich"
+
+msgid "Numbered list"
+msgstr "Nummerierung"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Only the owner can share this."
+msgstr "Teilen kann nur, wem es gehört."
+
+msgid "Only who joins sees it."
+msgstr "Erst wer beitritt, sieht es."
+
+msgid "Open connections"
+msgstr "Offene Verbindungen"
+
+msgid "Open in the browser"
+msgstr "Im Browser öffnen"
+
+#, python-brace-format
+msgid "Open {title}"
+msgstr "{title} öffnen"
+
+msgid "Own server"
+msgstr "Eigener Server"
+
+#, python-format
+msgid "PID %(pid)s on %(host)s"
+msgstr "PID %(pid)s auf %(host)s"
+
+msgid "Pages"
+msgstr "Seiten"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Personal settings of a module that is gone"
+msgstr "Persönliche Einstellungen eines Moduls, das es nicht mehr gibt"
+
+msgid "Port"
+msgstr "Port"
+
+msgid "Previous"
+msgstr "Zurück"
+
+msgid "Problem"
+msgstr "Problem"
+
+msgid "Process"
+msgstr "Prozess"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Provider"
+msgstr "Anbieter"
+
+msgid "Queue"
+msgstr "Warteschlange"
+
+msgid "Quote"
+msgstr "Zitat"
+
+msgid "Really delete?"
+msgstr "Wirklich löschen?"
+
+msgid "Really remove?"
+msgstr "Wirklich entfernen?"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "Remove for good?"
+msgstr "Endgültig entfernen?"
+
+msgid "Removed"
+msgstr "Entfernt"
+
+msgid "Requests"
+msgstr "Anfragen"
+
+msgid "Required"
+msgstr "Pflichtfeld"
+
+#, python-format
+msgid "Resolved: %(title)s"
+msgstr "Behoben: %(title)s"
+
+msgid "Restarts by systemd"
+msgstr "Neustarts durch systemd"
+
+msgid "Role"
+msgstr "Rolle"
+
+#, python-format
+msgid "Role of %(user)s"
+msgstr "Rolle von %(user)s"
+
+msgid "Router"
+msgstr "Router"
+
+msgid "Routes"
+msgstr "Routen"
+
+msgid "SSL/TLS"
+msgstr "SSL/TLS"
+
+msgid "STARTTLS"
+msgstr "STARTTLS"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Saved"
+msgstr "Gespeichert"
+
+msgid "Saved, takes effect now."
+msgstr "Gespeichert, gilt ab sofort."
+
+msgid "Saved."
+msgstr "Gespeichert."
+
+#, python-format
+msgid "Saved. Takes effect after a restart of: %(services)s"
+msgstr "Gespeichert. Gilt nach einem Neustart von: %(services)s"
+
+msgid "Saving…"
+msgstr "Speichere…"
+
+#, python-format
+msgid "Secure connection failed: %(error)s"
+msgstr "Sichere Verbindung fehlgeschlagen: %(error)s"
+
+msgid "Sending (SMTP)"
+msgstr "Senden (SMTP)"
+
+msgid "Server (IMAP)"
+msgstr "Server (IMAP)"
+
+msgid "Server (SMTP)"
+msgstr "Server (SMTP)"
+
+msgid "Server not found."
+msgstr "Server nicht gefunden."
+
+#, python-format
+msgid "Server not reachable: %(error)s"
+msgstr "Server nicht erreichbar: %(error)s"
+
+msgid "Service directory"
+msgstr "Dienstverzeichnis"
+
+msgid "Service directory not readable"
+msgstr "Dienstverzeichnis nicht lesbar"
+
+msgid "Services"
+msgstr "Dienste"
+
+msgid "Setting no module defines"
+msgstr "Einstellung, die kein Modul mehr kennt"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Several at once"
+msgstr "Mehrere auf einmal möglich"
+
+#, python-brace-format
+msgid "Several at once, at most {size} each"
+msgstr "Mehrere auf einmal möglich, je höchstens {size}"
+
+msgid "Share"
+msgstr "Teilen"
+
+#, python-brace-format
+msgid "Share «{name}»"
+msgstr "«{name}» teilen"
+
+msgid "Shared with every user of a role (also later ones), never with yourself."
+msgstr "Geteilt wird mit allen Benutzern einer Rolle (auch späteren), nie mit dir selbst."
+
+msgid "Shared with no one."
+msgstr "Mit niemandem geteilt."
+
+msgid "Shared with you"
+msgstr "Mit dir geteilt"
+
+msgid "Sharing needs a sign-in."
+msgstr "Teilen gibt es nur mit Anmeldung."
+
+msgid "Sharing saved."
+msgstr "Freigabe gespeichert."
+
+msgid "Show all services"
+msgstr "Alle Dienste zeigen"
+
+msgid "Show problems only"
+msgstr "Nur Probleme zeigen"
+
+msgid "Show the whole message"
+msgstr "Ganze Meldung zeigen"
+
+msgid "Sign out"
+msgstr "Abmelden"
+
+#, python-format
+msgid "Sign-in failed: %(error)s"
+msgstr "Anmeldung fehlgeschlagen: %(error)s"
+
+msgid "Sign-in refused (the access token is wrong, expired or revoked)."
+msgstr "Anmeldung abgelehnt (das Access Token ist falsch, abgelaufen oder widerrufen)."
+
+msgid "Sign-in refused (user name or password wrong)."
+msgstr "Anmeldung abgelehnt (Benutzername oder Passwort falsch)."
+
+#, python-format
+msgid "Sign-in refused: %(error)s"
+msgstr "Anmeldung abgelehnt: %(error)s"
+
+msgid "Signed in"
+msgstr "Angemeldet"
+
+#, python-format
+msgid "Since %(time)s: %(message)s"
+msgstr "Seit %(time)s: %(message)s"
+
+msgid "Slow consumers"
+msgstr "Langsame Consumer"
+
+msgid "Source"
+msgstr "Quelle"
+
+msgid "State directory of a module that is gone"
+msgstr "Statusverzeichnis eines Moduls, das es nicht mehr gibt"
+
+msgid "Status not available"
+msgstr "Status nicht verfügbar"
+
+msgid "Status of the services"
+msgstr "Status der Dienste"
+
+msgid "Storage not available"
+msgstr "Ablage nicht verfügbar"
+
+msgid "Strikethrough"
+msgstr "Durchgestrichen"
+
+msgid "Switch off"
+msgstr "Ausschalten"
+
+msgid "Switch off only for a server of your own with a self-signed certificate."
+msgstr "Nur für einen eigenen Server mit selbst signiertem Zertifikat ausschalten."
+
+msgid "Switch on"
+msgstr "Einschalten"
+
+msgid "System"
+msgstr "System"
+
+msgid "Table"
+msgstr "Tabelle"
+
+msgid "Table no module describes"
+msgstr "Tabelle, die kein Modul beschreibt"
+
+msgid "Table of contents"
+msgstr "Inhaltsverzeichnis"
+
+msgid "Task list"
+msgstr "Aufgabenliste"
+
+msgid "Test the connection"
+msgstr "Verbindung testen"
+
+msgid "Testing…"
+msgstr "Teste…"
+
+msgid "Text"
+msgstr "Text"
+
+msgid "Text style"
+msgstr "Absatzformat"
+
+msgid "The access token may not read the API (scope read_api or api)."
+msgstr "Das Access Token darf die API nicht lesen (Scope read_api oder api)."
+
+msgid "The address of the GitLab instance, without /api/v4."
+msgstr "Die Adresse der GitLab-Instanz, ohne /api/v4."
+
+#, python-format
+msgid "The checks fail: %(error)s"
+msgstr "Die Prüfungen schlagen fehl: %(error)s"
+
+msgid "The defaults come from config.yaml; an empty field takes the default again."
+msgstr "Die Standardwerte kommen aus config.yaml; ein leeres Feld setzt den Standardwert wieder."
+
+msgid "The file is empty."
+msgstr "Die Datei ist leer."
+
+#, python-format
+msgid "The file is too large (at most %(size)s)."
+msgstr "Die Datei ist zu gross (höchstens %(size)s)."
+
+msgid "The file is too large."
+msgstr "Die Datei ist zu gross."
+
+msgid "The file storage is not available. Please try again later."
+msgstr "Die Dateiablage ist nicht verfügbar. Bitte später nochmals versuchen."
+
+msgid "The order is not readable."
+msgstr "Die Reihenfolge ist nicht lesbar."
+
+msgid "The role comes from the sign-in (the identity provider's groups). An area without the right is invisible and closed."
+msgstr ""
+"Die Rolle kommt aus der Anmeldung (den Gruppen des Identity Providers). Ein Bereich ohne Recht ist unsichtbar und "
+"gesperrt."
+
+msgid "The role of each user. Changes apply at once."
+msgstr "Die Rolle jedes Benutzers. Änderungen gelten sofort."
+
+#, python-format
+msgid "The server answered %(status)s, not as a %(service)s server."
+msgstr "Der Server antwortete mit %(status)s, nicht wie ein %(service)s-Server."
+
+msgid "The server did not answer in time."
+msgstr "Der Server hat nicht rechtzeitig geantwortet."
+
+#, python-format
+msgid "The service %(name)s may run only once, but %(count)s instances report: %(instances)s."
+msgstr "Der Dienst %(name)s darf nur einmal laufen, aber %(count)s Instanzen melden sich: %(instances)s."
+
+#, python-format
+msgid "The service %(name)s runs, but reports that it can't work (%(instances)s)."
+msgstr "Der Dienst %(name)s läuft, meldet aber, dass er nicht arbeiten kann (%(instances)s)."
+
+msgid "The services are not readable."
+msgstr "Die Dienste sind nicht lesbar."
+
+#, python-format
+msgid "The services can't be watched: %(error)s (NATS without JetStream?)."
+msgstr "Die Dienste können nicht überwacht werden: %(error)s (NATS ohne JetStream?)."
+
+#, python-format
+msgid "The services' message bus does not answer (%(error)s)."
+msgstr "Der Nachrichtenbus der Dienste antwortet nicht (%(error)s)."
+
+msgid "The shares are not readable."
+msgstr "Die Freigaben sind nicht lesbar."
+
+#, python-brace-format
+msgid "The user name is the one you signed in with: {user}."
+msgstr "Der Benutzername ist der, mit dem du dich angemeldet hast: {user}."
+
+msgid "The value is too large."
+msgstr "Der Wert ist zu gross."
+
+msgid "The value must be an object."
+msgstr "Der Wert muss ein Objekt sein."
+
+#, python-format
+msgid "There is an account «%(name)s» already."
+msgstr "Ein Konto «%(name)s» gibt es schon."
+
+msgid ""
+"These accounts belong to the application, not to a person: the modules' services use them for everyone. Only admins "
+"see and change them."
+msgstr ""
+"Diese Konten gehören der App, nicht einer Person: Die Dienste der Module verwenden sie für alle. Nur Admins sehen und"
+" ändern sie."
+
+msgid "This deletes:"
+msgstr "Das wird gelöscht:"
+
+msgid "This provider is only for personal accounts."
+msgstr "Dieser Anbieter ist nur für persönliche Konten."
+
+msgid "This type of account is not available to you."
+msgstr "Diese Art von Konto steht dir nicht zur Verfügung."
+
+msgid "Tip"
+msgstr "Tipp"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Unknown action."
+msgstr "Unbekannte Aktion."
+
+msgid "Unknown kind of item to share."
+msgstr "Unbekannte Art zum Teilen."
+
+msgid "Unknown migration revision"
+msgstr "Unbekannte Migrations-Revision"
+
+msgid "Unknown permission (read or write)."
+msgstr "Unbekanntes Recht (lesen oder schreiben)."
+
+msgid "Unknown provider."
+msgstr "Unbekannter Anbieter."
+
+msgid "Unknown role (or it may not use this)."
+msgstr "Unbekannte Rolle (oder sie darf das nicht nutzen)."
+
+msgid "Unknown role or area."
+msgstr "Unbekannte Rolle oder unbekannter Bereich."
+
+msgid "Unknown role."
+msgstr "Unbekannte Rolle."
+
+#, python-format
+msgid "Unknown setting: %(path)s"
+msgstr "Unbekannte Einstellung: %(path)s"
+
+msgid "Unknown type of account."
+msgstr "Unbekannte Art von Konto."
+
+msgid "Unknown user."
+msgstr "Unbekannter Benutzer."
+
+#, python-brace-format
+msgid "Upload failed ({status})."
+msgstr "Hochladen fehlgeschlagen ({status})."
+
+#, python-brace-format
+msgid "Upload failed: {name}"
+msgstr "Hochladen fehlgeschlagen: {name}"
+
+msgid "Uploading works again once the storage is back."
+msgstr "Hochladen geht wieder, sobald die Ablage da ist."
+
+#, python-brace-format
+msgid "Uploading {name} …"
+msgstr "{name} wird hochgeladen …"
+
+msgid "Used by"
+msgstr "Genutzt von"
+
+msgid "User"
+msgstr "Benutzer"
+
+msgid "User name"
+msgstr "Benutzername"
+
+msgid "User name and password are needed."
+msgstr "Benutzername und Passwort sind nötig."
+
+msgid "Users"
+msgstr "Benutzer"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Video"
+msgstr "Video"
+
+msgid "Warning"
+msgstr "Warnung"
+
+msgid "Web"
+msgstr "Web"
+
+msgid "What"
+msgstr "Was"
+
+msgid ""
+"What modules the application no longer delivers left behind, and settings nothing uses any more. FlaskSpark never "
+"removes them by itself; whatever is removed here is first backed up."
+msgstr ""
+"Was Module hinterlassen haben, die die Anwendung nicht mehr mitliefert, und Einstellungen, die nichts mehr braucht. "
+"FlaskSpark entfernt sie nie von selbst; was du hier entfernst, wird vorher gesichert."
+
+msgid "When a share ends, who had joined sees a notice once."
+msgstr "Endet eine Freigabe, sieht einmal einen Hinweis, wer dabei war."
+
+msgid "Which role may use which area. Changes apply at once."
+msgstr "Welche Rolle welchen Bereich nutzen darf. Änderungen gelten sofort."
+
+#, python-format
+msgid "You are no longer part of «%(name)s» (shared by %(owner)s)."
+msgstr "Du bist nicht mehr bei «%(name)s» (geteilt von %(owner)s) dabei."
+
+msgid "You can't change your own role."
+msgstr "Deine eigene Rolle kannst du nicht ändern."
+
+msgid "You may not use this page."
+msgstr "Du darfst diese Seite nicht nutzen."
+
+msgid "Your role does not give you access to any part of this application yet."
+msgstr "Deine Rolle gibt dir noch keinen Zugriff auf einen Teil dieser Anwendung."
+
+#, python-format
+msgid "access of the area %(area)s for every role (%(rows)s)"
+msgstr "Zugriff auf den Bereich %(area)s für alle Rollen (%(rows)s)"
+
+msgid "always everything"
+msgstr "immer alles"
+
+msgid "an earlier history: run «db adopt»"
+msgstr "frühere Migrationsgeschichte: «db adopt» ausführen"
+
+msgid "answers"
+msgstr "antwortet"
+
+msgid "answers, but without a heartbeat"
+msgstr "antwortet, aber ohne Lebenszeichen"
+
+msgid "comma separated"
+msgstr "durch Komma getrennt"
+
+msgid "connected"
+msgstr "verbunden"
+
+msgid "current"
+msgstr "aktuell"
+
+#, python-format
+msgid "current (%(n)s database backups)"
+msgstr "aktuell (%(n)s Datenbank-Sicherungen)"
+
+msgid "declined"
+msgstr "abgelehnt"
+
+#, python-format
+msgid "directory %(path)s with everything in it (%(size)s)"
+msgstr "Verzeichnis %(path)s mit allem darin (%(size)s)"
+
+msgid "empty"
+msgstr "leer"
+
+msgid "invited"
+msgstr "eingeladen"
+
+msgid "item"
+msgstr "Eintrag"
+
+msgid "items"
+msgstr "Einträge"
+
+msgid "joined"
+msgstr "dabei"
+
+msgid "lags behind"
+msgstr "hinkt nach"
+
+#, python-format
+msgid "last %(age)s ago"
+msgstr "zuletzt vor %(age)s"
+
+#, python-format
+msgid "last seen in version %(version)s"
+msgstr "zuletzt gesehen in Version %(version)s"
+
+msgid "leader"
+msgstr "Leader"
+
+#, python-format
+msgid "migration revision %(rev)s"
+msgstr "Migrations-Revision %(rev)s"
+
+#, python-format
+msgid "module %(module)s"
+msgstr "Modul %(module)s"
+
+msgid "no backup yet"
+msgstr "noch kein Backup"
+
+msgid "no findings"
+msgstr "keine Befunde"
+
+msgid "no heartbeat"
+msgstr "kein Lebenszeichen"
+
+msgid "no heartbeats yet"
+msgstr "noch keine Lebenszeichen"
+
+#, python-format
+msgid "no longer checks (last %(age)s ago)"
+msgstr "prüft nicht mehr (zuletzt vor %(age)s)"
+
+#, python-format
+msgid "no longer delivered: %(name)s — its tables are kept"
+msgstr "nicht mehr mitgeliefert: %(name)s – seine Tabellen bleiben erhalten"
+
+msgid "no tables left"
+msgstr "keine Tabellen mehr"
+
+msgid "none"
+msgstr "keines"
+
+msgid "none configured"
+msgstr "keine eingerichtet"
+
+#, python-format
+msgid "none for %(age)s (%(host)s)"
+msgstr "keines seit %(age)s (%(host)s)"
+
+msgid "not answering"
+msgstr "antwortet nicht"
+
+msgid "not available: no service directory, work queue or leadership"
+msgstr "nicht verfügbar: kein Dienstverzeichnis, keine Warteschlange, keine Leitung"
+
+#, python-format
+msgid "not loaded: %(why)s"
+msgstr "nicht geladen: %(why)s"
+
+#, python-format
+msgid "not migrated: %(names)s"
+msgstr "nicht migriert: %(names)s"
+
+msgid "not reachable"
+msgstr "nicht erreichbar"
+
+msgid "not readable"
+msgstr "nicht lesbar"
+
+#, python-format
+msgid "not running (%(state)s)"
+msgstr "läuft nicht (%(state)s)"
+
+msgid "not shared"
+msgstr "nicht geteilt"
+
+msgid "not tested"
+msgstr "nicht geprüft"
+
+msgid "nothing waiting"
+msgstr "nichts wartet"
+
+msgid "off"
+msgstr "aus"
+
+msgid "on"
+msgstr "ein"
+
+msgid "on request only"
+msgstr "nur auf Anfrage"
+
+#, python-format
+msgid "personal setting %(key)s of every user (%(rows)s)"
+msgstr "persönliche Einstellung %(key)s aller Benutzer (%(rows)s)"
+
+msgid "read"
+msgstr "lesen"
+
+msgid "reports errors"
+msgstr "meldet Fehler"
+
+#, python-format
+msgid "revisions of no known module: %(revisions)s"
+msgstr "Revisionen keines bekannten Moduls: %(revisions)s"
+
+msgid "running"
+msgstr "läuft"
+
+#, python-format
+msgid "running for %(age)s"
+msgstr "läuft seit %(age)s"
+
+#, python-brace-format
+msgid "shared by {owner}"
+msgstr "geteilt von {owner}"
+
+msgid "sign-in failed"
+msgstr "Anmeldung fehlgeschlagen"
+
+msgid "standby"
+msgstr "Standby"
+
+#, python-format
+msgid "stored setting %(path)s"
+msgstr "gespeicherte Einstellung %(path)s"
+
+msgid "switched off"
+msgstr "ausgeschaltet"
+
+#, python-format
+msgid "systemd on this host (service directory: %(why)s)"
+msgstr "systemd auf diesem Host (Dienstverzeichnis: %(why)s)"
+
+#, python-format
+msgid "table %(name)s (%(rows)s)"
+msgstr "Tabelle %(name)s (%(rows)s)"
+
+#, python-format
+msgid "the oldest for %(age)s"
+msgstr "die älteste seit %(age)s"
+
+msgid "tile failed"
+msgstr "Kachel fehlgeschlagen"
+
+msgid "unknown"
+msgstr "unbekannt"
+
+msgid "waiting"
+msgstr "wartet"
+
+msgid "write"
+msgstr "schreiben"
+
+#, python-brace-format
+msgid "{columns} × {rows}"
+msgstr "{columns} × {rows}"
+
+#, python-brace-format
+msgid "{n} problems"
+msgstr "{n} Probleme"
+
+#, python-brace-format
+msgid "{n} running"
+msgstr "{n} in Betrieb"
+
+#, python-brace-format
+msgid "{n} warnings"
+msgstr "{n} Warnungen"
+
+#, python-brace-format
+msgid "{percent} of {size}"
+msgstr "{percent} von {size}"
+
+#, python-format
+msgid "«%(label)s»: a number expected"
+msgstr "«%(label)s»: eine Zahl erwartet"
+
+#, python-format
+msgid "«%(label)s»: a time HH:MM or «off» expected"
+msgstr "«%(label)s»: Uhrzeit HH:MM oder «off» erwartet"
+
+#, python-format
+msgid "«%(label)s»: a whole number expected"
+msgstr "«%(label)s»: eine ganze Zahl erwartet"
+
+#, python-format
+msgid "«%(label)s»: between %(min)s and %(max)s"
+msgstr "«%(label)s»: zwischen %(min)s und %(max)s"
+
+#, python-format
+msgid "«%(label)s»: invalid"
+msgstr "«%(label)s»: ungültig"
+
+#, python-format
+msgid "«%(label)s»: not one of the choices"
+msgstr "«%(label)s»: keine der Auswahlmöglichkeiten"
+
+#, python-format
+msgid "«%(label)s»: on or off expected"
+msgstr "«%(label)s»: ein oder aus erwartet"
+
+#, python-format
+msgid "«%(label)s»: valid JSON expected (a list or an object)"
+msgstr "«%(label)s»: gültiges JSON erwartet (eine Liste oder ein Objekt)"
+
+#, python-format
+msgid "«%(label)s»: values expected, separated by commas"
+msgstr "«%(label)s»: Werte erwartet, durch Komma getrennt"
+
+#, python-format
+msgid "«%(label)s»: whole numbers expected, separated by commas"
+msgstr "«%(label)s»: ganze Zahlen erwartet, durch Komma getrennt"
+
+#, python-format
+msgid "«%(name)s» is no longer shared by %(owner)s."
+msgstr "«%(name)s» wird von %(owner)s nicht mehr geteilt."
+
+#, python-format
+msgid "«%(title)s» uploaded."
+msgstr "«%(title)s» hochgeladen."
+
+msgid ""
+"«From the sign-in» takes the role the identity provider gives at every sign-in. A role chosen here applies at once "
+"and stays after later sign-ins, until it is set back. Users appear after their first sign-in."
+msgstr ""
+"«Von der Anmeldung» übernimmt bei jeder Anmeldung die Rolle des Identity Providers. Eine hier gewählte Rolle gilt "
+"sofort und bleibt auch nach weiteren Anmeldungen, bis sie zurückgesetzt wird. Benutzer erscheinen nach ihrer ersten "
+"Anmeldung."
+

@@ -1,0 +1,85 @@
+/* ui-kpi and ui-kpi-group: key figures as small tiles, in Bootstrap 6's colours (both colour modes through the
+   inherited --bs-* tokens). Plain CSS, no build step. */
+:host {
+  --ui-kpi-gap: 0.15rem;
+  --ui-kpi-padding-y: 0.65rem;
+  --ui-kpi-padding-x: 0.85rem;
+  --ui-kpi-bg: var(--bs-bg-2);
+  --ui-kpi-border-color: var(--bs-border-color-translucent, var(--bs-border-color));
+  --ui-kpi-border-width: var(--bs-border-width, 1px);
+  --ui-kpi-radius: var(--bs-radius-5, 0.625rem);
+  --ui-kpi-label-color: var(--bs-fg-3);
+  --ui-kpi-label-font-size: 0.72rem;
+  --ui-kpi-value-font-size: 1.15rem;
+  --ui-kpi-value-font-weight: 600;
+  --ui-kpi-sub-color: var(--bs-fg-3);
+  --ui-kpi-sub-font-size: 0.75rem;
+  --ui-kpi-group-min: 9rem;
+  --ui-kpi-group-gap: 0.5rem;
+  display: block;
+  min-inline-size: 0;
+}
+
+:host([compact]) {
+  --ui-kpi-group-min: 7rem;
+  --ui-kpi-group-gap: 0.35rem;
+}
+
+.ui-kpi-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--ui-kpi-group-min), 100%), 1fr));
+  gap: var(--ui-kpi-group-gap);
+}
+
+.ui-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-kpi-gap);
+  block-size: 100%;
+  box-sizing: border-box;
+  padding-block: var(--ui-kpi-padding-y);
+  padding-inline: var(--ui-kpi-padding-x);
+  border: var(--ui-kpi-border-width) solid var(--ui-kpi-border-color);
+  border-radius: var(--ui-kpi-radius);
+  background: var(--ui-kpi-bg);
+  color: var(--bs-fg-body);
+}
+
+.ui-kpi-label {
+  color: var(--ui-kpi-label-color);
+  font-size: var(--ui-kpi-label-font-size);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ui-kpi-value {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3em;
+  font-size: var(--ui-kpi-value-font-size);
+  font-weight: var(--ui-kpi-value-font-weight);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.ui-kpi-trend {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.ui-kpi-sub {
+  color: var(--ui-kpi-sub-color);
+  font-size: var(--ui-kpi-sub-font-size);
+}
+
+/* size="sm": compact; size="lg": an emphasised figure (e.g. a total). */
+.ui-kpi-sm {
+  padding-block: calc(var(--ui-kpi-padding-y) * 0.7);
+  padding-inline: calc(var(--ui-kpi-padding-x) * 0.75);
+
+  .ui-kpi-value { font-size: calc(var(--ui-kpi-value-font-size) * 0.87); }
+}
+
+.ui-kpi-lg .ui-kpi-value { font-size: calc(var(--ui-kpi-value-font-size) * 1.2); }

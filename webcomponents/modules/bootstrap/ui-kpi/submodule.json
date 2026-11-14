@@ -1,0 +1,41 @@
+{
+  "name": "ui-kpi",
+  "description": "Key figures as small tiles: label, value, a line below, trend arrow, theme colour, sizes; ui-kpi-group lays them out in a responsive grid.",
+  "elements": [
+    "ui-kpi",
+    "ui-kpi-group"
+  ],
+  "entry": "ui-kpi.js",
+  "files": [
+    "ui-kpi.js",
+    "ui-kpi.css",
+    "kpi-trend.js"
+  ],
+  "requires": [],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-kpi-",
+        "file": "ui-kpi.css"
+      }
+    ],
+    "descriptions": {
+      "--ui-kpi-gap": "Space between label, value and the line below.",
+      "--ui-kpi-padding-y": "Vertical padding of a tile.",
+      "--ui-kpi-padding-x": "Horizontal padding of a tile.",
+      "--ui-kpi-bg": "Background of a tile.",
+      "--ui-kpi-border-color": "Border colour of a tile.",
+      "--ui-kpi-border-width": "Border width of a tile (0: none).",
+      "--ui-kpi-radius": "Corner radius of a tile.",
+      "--ui-kpi-label-color": "Colour of the label.",
+      "--ui-kpi-label-font-size": "Font size of the label.",
+      "--ui-kpi-value-font-size": "Font size of the value (size sm and lg scale it).",
+      "--ui-kpi-value-font-weight": "Font weight of the value.",
+      "--ui-kpi-sub-color": "Colour of the line below the value.",
+      "--ui-kpi-sub-font-size": "Font size of the line below the value.",
+      "--ui-kpi-group-min": "ui-kpi-group: the narrowest a tile gets before the grid wraps.",
+      "--ui-kpi-group-gap": "ui-kpi-group: space between the tiles."
+    }
+  }
+}

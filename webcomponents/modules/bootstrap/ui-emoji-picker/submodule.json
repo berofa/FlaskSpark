@@ -1,0 +1,13 @@
+{
+  "name": "ui-emoji-picker",
+  "description": "All emojis of Unicode in categories like a phone keyboard: recently used, a tab per category, search; picks with an event.",
+  "elements": [
+    "ui-emoji-picker"
+  ],
+  "entry": "ui-emoji-picker.js",
+  "files": [
+    "ui-emoji-picker.js",
+    "ui-emoji-picker.css",
+    "emoji.json"
+  ]
+}

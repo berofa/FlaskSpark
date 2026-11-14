@@ -1,0 +1,765 @@
+[
+  {
+    "name": "empty_payload_no_items",
+    "payload": {},
+    "active_item_ids": [],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "empty_payload_items_stack_in_single_cell",
+    "payload": {},
+    "active_item_ids": [
+      "a",
+      "b",
+      "c"
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a",
+            "b",
+            "c"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a",
+              "b",
+              "c"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "unplaced_item_fills_emptiest_area",
+    "payload": {
+      "rows_count": 2,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        }
+      ]
+    },
+    "active_item_ids": [
+      "a",
+      "b"
+    ],
+    "expected": {
+      "rows_count": 2,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "b"
+          ],
+          "cell_items": {
+            "1:2": [
+              "b"
+            ]
+          }
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "overlapping_area_rejected",
+    "payload": {
+      "rows_count": 2,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 2,
+          "column_span": 2,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "b"
+          ],
+          "cell_items": {
+            "2:2": [
+              "b"
+            ]
+          }
+        }
+      ]
+    },
+    "active_item_ids": [
+      "a",
+      "b"
+    ],
+    "expected": {
+      "rows_count": 2,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 2,
+          "column_span": 2,
+          "item_ids": [
+            "a",
+            "b"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "out_of_bounds_area_rejected",
+    "payload": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 2,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "2:1": [
+              "a"
+            ]
+          }
+        }
+      ]
+    },
+    "active_item_ids": [
+      "a"
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "cell_items_outside_span_fall_back_to_anchor",
+    "payload": {
+      "rows_count": 1,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:2": [
+              "a"
+            ]
+          }
+        }
+      ]
+    },
+    "active_item_ids": [
+      "a"
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "duplicate_ids_deduped_across_areas",
+    "payload": {
+      "rows_count": 1,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:2": [
+              "a"
+            ]
+          }
+        }
+      ]
+    },
+    "active_item_ids": [
+      "a"
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "inactive_ids_filtered_out",
+    "payload": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a",
+            "ghost"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a",
+              "ghost"
+            ]
+          }
+        }
+      ]
+    },
+    "active_item_ids": [
+      "a"
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "numeric_ids_normalized_to_strings",
+    "payload": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            5
+          ],
+          "cell_items": {
+            "1:1": [
+              5
+            ]
+          }
+        }
+      ]
+    },
+    "active_item_ids": [
+      5
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "5"
+          ],
+          "cell_items": {
+            "1:1": [
+              "5"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "legacy_rows_columns_count_keys",
+    "payload": {
+      "rows": 2,
+      "columns": 3
+    },
+    "active_item_ids": [],
+    "expected": {
+      "rows_count": 2,
+      "columns_count": 3,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        },
+        {
+          "row": 1,
+          "column": 3,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        },
+        {
+          "row": 2,
+          "column": 3,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "unused_item_ids_auto_assigned",
+    "payload": {
+      "rows_count": 1,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        }
+      ],
+      "unused_item_ids": [
+        "b"
+      ]
+    },
+    "active_item_ids": [
+      "a",
+      "b"
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "b"
+          ],
+          "cell_items": {
+            "1:2": [
+              "b"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "fill_prefers_least_loaded_area",
+    "payload": {
+      "rows_count": 1,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a",
+            "b"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        }
+      ]
+    },
+    "active_item_ids": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a",
+            "b"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "c",
+            "d"
+          ],
+          "cell_items": {
+            "1:2": [
+              "c",
+              "d"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "merged_area_with_per_cell_items",
+    "payload": {
+      "rows_count": 2,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 2,
+          "column_span": 1,
+          "item_ids": [
+            "a",
+            "b"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ],
+            "2:1": [
+              "b"
+            ]
+          }
+        }
+      ]
+    },
+    "active_item_ids": [
+      "a",
+      "b"
+    ],
+    "expected": {
+      "rows_count": 2,
+      "columns_count": 2,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 2,
+          "column_span": 1,
+          "item_ids": [
+            "a",
+            "b"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ],
+            "2:1": [
+              "b"
+            ]
+          }
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [],
+          "cell_items": {}
+        }
+      ]
+    }
+  },
+  {
+    "name": "non_dict_payload_falls_back_to_default",
+    "payload": null,
+    "active_item_ids": [
+      "a"
+    ],
+    "expected": {
+      "rows_count": 1,
+      "columns_count": 1,
+      "areas": [
+        {
+          "row": 1,
+          "column": 1,
+          "row_span": 1,
+          "column_span": 1,
+          "item_ids": [
+            "a"
+          ],
+          "cell_items": {
+            "1:1": [
+              "a"
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

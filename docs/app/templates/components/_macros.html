@@ -1,0 +1,132 @@
+{# Shared building blocks for component pages: live example + code, reference tables. #}
+{% macro example(id, title, snippet, intro="", preview_class="") -%}
+  <section class="docs-section" id="{{ id }}">
+    <div class="docs-section__heading">
+      <h3>{{ title }}</h3>
+      {% if intro %}<p>{{ intro }}</p>{% endif %}
+    </div>
+    <div class="docs-example">
+      <div class="docs-example__preview {{ preview_class }}">
+        {{ caller() }}
+      </div>
+      <div class="docs-code-block">
+        <div class="docs-code-block__header"><span>HTML</span><button class="btn-outline theme-secondary btn-sm" type="button" data-copy-code>Copy</button></div>
+        <pre><code>{{ snippet }}</code></pre>
+      </div>
+    </div>
+  </section>
+{%- endmacro %}
+
+{% macro code(title, snippet, label="JavaScript") -%}
+  <div class="docs-code-block mt-3">
+    <div class="docs-code-block__header"><span>{{ label }}</span><button class="btn-outline theme-secondary btn-sm" type="button" data-copy-code>Copy</button></div>
+    <pre><code>{{ snippet }}</code></pre>
+  </div>
+{%- endmacro %}
+
+{% macro reference(title, rows, headers=("Attribute", "Type", "Description")) -%}
+  <h4 class="h5 mt-5">{{ title }}</h4>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead><tr>{% for h in headers %}<th scope="col">{{ h }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for row in rows %}
+          <tr><th scope="row"><code>{{ row[0] }}</code></th>{% for cell in row[1:] %}<td>{% if loop.first and headers | length == 3 %}<code>{{ cell }}</code>{% else %}{{ cell | safe }}{% endif %}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{%- endmacro %}
+
+{% macro intro(tag, text) -%}
+  <section class="docs-section">
+    <div class="docs-section__intro">
+      <p class="docs-kicker">Component</p>
+      <h2 class="text-4xl mb-3">{{ tag }}</h2>
+      <p class="text-lg fg-3 mb-0">{{ text }}</p>
+    </div>
+  </section>
+{%- endmacro %}
+
+{# CSS variables of a submodule: defaults from the vendored Bootstrap CSS, descriptions from submodule.json. #}
+{% macro tokens(submodule, host, example_token, example_value, module="bootstrap", selector=None, spec=None) -%}
+  <section class="docs-section" id="css-variables">
+    <div class="docs-section__heading">
+      <h3>CSS variables</h3>
+      {% if selector %}
+        <p>
+          The markup is Bootstrap's own (light DOM): set the variables on <code>{{ selector }}</code>, like in
+          Bootstrap. Tokens of the page itself (colours, spacers, radii) inherit as usual.
+        </p>
+      {% else %}
+        <p>
+          Set them on the element (or any selector that matches it) to theme one or all <code>&lt;{{ host }}&gt;</code>,
+          e.g. <code>{{ host }} { {{ example_token }}: {{ example_value }}; }</code> (see <a href="#customizing">Customizing</a>).
+          The defaults sit on the host, so every page rule wins; tokens of the page itself (colours, spacers, radii)
+          inherit as usual. How it works: <a href="/#styling">Styling</a>.
+        </p>
+      {% endif %}
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle docs-token-table">
+        <thead><tr><th scope="col">Variable</th><th scope="col">Default</th><th scope="col">Description</th></tr></thead>
+        <tbody>
+          {% for token in (spec_tokens(spec) if spec else component_tokens(module, submodule)) %}
+            <tr>
+              <th scope="row"><code>{{ token.name }}</code></th>
+              <td><code class="docs-token-default">{{ token.default }}</code></td>
+              <td>{{ token.description }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{%- endmacro %}
+
+{# A live example from one HTML snippet: rendered as the preview and shown as code, so both always match. #}
+{% macro demo(section) -%}
+  <section class="docs-section" id="{{ section.id }}">
+    <div class="docs-section__heading">
+      <h3>{{ section.title }}</h3>
+      {% if section.intro %}<p>{{ section.intro | safe }}</p>{% endif %}
+    </div>
+    {% if section.html %}
+      <div class="docs-example{% if section.stacked %} docs-example--stacked{% endif %}">
+        <div class="docs-example__preview {{ section.preview_class or '' }}">
+          {{ section.html | safe }}
+        </div>
+        <div class="docs-code-block">
+          <div class="docs-code-block__header"><span>{{ section.language or "HTML" }}</span><button class="btn-outline theme-secondary btn-sm" type="button" data-copy-code>Copy</button></div>
+          <pre><code>{{ section.html }}</code></pre>
+        </div>
+      </div>
+    {% endif %}
+    {% if section.script %}
+      {{ code(section.script_language or "JavaScript", section.script) }}
+    {% endif %}
+  </section>
+{%- endmacro %}
+
+
+{# A live customizing demo: the CSS goes into the page as shown, the HTML is rendered and shown. #}
+{% macro customizing(custom) -%}
+  <section class="docs-section" id="customizing">
+    <div class="docs-section__heading">
+      <h3>Customizing</h3>
+      <p>{{ (custom.intro or "Set the component's CSS variables on the element, here through a class of your own. They are inherited into the shadow tree; the component's defaults sit on the host, so your rule wins.") | safe }}</p>
+    </div>
+    <style>{{ custom.css | safe }}</style>
+    <div class="docs-example docs-example--stacked">
+      <div class="docs-example__preview">{{ custom.html | safe }}</div>
+      <div class="docs-code-block">
+        <div class="docs-code-block__header"><span>CSS</span><button class="btn-outline theme-secondary btn-sm" type="button" data-copy-code>Copy</button></div>
+        <pre><code>{{ custom.css }}</code></pre>
+      </div>
+      <div class="docs-code-block">
+        <div class="docs-code-block__header"><span>HTML</span><button class="btn-outline theme-secondary btn-sm" type="button" data-copy-code>Copy</button></div>
+        <pre><code>{{ custom.html }}</code></pre>
+      </div>
+    </div>
+  </section>
+{%- endmacro %}

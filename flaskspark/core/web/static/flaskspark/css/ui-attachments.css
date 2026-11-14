@@ -1,0 +1,67 @@
+/* The files of an item (flaskspark/ui-attachments.js): gallery (ui-gallery), documents as a list, inline edit, upload
+   progress. Plain modern CSS (nesting, logical properties). */
+ui-attachments {
+  display: block;
+
+  ui-gallery {
+    --ui-gallery-tile-size: 7rem;
+    margin-block-end: 0.75rem;
+  }
+}
+
+.ui-att-docs {
+  display: grid;
+  gap: 0.5rem;
+  margin-block-end: 0.75rem;
+}
+
+.ui-att-doc {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--app-radius);
+}
+
+.ui-att-doc-thumb {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 3rem;
+  block-size: 3rem;
+  object-fit: cover;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--app-radius-sm);
+}
+
+.ui-att-doc-type {
+  background: var(--bs-bg-2);
+  color: var(--bs-fg-3);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.ui-att-doc-main {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.ui-att-doc-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.ui-att-edit {
+  margin-block-end: 0.75rem;
+  padding: 0.75rem;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--app-radius);
+  background: var(--bs-bg-2);
+}
+
+.ui-att-upload {
+  margin-block-start: 0.5rem;
+}

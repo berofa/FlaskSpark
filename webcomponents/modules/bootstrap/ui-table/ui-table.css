@@ -1,0 +1,73 @@
+/* ui-table (Bootstrap 6 .table): plain CSS on top of the shared Bootstrap copy. */
+:host {
+  display: block;
+}
+
+/* Head cells: --ui-table-head-color and --ui-table-head-font-weight (e.g. quieter column headers). */
+.table > thead > tr > th {
+  color: var(--ui-table-head-color, var(--bs-table-color-state, var(--bs-table-color-type, var(--bs-theme-fg, var(--bs-table-color)))));
+  font-weight: var(--ui-table-head-font-weight, var(--bs-font-weight-bold));
+}
+
+/* Bottom border of the last body row: --ui-table-last-row-border-width: 0 drops it (e.g. inside a card). */
+.table > tbody:last-child > tr:last-child > * {
+  border-block-end-width: var(--ui-table-last-row-border-width, var(--bs-table-border-width));
+}
+
+/* A total row (class table-total on a <tr>, usually in <tfoot>): a stronger line above it, bold cells. */
+.table > :is(tbody, tfoot) > tr.table-total > * {
+  border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+  font-weight: var(--bs-font-weight-semibold, 600);
+}
+
+/* Icon column (.table-icons on the column header, copied to its cells): as narrow as its buttons, never wraps. */
+.table-icons {
+  width: 1%;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.table-icons > * {
+  vertical-align: middle;
+}
+
+/* Stacked rows: the cells are blocks, the icons line up with the other values (same container queries as Bootstrap). */
+.table-stacked .table-icons {
+  width: auto;
+  text-align: start;
+}
+
+@container (width < 576px) {
+  .sm\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
+
+@container (width < 768px) {
+  .md\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
+
+@container (width < 1024px) {
+  .lg\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
+
+@container (width < 1280px) {
+  .xl\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}
+
+@container (width < 1536px) {
+  .\32 xl\:table-stacked .table-icons {
+    width: auto;
+    text-align: start;
+  }
+}

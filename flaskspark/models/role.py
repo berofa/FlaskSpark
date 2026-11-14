@@ -104,7 +104,7 @@ class Role(db.Model):
         role = Role.query.filter_by(name=name).first()
         if role:
             return role
-            role = Role(name=name, is_admin=is_admin, rank=rank)
+        role = Role(name=name, is_admin=is_admin, rank=rank)
         db.session.add(role)
         db.session.commit()
         return role

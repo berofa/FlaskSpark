@@ -1,0 +1,53 @@
+{# Component page (Bootstrap 6): sections like Bootstrap's docs, reference, CSS variables. Data from docs/app/pages.py. #}
+{% extends "layouts/main.html" %}
+{% from "components/_macros.html" import intro, demo, reference, tokens, customizing %}
+
+{% block content %}
+  {{ intro(page.title, page.summary) }}
+
+  <nav class="docs-toc" aria-label="On this page">
+    {% for section in page.sections %}<a href="#{{ section.id }}">{{ section.title }}</a>{% endfor %}
+    {% if page.custom %}<a href="#customizing">Customizing</a>{% endif %}
+    <a href="#reference">Reference</a>
+    {% if page.tokens %}<a href="#css-variables">CSS variables</a>{% endif %}
+  </nav>
+
+  {% for section in page.sections %}
+    {{ demo(section) }}
+  {% endfor %}
+
+  {% if page.custom %}{{ customizing(page.custom) }}{% endif %}
+
+  <section class="docs-section" id="reference">
+    <div class="docs-section__heading">
+      <h3>Reference</h3>
+      <p>Load the whole module, or only this component:</p>
+    </div>
+    <div class="docs-code-block">
+      <div class="docs-code-block__header"><span>HTML</span></div>
+      <pre><code>&lt;script type="module" src="{{ url_for('webcomponents.static', filename='modules/' ~ (page.module or 'bootstrap') ~ '/' ~ (page.module or 'bootstrap') ~ '.js') }}"&gt;&lt;/script&gt;{% if page.entry %}
+&lt;script type="module" src="{{ url_for('webcomponents.static', filename=page.entry) }}"&gt;&lt;/script&gt;{% endif %}</code></pre>
+    </div>
+    {% for element in page.elements %}
+      {% if page.elements | length > 1 %}<h4 class="h5 mt-5"><code>&lt;{{ element.tag }}&gt;</code></h4>{% endif %}
+      {% if element.attributes %}{{ reference("Attributes", element.attributes) }}{% endif %}
+      {% if element.slots %}{{ reference("Slots", element.slots, ("Slot", "Description")) }}{% endif %}
+      {% if element.parts %}{{ reference("CSS parts", element.parts, ("Part", "Description")) }}{% endif %}
+      {% if element.events %}{{ reference("Events", element.events, ("Event", "Description")) }}{% endif %}
+      {% if element.methods %}{{ reference("Methods and properties", element.methods, ("Member", "Description")) }}{% endif %}
+    {% endfor %}
+    {% if page.notes %}
+      <h4 class="h5 mt-5">Notes</h4>
+      <ul>{% for note in page.notes %}<li>{{ note | safe }}</li>{% endfor %}</ul>
+    {% endif %}
+  </section>
+
+  {% if page.tokens %}
+    {{ tokens(page.submodule, page.tokens.host, page.tokens.example_token, page.tokens.example_value, module=page.module or "bootstrap", selector=page.tokens.selector, spec=page.tokens.spec) }}
+  {% endif %}
+{% endblock %}
+
+{% block page_scripts %}
+  {% for entry in page.scripts or [] %}<script type="module" src="{{ url_for('webcomponents.static', filename=entry) }}"></script>{% endfor %}
+  {% if page.page_script %}<script type="module">{{ page.page_script | safe }}</script>{% endif %}
+{% endblock %}

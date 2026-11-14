@@ -1,0 +1,5 @@
+{#- Bootstrap Icons as inline SVG from the sprite (also inside shadow trees, e.g. ui-table):
+    {% from "flaskspark/icons.html" import icon %} … {{ icon("trash") }} or {{ icon("trash", _("Delete")) }} -#}
+{% macro icon(name, label="") -%}
+<svg class="bi-svg" width="1em" height="1em" fill="currentColor"{% if label %} role="img" aria-label="{{ label }}"{% else %} aria-hidden="true"{% endif %}><use href="{{ url_for('static', filename='flaskspark/vendor/bootstrap-icons/bootstrap-icons.svg') }}#{{ name }}"></use></svg>
+{%- endmacro %}

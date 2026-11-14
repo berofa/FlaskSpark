@@ -1,0 +1,61 @@
+/* ui-markdown-editor: the editable text (light DOM, where shadow styles cannot reach); typography: markdown-body.css. */
+@layer components {
+  ui-markdown-editor > .ui-markdown-editor-text {
+    &.is-empty::before {
+      position: absolute;
+      color: var(--ui-markdown-editor-placeholder-color, var(--bs-fg-3));
+      pointer-events: none;
+      content: attr(data-placeholder);
+    }
+
+    &[contenteditable="false"] {
+      cursor: default;
+    }
+
+    & pre code {
+      white-space: pre-wrap;
+    }
+
+    & nav.markdown-toc {
+      cursor: default;
+      user-select: none;
+      opacity: 0.85;
+    }
+
+    /* task lists while editing: the box is drawn, the item carries data-checked (a click on the box ticks it) */
+    & ul[data-task] {
+      padding-inline-start: 0.5em;
+      list-style: none;
+
+      & ul[data-task] {
+        padding-inline-start: 0.25em;
+      }
+
+      & > li {
+        position: relative;
+        padding-inline-start: 1.6em;
+
+        &::before {
+          position: absolute;
+          inset-inline-start: 0;
+          inset-block-start: 0.3em;
+          box-sizing: border-box;
+          inline-size: 1em;
+          block-size: 1em;
+          cursor: pointer;
+          content: "";
+          background: var(--bs-bg-body) center / 0.75em no-repeat;
+          border: 1px solid var(--bs-border-color);
+          border-radius: 0.25em;
+        }
+
+        &[data-checked="true"]::before {
+          /* Bootstrap Icons check-lg (MIT) */
+          background-color: var(--bs-primary-bg);
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z'/%3E%3C/svg%3E");
+          border-color: var(--bs-primary-bg);
+        }
+      }
+    }
+  }
+}

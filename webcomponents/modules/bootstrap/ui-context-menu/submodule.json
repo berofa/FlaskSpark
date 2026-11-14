@@ -1,0 +1,12 @@
+{
+  "name": "ui-context-menu",
+  "description": "Bootstrap 6 menu as a context menu: right click, long press on touch screens, the context menu key; items with icons, dividers, headers, danger.",
+  "elements": [
+    "ui-context-menu"
+  ],
+  "entry": "ui-context-menu.js",
+  "files": [
+    "ui-context-menu.js",
+    "ui-context-menu.document.css"
+  ]
+}

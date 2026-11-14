@@ -1,0 +1,8 @@
+/* ui-markdown: rendered Markdown; the typography is markdown-body.css (shared with ui-markdown-editor). */
+:host {
+  display: block;
+}
+
+.markdown-body {
+  color: inherit;
+}

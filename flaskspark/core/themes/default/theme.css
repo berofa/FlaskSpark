@@ -1,0 +1,7 @@
+/* FlaskSpark's neutral theme: an indigo accent on calm surfaces (the tokens: flaskspark/css/frame.css). */
+:root {
+  --app-accent: #4f46e5;
+  --app-accent-hover: #4338ca;
+  --app-accent-fg: light-dark(#4338ca, #a5b4fc);
+  --app-glow: rgba(99, 102, 241, 0.45);
+}

@@ -1,0 +1,20 @@
+/* ui-context-menu: page rules for its Bootstrap menu (adopted into the document once). */
+@layer components {
+  ui-context-menu {
+    display: contents;
+  }
+
+  /* In the top layer (popover) at the point of the click; the script sets left and top in viewport pixels. */
+  .menu.ui-context-menu[popover] {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+  }
+
+  .menu.ui-context-menu .menu-item-icon svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+  }
+}

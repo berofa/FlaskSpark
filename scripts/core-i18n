@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Update the catalogue of flaskspark.core (flaskspark/core/locales): extract the texts of the core (Python, templates,
+# browser scripts), merge them into every language and compile the .mo files (shipped with the package).
+#
+#   scripts/core-i18n            extract, update, compile
+#   scripts/core-i18n init fr    add a language
+#
+# Needs pybabel (Babel) on the PATH or in .venv/bin.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CORE="$ROOT/flaskspark/core"
+LOCALES="$CORE/locales"
+POT="$(mktemp --suffix=.pot)"
+trap 'rm -f "$POT"' EXIT
+PYBABEL="${PYBABEL:-$(command -v "$ROOT/.venv/bin/pybabel" || command -v pybabel)}"
+
+cd "$CORE"
+"$PYBABEL" extract -F "$ROOT/scripts/core-babel.cfg" -k _ -k gettext -k lazy_gettext -k N_ -k t -k nt:1,2 -k tr -k ntr:1,2 \
+  --no-location --sort-output --width 120 --project FlaskSpark -o "$POT" .
+
+if [[ "${1:-}" == "init" ]]; then
+  "$PYBABEL" init -i "$POT" -d "$LOCALES" -l "${2:?language missing}"
+fi
+"$PYBABEL" update -i "$POT" -d "$LOCALES" --no-fuzzy-matching --ignore-obsolete --width 120
+"$PYBABEL" compile -d "$LOCALES" --statistics

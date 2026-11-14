@@ -1,0 +1,41 @@
+{
+  "name": "ui-markdown",
+  "description": "Rendered Markdown (GitHub/GitLab flavoured: tables, task lists, alerts, collapsible sections, table of contents), sanitised in the browser with the same rules as flaskspark.markdown; markdown.js renders and turns HTML back into Markdown (markdown-it, loaded on first use).",
+  "elements": [
+    "ui-markdown"
+  ],
+  "entry": "ui-markdown.js",
+  "files": [
+    "ui-markdown.js",
+    "markdown.js",
+    "ui-markdown.css",
+    "markdown-body.css"
+  ],
+  "tokens": {
+    "sources": [
+      {
+        "selector": ":host",
+        "prefix": "--ui-markdown-",
+        "file": "markdown-body.css"
+      }
+    ],
+    "descriptions": {
+      "--ui-markdown-gap": "Space between blocks (paragraphs, lists, tables, …).",
+      "--ui-markdown-line-height": "Line height of the text.",
+      "--ui-markdown-heading-weight": "Font weight of headings, table headers, titles.",
+      "--ui-markdown-heading-border": "Line below headings of level 1 and 2.",
+      "--ui-markdown-quote-border": "Line of a quote.",
+      "--ui-markdown-quote-color": "Text colour of a quote.",
+      "--ui-markdown-code-bg": "Background of code and code blocks.",
+      "--ui-markdown-code-color": "Text colour of code.",
+      "--ui-markdown-radius": "Corner radius of code blocks, collapsible sections, the table of contents.",
+      "--ui-markdown-table-border": "Lines of tables, horizontal lines, collapsible sections.",
+      "--ui-markdown-table-head-bg": "Background of table headers.",
+      "--ui-markdown-note": "Colour of a «note» alert.",
+      "--ui-markdown-tip": "Colour of a «tip» alert.",
+      "--ui-markdown-important": "Colour of an «important» alert.",
+      "--ui-markdown-warning": "Colour of a «warning» alert.",
+      "--ui-markdown-caution": "Colour of a «caution» alert."
+    }
+  }
+}

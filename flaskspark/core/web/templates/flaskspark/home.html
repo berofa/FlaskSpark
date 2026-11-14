@@ -1,0 +1,27 @@
+{% extends "layouts/main.html" %}
+{% block page_title %}{{ _("Home") }}{% endblock %}
+{% block content %}
+  <div class="app-page-head">
+    <div>
+      <h1>{{ app_title }}</h1>
+    </div>
+  </div>
+  <div class="app-stack">
+    {% for template in page_sections("home") %}{% include template %}{% endfor %}
+    {% set tiles = home_tiles() %}
+    {% if tiles %}
+      <div class="app-tiles">
+        {% for tile in tiles %}
+          <a class="app-tile" href="{{ tile.href }}">
+            {% if tile.icon %}<i class="bi bi-{{ tile.icon }}" aria-hidden="true"></i>{% endif %}
+            <span>
+              <span class="app-tile-module">{{ tile.module }}</span>
+              <strong>{{ tile.label }}</strong>
+              {% if tile.description %}<small>{{ tile.description }}</small>{% endif %}
+            </span>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

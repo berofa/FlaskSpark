@@ -1,0 +1,186 @@
+{% extends "layouts/main.html" %}
+{#- «Settings» (admins): the access (role x area, with sign-in), the users' roles (with sign-in), the application's
+    accounts (when a module names APP_ACCOUNT_TYPES; <ui-user-accounts> on /api/settings/accounts), a tab per module
+    with its own sections (Module.SETTINGS) and its settings of config.yaml (Module.CONFIG, generated from the
+    manifest), and «Data»: what modules no longer delivered left behind (flaskspark.core.leftovers), to clean up.
+    Script: flaskspark/settings.js. -#}
+{% block page_title %}{{ _("Settings") }}{% endblock %}
+
+{% macro field(f) %}
+  {%- set label = f.label ~ (" (" ~ f.unit ~ ")" if f.unit else "") -%}
+  {%- set bounds = (" · " ~ (f.min if f.min is not none else "…") ~ "–" ~ (f.max if f.max is not none else "…")) if (f.min is not none or f.max is not none) else "" -%}
+  {%- set default = f.default_shown if f.kind not in ("bool", "choice") else (
+        (_("on") if f.default else _("off")) if f.kind == "bool" else
+        ((f.choices | selectattr("value", "equalto", f.default_shown) | map(attribute="label") | first) or f.default_shown)) -%}
+  {%- set format = {"time": _("HH:MM or «off»"), "ints": _("comma separated"), "texts": _("comma separated"), "json": "JSON"}.get(f.kind) -%}
+  {%- set help = (f.help ~ " · " if f.help else "") ~ (format ~ " · " if format else "") ~ _("Default: %(value)s", value=(default if default != "" else _("empty"))) ~ bounds -%}
+  <div class="md:col-6" data-setting="{{ f.path }}" data-kind="{{ f.kind }}"
+       data-initial="{{ ('true' if f.effective else 'false') if f.kind == 'bool' else f.shown }}">
+    {% if f.kind == "bool" %}
+      <ui-check switch name="{{ f.path }}" label="{{ label }}" description="{{ help }}"{% if f.effective %} checked{% endif %}></ui-check>
+    {% elif f.kind == "choice" %}
+      <ui-select name="{{ f.path }}" label="{{ label }}" help="{{ help }}" value="{{ f.shown }}">
+        <option value=""{% if not f.changed %} selected{% endif %}>{{ _("Default (%(value)s)", value=default) }}</option>
+        {% for choice in f.choices %}
+          <option value="{{ choice.value }}"{% if f.changed and choice.value == f.shown %} selected{% endif %}>{{ choice.label }}</option>
+        {% endfor %}
+      </ui-select>
+    {% elif f.kind == "json" %}
+      <ui-textarea name="{{ f.path }}" label="{{ label }}" help="{{ help }}" rows="4" value="{{ f.shown }}"
+                   placeholder="{{ f.default_shown }}" class="font-monospace"></ui-textarea>
+    {% else %}
+      {% set number = f.kind in ("int", "float") %}
+      <ui-input name="{{ f.path }}" type="{{ 'number' if number else 'text' }}" label="{{ label }}" help="{{ help }}"
+                value="{{ f.shown }}" placeholder="{{ f.default_shown }}"
+                {% if number %}step="{{ 'any' if f.kind == 'float' else '1' }}"{% endif %}
+                {% if number and f.min is not none %}min="{{ f.min }}"{% endif %}
+                {% if number and f.max is not none %}max="{{ f.max }}"{% endif %}></ui-input>
+    {% endif %}
+    {% if f.changed %}
+      <div class="small fg-3 mt-1" data-changed>
+        <i class="bi bi-pencil" aria-hidden="true"></i> {{ _("Changed here") }}
+        <ui-button size="sm" variant="link" data-reset="{{ f.path }}" title="{{ _('Back to the default of config.yaml') }}">{{ _("Default") }}</ui-button>
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% block content %}
+  <div class="app-page-head">
+    <div>
+      <h1>{{ _("Settings") }}</h1>
+    </div>
+  </div>
+    <ui-tabs card persist-key="core-settings" class="d-block" data-settings-tabs label="{{ _('Settings') }}">
+      {% if matrix %}
+        <ui-tab-panel heading="{{ _('Access') }}" name="access">
+          <div data-access-url="{{ url_for('core_settings_access') }}">
+            <p class="small fg-3 mb-3">{{ _("Which role may use which area. Changes apply at once.") }}</p>
+            <ui-table size="sm" valign="middle" responsive><table class="mb-0">
+              <thead>
+                <tr>
+                  <th>{{ _("Role") }}</th>
+                  {% for area in matrix.areas %}
+                    <th title="{{ area.description }}">{{ area.label }}{% if area.description %}<br><small class="fw-normal fg-3">{{ area.description }}</small>{% endif %}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for role in matrix.roles %}
+                  <tr data-role-row="{{ role.id }}">
+                    <td class="fw-semibold text-nowrap">{{ role.name }}{% if role.admin %}<br><small class="fw-normal fg-3">{{ _("always everything") }}</small>{% endif %}</td>
+                    {% for area in matrix.areas %}
+                      <td>
+                        <ui-check switch data-role="{{ role.id }}" data-area="{{ area.key }}"
+                                  aria-label="{{ _('%(area)s for %(role)s', area=area.label, role=role.name) }}"
+                                  {% if role.allowed[area.key] %}checked{% endif %} {% if role.admin %}disabled{% endif %}></ui-check>
+                      </td>
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table></ui-table>
+            <p class="small fg-3 mt-3 mb-0">{{ _("The role comes from the sign-in (the identity provider's groups). An area without the right is invisible and closed.") }}</p>
+          </div>
+        </ui-tab-panel>
+      {% endif %}
+      {% if users is not none %}
+        <ui-tab-panel heading="{{ _('Users') }}" name="users">
+          <div data-users-url="{{ url_for('core_settings_users') }}">
+            <p class="small fg-3 mb-3">{{ _("The role of each user. Changes apply at once.") }}</p>
+            <ui-table size="sm" valign="middle" responsive><table class="mb-0">
+              <thead><tr><th>{{ _("User") }}</th><th>{{ _("E-mail") }}</th><th>{{ _("Role") }}</th></tr></thead>
+              <tbody>
+                {% for u in users %}
+                  {% set own = u.id == me %}
+                  <tr data-user-row="{{ u.id }}">
+                    <td class="fw-semibold text-nowrap">{{ u.username }}{% if u.name %}<br><small class="fw-normal fg-3">{{ u.name }}</small>{% endif %}</td>
+                    <td class="fg-3">{{ u.email }}</td>
+                    <td class="app-cell-wide">
+                      <ui-select size="sm" data-user="{{ u.id }}" aria-label="{{ _('Role of %(user)s', user=u.username) }}"{% if own %} disabled{% endif %}>
+                        <option value=""{% if u.override is none %} selected{% endif %}>{{ _("From the sign-in") }}{% if u.sso_role %} ({{ u.sso_role }}){% endif %}</option>
+                        {% for role in matrix.roles %}
+                          <option value="{{ role.id }}"{% if u.override == role.id %} selected{% endif %}>{{ role.name }}</option>
+                        {% endfor %}
+                      </ui-select>
+                      {% if own %}<small class="fg-3">{{ _("You can't change your own role.") }}</small>{% endif %}
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr><td colspan="3" class="fg-3">{{ _("No users yet.") }}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table></ui-table>
+            <p class="small fg-3 mt-3 mb-0">{{ _("«From the sign-in» takes the role the identity provider gives at every sign-in. A role chosen here applies at once and stays after later sign-ins, until it is set back. Users appear after their first sign-in.") }}</p>
+          </div>
+        </ui-tab-panel>
+      {% endif %}
+      {% if app_accounts %}
+        <ui-tab-panel heading="{{ _('Accounts') }}" name="accounts">
+          <ui-user-accounts src="{{ url_for('core_settings_accounts') }}"></ui-user-accounts>
+        </ui-tab-panel>
+      {% endif %}
+      {% for tab in tabs %}
+        <ui-tab-panel heading="{{ tab.label }}" name="{{ tab.name }}">
+          {#- the module's own sections (Module.SETTINGS), above the generated form of its CONFIG #}
+          {% for section in tab.sections %}{% include section %}{% endfor %}
+          {% if tab.groups %}
+          <form data-settings-form action="{{ url_for('core_settings_config', name=tab.name) }}" novalidate{% if tab.sections %} class="mt-4"{% endif %}>
+            <p class="small fg-3">{{ _("The defaults come from config.yaml; an empty field takes the default again.") }}</p>
+            {% for group in tab.groups %}
+              <fieldset class="mb-3">
+                <legend class="h6">{{ group.label or _("General") }}</legend>
+                <div class="row g-2">
+                  {% for f in group.fields %}{{ field(f) }}{% endfor %}
+                </div>
+              </fieldset>
+            {% endfor %}
+            <div class="d-flex justify-content-end">
+              <ui-button type="submit" size="sm" variant="primary">{{ _("Save") }}</ui-button>
+            </div>
+          </form>
+          {% endif %}
+        </ui-tab-panel>
+      {% endfor %}
+      <ui-tab-panel heading="{{ _('Data') }}" name="data">
+        <div data-leftovers-url="{{ url_for('core_settings_data') }}">
+          <p class="small fg-3 mb-3">{{ _("What modules the application no longer delivers left behind, and settings nothing uses any more. FlaskSpark never removes them by itself; whatever is removed here is first backed up.") }}</p>
+          {% if leftovers %}
+            <ui-table size="sm" valign="middle" responsive><table class="mb-0">
+              <thead><tr><th>{{ _("What") }}</th><th>{{ _("Kind") }}</th><th>{{ _("Details") }}</th><th class="text-end">{{ _("Clean up") }}</th></tr></thead>
+              <tbody>
+                {% for item in leftovers %}
+                  <tr data-leftover="{{ item.id }}" data-title="{{ item.title }}" data-deletes='{{ item.deletes | tojson }}'>
+                    <td class="fw-semibold text-break">{{ item.title }}</td>
+                    <td class="fg-3">{{ item.kind_label }}</td>
+                    <td class="small fg-3 text-break">{{ item.detail }}</td>
+                    <td class="text-end"><ui-button size="sm" variant="danger" outline data-clean="{{ item.id }}">{{ _("Remove") }}</ui-button></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table></ui-table>
+            <div class="d-flex justify-content-end mt-3">
+              <ui-button size="sm" variant="danger" data-clean-all>{{ _("Clean up all") }}</ui-button>
+            </div>
+          {% else %}
+            <p class="mb-0" data-leftovers-empty>{{ _("Nothing left over.") }}</p>
+          {% endif %}
+          <ui-dialog data-leftovers-dialog heading="{{ _('Remove for good?') }}">
+            <p>{{ _("This deletes:") }}</p>
+            <ul class="small" data-leftovers-list></ul>
+            <ui-alert variant="warning">{{ _("It cannot be undone, except from the backup FlaskSpark makes first (its name follows after the clean-up).") }}</ui-alert>
+            <div data-leftovers-notice></div>
+            <ui-button slot="footer" variant="secondary" outline data-bs-dismiss="dialog">{{ _("Cancel") }}</ui-button>
+            <ui-button slot="footer" variant="danger" data-leftovers-confirm>{{ _("Remove") }}</ui-button>
+          </ui-dialog>
+        </div>
+      </ui-tab-panel>
+    </ui-tabs>
+{% endblock %}
+
+{% block page_scripts %}
+  <script type="module" src="{{ url_for('static', filename='flaskspark/js/settings.js') }}"></script>
+  {% if app_accounts %}
+    <script type="module" src="{{ url_for('static', filename='flaskspark/js/ui-user-accounts.js') }}"></script>
+  {% endif %}
+{% endblock %}

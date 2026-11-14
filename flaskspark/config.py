@@ -65,75 +65,85 @@ def _parse_role_map(value: Optional[str]) -> dict:
             mapping[group] = role
     return mapping
 
-class Config:
-    """
-    Base FlaskSpark configuration.
 
-    Environment variables are read at import time.
+def from_environment() -> type:
+    """The configuration class built from the environment as it is now (FlaskSpark uses it at every start, so
+    variables loaded after the import, e.g. from env files, count)."""
 
-    Attributes:
-        SECRET_KEY (str | None): Flask secret key.
-        DEBUG (bool): Debug flag.
-        FLASK_ENV (str): Flask environment.
-        SQLALCHEMY_DATABASE_URI (str): Database connection URI.
-        SQLALCHEMY_TRACK_MODIFICATIONS (bool): SQLAlchemy modification tracking flag.
-        OAUTH_* (str | None): OAuth/OIDC configuration values.
-        ASSETS_*: Asset pipeline configuration values.
-    """
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-    ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
-    FLASK_ENV = "production" if ENVIRONMENT.lower() == "production" else "development"
-    DEBUG = ENVIRONMENT.lower() != "production"
+    class Config:
+        """
+        Base FlaskSpark configuration.
 
-    """Database configuration."""
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "SQLALCHEMY_DATABASE_URI",
-        os.environ.get("DATABASE_URL", "sqlite:///app.db"),
-    )
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+        Environment variables are read when the class is built: `Config` at import time, `from_environment()` anew.
 
-    """OAuth configuration."""
-    OAUTH_NAME = os.environ.get("OAUTH_NAME")
-    OAUTH_AUTHORIZE_URL = os.environ.get("OAUTH_AUTHORIZE_URL")
-    OAUTH_ACCESS_TOKEN_URL = os.environ.get("OAUTH_ACCESS_TOKEN_URL")
-    OAUTH_USERINFO_ENDPOINT = os.environ.get("OAUTH_USERINFO_ENDPOINT")
-    OAUTH_JWKS_URI = os.environ.get("OAUTH_JWKS_URI")
-    OAUTH_CLIENT_ID = os.environ.get("OAUTH_CLIENT_ID")
-    OAUTH_CLIENT_SECRET = os.environ.get("OAUTH_CLIENT_SECRET")
-    OAUTH_SCOPE = os.environ.get("OAUTH_SCOPE")
-    OAUTH_REDIRECT_URI = os.environ.get("OAUTH_REDIRECT_URI")
-    OAUTH_GROUPS_CLAIM = os.environ.get("OAUTH_GROUPS_CLAIM", "groups")
-    OAUTH_ROLE_PRIORITY = _split_csv(os.environ.get("OAUTH_ROLE_PRIORITY"))
-    OAUTH_ROLE_MAP = _parse_role_map(os.environ.get("OAUTH_ROLE_MAP"))
-    ROLE_DEFAULTS = _parse_role_defaults(os.environ.get("ROLE_DEFAULTS"))
-    # A view or model module that fails to import stops the start (default: skipped with a warning).
-    STRICT_IMPORTS = os.environ.get("STRICT_IMPORTS", "false").lower() in ("1", "true", "yes")
+        Attributes:
+            SECRET_KEY (str | None): Flask secret key.
+            DEBUG (bool): Debug flag.
+            FLASK_ENV (str): Flask environment.
+            SQLALCHEMY_DATABASE_URI (str): Database connection URI.
+            SQLALCHEMY_TRACK_MODIFICATIONS (bool): SQLAlchemy modification tracking flag.
+            OAUTH_* (str | None): OAuth/OIDC configuration values.
+            ASSETS_*: Asset pipeline configuration values.
+        """
+        SECRET_KEY = os.environ.get("SECRET_KEY")
+        ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
+        FLASK_ENV = "production" if ENVIRONMENT.lower() == "production" else "development"
+        DEBUG = ENVIRONMENT.lower() != "production"
 
-    """Babel (i18n) configuration."""
-    BABEL_DEFAULT_LOCALE = os.environ.get("BABEL_DEFAULT_LOCALE", "en")
-    BABEL_SUPPORTED_LOCALES = _split_csv(os.environ.get("BABEL_SUPPORTED_LOCALES")) or ["en"]
-    BABEL_TRANSLATION_DIRECTORIES = os.environ.get("BABEL_TRANSLATION_DIRECTORIES", "locales")
+        """Database configuration."""
+        SQLALCHEMY_DATABASE_URI = os.environ.get(
+            "SQLALCHEMY_DATABASE_URI",
+            os.environ.get("DATABASE_URL", "sqlite:///app.db"),
+        )
+        SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    """Asset pipeline configuration."""
-    ASSETS_ENABLE = os.environ.get("ASSETS_ENABLE", "True").lower() == "true"
-    ASSETS_AUTO_BUILD = os.environ.get("ASSETS_AUTO_BUILD", "True").lower() == "true"
-    ASSETS_DEBUG = os.environ.get("ASSETS_DEBUG", "False").lower() == "true"
-    ASSETS_BUILD_ON_START = os.environ.get("ASSETS_BUILD_ON_START", "False").lower() == "true"
-    ASSETS_FORCE_BUILD = os.environ.get("ASSETS_FORCE_BUILD", "False").lower() == "true"
-    ASSETS_SCSS_ENTRY = os.environ.get("ASSETS_SCSS_ENTRY", "scss/app.scss")
-    ASSETS_JS_ENTRY = os.environ.get("ASSETS_JS_ENTRY", "js/app.js")
-    ASSETS_SCSS_OUTPUT = os.environ.get("ASSETS_SCSS_OUTPUT", "styles/app.min.css")
-    ASSETS_JS_OUTPUT = os.environ.get("ASSETS_JS_OUTPUT", "scripts/app.min.js")
-    ASSETS_SCSS_FILTERS = os.environ.get("ASSETS_SCSS_FILTERS", "libsass,rcssmin")
-    ASSETS_JS_FILTERS = os.environ.get("ASSETS_JS_FILTERS", "rjsmin")
-    ASSETS_SCSS_INCLUDE_PATHS = _split_csv(os.environ.get("ASSETS_SCSS_INCLUDE_PATHS"))
-    ASSETS_BUNDLES = []
-    VENDOR_INCLUDE_BOOTSTRAP = os.environ.get("VENDOR_INCLUDE_BOOTSTRAP", "False").lower() == "true"
-    # Web components with Bootstrap 6 (page CSS + "bootstrap" module); excludes VENDOR_INCLUDE_BOOTSTRAP.
-    VENDOR_INCLUDE_WEBCOMPONENTS = os.environ.get("VENDOR_INCLUDE_WEBCOMPONENTS", "False").lower() == "true"
-    APP_LAYOUT_TEMPLATE = os.environ.get("APP_LAYOUT_TEMPLATE", "layouts/framework.html")
+        """OAuth configuration."""
+        OAUTH_NAME = os.environ.get("OAUTH_NAME")
+        OAUTH_AUTHORIZE_URL = os.environ.get("OAUTH_AUTHORIZE_URL")
+        OAUTH_ACCESS_TOKEN_URL = os.environ.get("OAUTH_ACCESS_TOKEN_URL")
+        OAUTH_USERINFO_ENDPOINT = os.environ.get("OAUTH_USERINFO_ENDPOINT")
+        OAUTH_JWKS_URI = os.environ.get("OAUTH_JWKS_URI")
+        OAUTH_CLIENT_ID = os.environ.get("OAUTH_CLIENT_ID")
+        OAUTH_CLIENT_SECRET = os.environ.get("OAUTH_CLIENT_SECRET")
+        OAUTH_SCOPE = os.environ.get("OAUTH_SCOPE")
+        OAUTH_REDIRECT_URI = os.environ.get("OAUTH_REDIRECT_URI")
+        OAUTH_GROUPS_CLAIM = os.environ.get("OAUTH_GROUPS_CLAIM", "groups")
+        OAUTH_ROLE_PRIORITY = _split_csv(os.environ.get("OAUTH_ROLE_PRIORITY"))
+        OAUTH_ROLE_MAP = _parse_role_map(os.environ.get("OAUTH_ROLE_MAP"))
+        ROLE_DEFAULTS = _parse_role_defaults(os.environ.get("ROLE_DEFAULTS"))
+        # A view or model module that fails to import stops the start (default: skipped with a warning).
+        STRICT_IMPORTS = os.environ.get("STRICT_IMPORTS", "false").lower() in ("1", "true", "yes")
 
-    """Server configuration."""
-    APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
-    APP_BIND_HOST = os.environ.get("APP_BIND_HOST", "0.0.0.0")
-    APP_PORT = int(os.environ.get("APP_PORT", "5067"))
+        """Babel (i18n) configuration."""
+        BABEL_DEFAULT_LOCALE = os.environ.get("BABEL_DEFAULT_LOCALE", "en")
+        BABEL_SUPPORTED_LOCALES = _split_csv(os.environ.get("BABEL_SUPPORTED_LOCALES")) or ["en"]
+        BABEL_TRANSLATION_DIRECTORIES = os.environ.get("BABEL_TRANSLATION_DIRECTORIES", "locales")
+
+        """Asset pipeline configuration."""
+        ASSETS_ENABLE = os.environ.get("ASSETS_ENABLE", "True").lower() == "true"
+        ASSETS_AUTO_BUILD = os.environ.get("ASSETS_AUTO_BUILD", "True").lower() == "true"
+        ASSETS_DEBUG = os.environ.get("ASSETS_DEBUG", "False").lower() == "true"
+        ASSETS_BUILD_ON_START = os.environ.get("ASSETS_BUILD_ON_START", "False").lower() == "true"
+        ASSETS_FORCE_BUILD = os.environ.get("ASSETS_FORCE_BUILD", "False").lower() == "true"
+        ASSETS_SCSS_ENTRY = os.environ.get("ASSETS_SCSS_ENTRY", "scss/app.scss")
+        ASSETS_JS_ENTRY = os.environ.get("ASSETS_JS_ENTRY", "js/app.js")
+        ASSETS_SCSS_OUTPUT = os.environ.get("ASSETS_SCSS_OUTPUT", "styles/app.min.css")
+        ASSETS_JS_OUTPUT = os.environ.get("ASSETS_JS_OUTPUT", "scripts/app.min.js")
+        ASSETS_SCSS_FILTERS = os.environ.get("ASSETS_SCSS_FILTERS", "libsass,rcssmin")
+        ASSETS_JS_FILTERS = os.environ.get("ASSETS_JS_FILTERS", "rjsmin")
+        ASSETS_SCSS_INCLUDE_PATHS = _split_csv(os.environ.get("ASSETS_SCSS_INCLUDE_PATHS"))
+        ASSETS_BUNDLES = []
+        VENDOR_INCLUDE_BOOTSTRAP = os.environ.get("VENDOR_INCLUDE_BOOTSTRAP", "False").lower() == "true"
+        # Web components with Bootstrap 6 (page CSS + "bootstrap" module); excludes VENDOR_INCLUDE_BOOTSTRAP.
+        VENDOR_INCLUDE_WEBCOMPONENTS = os.environ.get("VENDOR_INCLUDE_WEBCOMPONENTS", "False").lower() == "true"
+        APP_LAYOUT_TEMPLATE = os.environ.get("APP_LAYOUT_TEMPLATE", "layouts/framework.html")
+
+        """Server configuration."""
+        APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
+        APP_BIND_HOST = os.environ.get("APP_BIND_HOST", "0.0.0.0")
+        APP_PORT = int(os.environ.get("APP_PORT", "5067"))
+
+    return Config
+
+
+Config = from_environment()

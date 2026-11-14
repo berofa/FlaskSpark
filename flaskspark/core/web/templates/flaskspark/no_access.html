@@ -1,0 +1,25 @@
+{% extends "layouts/main.html" %}
+{#- No access: a page whose area the visitor may not use (denied), or a signed-in visitor whose role gives no area of
+    the application at all. -#}
+{% block page_title %}{{ _("No access") }}{% endblock %}
+{% block content %}
+  <div class="app-page-head">
+    <div>
+      <h1>{{ _("No access") }}</h1>
+    </div>
+  </div>
+  <ui-alert variant="warning" class="d-block" data-no-access>
+    {% if denied %}
+      {{ _("You may not use this page.") }}
+    {% else %}
+      {{ _("Your role does not give you access to any part of this application yet.") }}
+    {% endif %}
+    {{ _("Ask an administrator if you need it.") }}
+  </ui-alert>
+  <div class="d-flex gap-2 mt-3">
+    <ui-button variant="secondary" outline href="/">{{ _("Home") }}</ui-button>
+    {% if access.signed_in %}
+      <ui-button variant="secondary" outline href="{{ access.logout_url }}">{{ _("Sign out") }}</ui-button>
+    {% endif %}
+  </div>
+{% endblock %}

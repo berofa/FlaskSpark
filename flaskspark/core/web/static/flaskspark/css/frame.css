@@ -1,0 +1,959 @@
+/*
+ * flaskspark.core layout: sidebar navigation + content, cards, buttons and fields in the theme's colours.
+ *
+ * Plain modern CSS, no preprocessor: native nesting, custom properties, color-mix(), light-dark(), logical properties.
+ * The layout lives here only; a theme (themes/<name>/theme.css) sets tokens, never layout rules: whatever a brand may
+ * want different is a token below (README «Themes»). light-dark() covers both colour modes. The colour mode is
+ * data-bs-theme on <html> (webcomponents' theme.js), mirrored as html.theme-dark / html.theme-light
+ * (flaskspark/js/app.js). The web components render in shadow trees: they are styled through their parts (::part) and
+ * the inherited --bs-* tokens.
+ *
+ * Tokens a theme sets (defaults below):
+ *   --app-accent, --app-accent-hover, --app-accent-contrast   the brand colour, its hover, text on it
+ *   --app-accent-fg                                          the brand colour as text (readable in both modes)
+ *   --app-accent-tint                                        a light wash of the brand colour (active entries)
+ *   --app-glow, --app-glow-opacity, --app-glow-blur          the glow behind the page (transparent: none)
+ *   --app-page-bg                                            the page background (colour or gradient)
+ *   --app-surface, --app-surface-alt, --app-border           cards and fields
+ *   --app-chrome-bg, --app-chrome-border, --app-chrome-blur  the top bar (and the blur and border of the sidebar)
+ *   --app-sidebar-bg, --app-sidebar-width                    the docked sidebar: its background (milky), its width
+ *   --app-sidebar-inset, --app-sidebar-radius,               the docked sidebar floats: inset from the window's edges,
+ *   --app-sidebar-shadow                                     rounded, with a shadow (inset 0: attached column)
+ *   --app-radius, --app-radius-sm                            corners of cards and fields
+ *   --app-shadow                                             the shadow of cards and tiles
+ *   --app-card-radius, --app-card-shadow, --app-card-border  cards, tabbed cards and tiles
+ *   --app-nav-radius, --app-nav-font-weight                  the navigation's entries
+ *   --app-nav-group-color                                    the titles of the navigation's groups
+ *   --app-nav-hover-bg                                       an entry under the pointer
+ *   --app-nav-active-bg, --app-nav-active-fg,                the current entry: its background, text and the bar
+ *   --app-nav-active-border, --app-nav-active-border-width   at its start
+ *   --app-btn-radius, --app-btn-font-weight                  buttons (and menus)
+ *   --app-brand-max-height, --app-brand-compact-height       the logo in the sidebar; in the top bar and the drawer
+ *   --app-card-icon-color                                    the icon in a card's heading (ui-card icon)
+ *   --app-field-bg                                           the background of fields (ui-input, ui-select, …)
+ *   --app-tooltip-max-width, --app-tooltip-text-align        tooltips (long hints: wider, start-aligned)
+ *   --app-table-cell-padding-y                               rows of .app-table (unset: Bootstrap's)
+ *   --app-table-last-row-border-width                        the last row of .app-table and ui-table (0: no line)
+ *   --app-font                                               the page font (optional)
+ */
+
+/* A length, so a theme may write 0 (attached sidebar) and calc()/min() still get a length. */
+@property --app-sidebar-inset {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+:root {
+  --app-accent: #0d6efd;
+  --app-accent-hover: color-mix(in srgb, var(--app-accent) 85%, black);
+  --app-accent-contrast: #ffffff;
+  --app-accent-fg: light-dark(var(--app-accent), color-mix(in srgb, var(--app-accent) 65%, white));
+  --app-accent-tint: color-mix(in srgb, var(--app-accent) 12%, transparent);
+  --app-glow: transparent;
+  --app-glow-opacity: 0.7;
+  --app-glow-blur: 6px;
+  --app-page-bg: light-dark(#f8fafc, #0f1115);
+  --app-surface: light-dark(#ffffff, #151821);
+  --app-surface-alt: light-dark(#eef2f7, #1f2430);
+  --app-border: light-dark(#d0d5dd, #2a2f3a);
+  --app-chrome-bg: light-dark(rgba(255, 255, 255, 0.6), rgba(15, 17, 21, 0.6));
+  --app-chrome-border: light-dark(rgba(15, 23, 42, 0.08), rgba(148, 163, 184, 0.14));
+  --app-chrome-blur: 18px;
+  --app-radius: 12px;
+  --app-radius-sm: 8px;
+  --app-sidebar-width: 18rem;
+  --app-sidebar-inset: 1rem;
+  --app-sidebar-radius: var(--bs-radius-7, 0.75rem);
+  --app-sidebar-bg: light-dark(color-mix(in srgb, var(--app-surface) 90%, transparent),
+                               color-mix(in srgb, color-mix(in srgb, var(--app-surface) 95%, white) 90%, transparent));
+  --app-sidebar-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 18px 40px rgba(15, 23, 42, 0.12);
+  --app-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 28px rgba(15, 23, 42, 0.06);
+  --app-card-radius: var(--app-radius);
+  --app-card-shadow: var(--app-shadow);
+  --app-card-border: var(--app-border);
+  --app-nav-radius: 10px;
+  --app-nav-font-weight: 600;
+  --app-nav-hover-bg: light-dark(rgba(15, 23, 42, 0.05), rgba(255, 255, 255, 0.06));
+  --app-nav-group-color: var(--bs-fg-3);
+  --app-nav-active-bg: var(--app-accent-tint);
+  --app-nav-active-fg: var(--app-accent-fg);
+  --app-nav-active-border: var(--app-accent);
+  --app-nav-active-border-width: 3px;
+  --app-btn-radius: 10px;
+  --app-btn-font-weight: 600;
+  --app-brand-max-height: 8rem;
+  --app-brand-compact-height: 36px;
+  --app-card-icon-color: var(--app-accent-fg);
+  --app-field-bg: var(--bs-bg-body);
+  --app-tooltip-max-width: 200px;
+  --app-tooltip-text-align: center;
+  --app-table-last-row-border-width: 0;
+
+  /* Bootstrap 6 tokens from the theme (shadow trees inherit them). */
+  --bs-primary-base: var(--app-accent);
+  --bs-primary-bg: var(--app-accent);
+  --bs-primary-fg: var(--app-accent-fg);
+  --bs-primary-bg-subtle: color-mix(in srgb, var(--app-accent) 14%, var(--app-surface));
+  --bs-primary-border: color-mix(in srgb, var(--app-accent) 55%, var(--app-surface));
+  --bs-primary-focus-ring: color-mix(in srgb, var(--app-accent) 35%, transparent);
+  --bs-border-color: var(--app-border);
+  --bs-bg-2: var(--app-surface-alt);
+  --bs-link-color: var(--app-accent-fg);
+  --bs-link-hover-color: color-mix(in srgb, var(--app-accent-fg) 80%, var(--bs-fg-body, black));
+}
+
+html.theme-dark {
+  --app-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --app-sidebar-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Page ---------------------------------------------------------------------------------------------------------- */
+body.app-body {
+  position: relative;
+  min-block-size: 100vh;
+  overflow-x: hidden;
+  background: var(--app-page-bg);
+  font-family: var(--app-font, var(--bs-font-sans-serif, system-ui, sans-serif));
+
+  /* The glow behind the page, drifting slowly. */
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(circle at 50% 18%,
+      color-mix(in srgb, var(--app-glow) 38%, transparent) 0%,
+      color-mix(in srgb, var(--app-glow) 18%, transparent) 24%,
+      transparent 55%);
+    background-size: 200% 100%;
+    filter: blur(var(--app-glow-blur));
+    opacity: var(--app-glow-opacity);
+    animation: app-glow 224s ease-in-out infinite;
+    pointer-events: none;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+}
+
+@keyframes app-glow {
+  0%, 100% { background-position: 0% 0; }
+  50% { background-position: 100% 0; }
+}
+
+/* --- Frame: sidebar + content ---------------------------------------------------------------------------------------
+ * The sidebar is a ui-drawer (responsive="lg"): docked from lg (1024px) on, a drawer behind the hamburger below. The
+ * drawer's host is display: contents and its docked panel is static, so the wrapper is the sticky column. */
+.app-frame {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-block-size: 100vh;
+}
+
+.app-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+/* The docked sidebar floats like the opened drawer on phones: inset from the window's edges, rounded, with a shadow.
+   --app-sidebar-inset: 0 attaches it to the edges again (a column with a line at its end, no corners, no shadow). The
+   panel is the wrapper itself: Bootstrap resets the docked drawer's background and border with !important inside its
+   shadow tree, which ::part() cannot override. min() turns the corners and the outer lines off at inset 0. */
+.app-sidebar-wrap {
+  @media (min-width: 1024px) {
+    --_attached: min(1px, calc(var(--app-sidebar-inset) * 100));
+    position: sticky;
+    inset-block-start: var(--app-sidebar-inset);
+    display: flex;
+    flex: 0 0 var(--app-sidebar-width);
+    flex-direction: column;
+    box-sizing: border-box;
+    block-size: calc(100vh - 2 * var(--app-sidebar-inset));
+    margin-block: var(--app-sidebar-inset);
+    margin-inline: var(--app-sidebar-inset) 0;
+    overflow-y: auto;
+    border: var(--_attached) solid var(--app-chrome-border);
+    border-inline-end-width: 1px;
+    border-radius: min(var(--app-sidebar-radius), calc(var(--app-sidebar-inset) * 100));
+    background: var(--app-sidebar-bg);
+    box-shadow: var(--app-sidebar-shadow);
+    scrollbar-width: thin;
+    scrollbar-color: var(--app-border) transparent;
+    backdrop-filter: blur(var(--app-chrome-blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--app-chrome-blur)) saturate(1.2);
+
+    /* Attached (inset 0): no shadow either (browsers without style queries keep it; a theme may set
+       --app-sidebar-shadow: none). */
+    @container style(--app-sidebar-inset: 0) {
+      box-shadow: none;
+    }
+  }
+}
+
+.app-sidebar {
+  --bs-drawer-width: 20rem;
+
+  &[docked] {
+    /* The drawer's host is display: contents: its panel is the wrapper's flex item. */
+    &::part(drawer) {
+      flex: 1 1 auto;
+      min-block-size: 0;
+    }
+
+    &::part(body) { flex: 1 1 auto; }
+
+    .app-sidebar-inner {
+      flex: 1 1 auto;
+      padding: 1.25rem 1rem 1rem;
+    }
+  }
+
+  &:not([docked]) .app-sidebar-brand { display: none; }
+
+  /* Before the element is defined: no flash of the menu on small screens (the docked column is reserved above). */
+  &:not(:defined) {
+    display: none;
+
+    @media (min-width: 1024px) {
+      display: block;
+      visibility: hidden;
+    }
+  }
+}
+
+.app-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-block-size: 100%;
+
+  /* A long navigation scrolls the sidebar; nothing in it shrinks (the logo would overlap the first entry). */
+  > * { flex-shrink: 0; }
+}
+
+/* --- Navigation ---------------------------------------------------------------------------------------------------- */
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.app-nav-group {
+  margin-block: 0.6rem 0.2rem;
+  margin-inline: 0;
+  padding-block: 0;
+  padding-inline: 0.75rem;
+  color: var(--app-nav-group-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-block: 0.32rem;
+  padding-inline: 0.75rem;
+  border-inline-start: var(--app-nav-active-border-width) solid transparent;
+  border-radius: var(--app-nav-radius);
+  color: var(--bs-fg-body);
+  font-size: 0.95rem;
+  font-weight: var(--app-nav-font-weight);
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  .bi {
+    color: var(--bs-fg-3);
+    font-size: 1.05em;
+  }
+
+  &:hover {
+    background: var(--app-nav-hover-bg);
+    color: var(--bs-fg-body);
+  }
+
+  &.active {
+    border-inline-start-color: var(--app-nav-active-border);
+    background: var(--app-nav-active-bg);
+    color: var(--app-nav-active-fg);
+
+    .bi { color: inherit; }
+  }
+}
+
+.app-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
+
+  & + & { margin-inline-start: 0.25rem; }
+
+  /* A spinner in a count (e.g. «2 running»): as small as the digits, in their colour. */
+  ui-spinner { color: inherit; }
+
+  ui-spinner::part(spinner) {
+    --bs-spinner-width: 0.8em;
+    --bs-spinner-height: 0.8em;
+    --bs-spinner-border-width: 0.15em;
+  }
+}
+
+/* --- Sidebar footer: services, colour mode, language, the user ---------------------------------------------------- */
+.app-sidebar-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block-start: auto;
+
+  ui-button::part(button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: calc(1.5em + 0.5rem + 2px);
+  }
+}
+
+/* The signed-in user and the admins' pages (Settings), sign out. */
+.app-sidebar-account {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.app-sidebar-user {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--bs-secondary-color);
+  white-space: nowrap;
+}
+
+/* --- Top bar: only below lg (hamburger + logo) --------------------------------------------------------------------- */
+.app-topbar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block: 0.5rem;
+  padding-inline: 0.75rem;
+  border-block-end: 1px solid var(--app-chrome-border);
+  background: var(--app-chrome-bg);
+  backdrop-filter: blur(var(--app-chrome-blur)) saturate(1.2);
+  -webkit-backdrop-filter: blur(var(--app-chrome-blur)) saturate(1.2);
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+/* --- Brand --------------------------------------------------------------------------------------------------------- */
+.brand-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-logo {
+  display: block;
+  inline-size: auto;
+  max-inline-size: 100%;
+  block-size: 64px;
+  object-fit: contain;
+
+  /* In the docked sidebar the logo takes the column's width (up to --app-brand-max-height high); in the top bar and
+     the drawer's heading it stays small. */
+  .app-sidebar-brand & {
+    inline-size: 100%;
+    block-size: auto;
+    max-block-size: var(--app-brand-max-height);
+    object-position: left center;
+  }
+
+  :is(.app-topbar, .app-drawer-brand) & {
+    block-size: var(--app-brand-compact-height);
+  }
+}
+
+/* One logo per colour mode. */
+.brand-logo--dark { display: none; }
+
+html.theme-dark {
+  .brand-logo--light { display: none; }
+  .brand-logo--dark { display: block; }
+}
+
+/* --- Main column --------------------------------------------------------------------------------------------------- */
+.app-main {
+  flex: 1 1 auto;
+  inline-size: 100%;
+  max-inline-size: 1920px;
+  margin-block: 0;
+  margin-inline: auto;
+  padding-block: 2rem;
+  container-type: inline-size; /* page layouts react to the space next to the sidebar */
+}
+
+.app-footer {
+  padding-block: 0.75rem;
+  padding-inline: 1.5rem;
+  color: var(--bs-fg-3);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* --- Page heading -------------------------------------------------------------------------------------------------- */
+.app-page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-block-end: 1.5rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin-block: 0.25rem 0;
+    margin-inline: 0;
+    color: var(--bs-fg-3);
+  }
+}
+
+.app-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* --- Start page tiles ---------------------------------------------------------------------------------------------- */
+.app-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.app-tile {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding-block: 1rem;
+  padding-inline: 1.15rem;
+  border: 1px solid var(--app-card-border);
+  border-radius: var(--app-card-radius);
+  background: var(--app-surface);
+  box-shadow: var(--app-card-shadow);
+  color: var(--bs-fg-body);
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    border-color: var(--app-accent);
+    color: var(--bs-fg-body);
+    transform: translateY(-1px);
+  }
+
+  .bi {
+    color: var(--app-accent-fg);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  strong { display: block; }
+
+  small {
+    display: block;
+    margin-block-start: 0.15rem;
+    color: var(--bs-fg-3);
+  }
+
+  .app-tile-module {
+    color: var(--bs-fg-3);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+
+/* --- Layout helpers for pages ------------------------------------------------------------------------------------- */
+.app-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 1rem;
+}
+
+.app-grid-2,
+.app-grid-3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+
+  @container (min-width: 900px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.app-grid-3 {
+  @container (min-width: 1300px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.app-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+
+  > .app-grow {
+    flex: 1 1 14rem;
+    min-inline-size: 0;
+  }
+}
+
+.app-muted { color: var(--bs-fg-3); }
+.app-cell-wide { min-inline-size: 16rem; } /* a table cell with a control that needs room (e.g. a select) */
+.app-mono { font-family: var(--bs-font-monospace, ui-monospace, monospace); }
+.app-nowrap { white-space: nowrap; }
+
+/* Key figures as tiles. */
+.app-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.5rem;
+}
+
+.app-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-block: 0.65rem;
+  padding-inline: 0.85rem;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  background: var(--app-surface-alt);
+
+  small {
+    color: var(--bs-fg-3);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  span {
+    font-size: 1.15rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* A log or console output. */
+.app-log {
+  max-block-size: 22rem;
+  overflow: auto;
+  margin: 0;
+  padding-block: 0.75rem;
+  padding-inline: 1rem;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface-alt);
+  font-family: var(--bs-font-monospace, ui-monospace, monospace);
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Activity log lines (flaskspark/ui.js activityLog). */
+.app-log-line { padding-block: 0.05rem; }
+.app-log-time { color: var(--bs-fg-3); }
+
+.app-log-separator {
+  margin-block: 0.35rem;
+  border-block-start: 1px dashed var(--app-border);
+}
+
+.app-log-success .app-log-text { color: var(--bs-success-fg, #198754); }
+.app-log-warning .app-log-text { color: var(--bs-warning-fg, #b58100); }
+:is(.app-log-error, .app-log-danger) .app-log-text { color: var(--bs-danger-fg, #dc3545); }
+.app-log-debug .app-log-text { color: var(--bs-fg-3); }
+
+/* --- Buttons ------------------------------------------------------------------------------------------------------- */
+ui-button {
+  &::part(button) {
+    --bs-btn-border-radius: var(--app-btn-radius);
+    --bs-btn-font-weight: var(--app-btn-font-weight);
+    letter-spacing: 0.01em;
+  }
+
+  &:is([variant="primary"], :not([variant])):not([outline])::part(button) {
+    --bs-btn-bg: var(--app-accent);
+    --bs-btn-border-color: var(--app-accent);
+    --bs-btn-hover-bg: var(--app-accent-hover);
+    --bs-btn-hover-border-color: var(--app-accent-hover);
+    --bs-btn-active-bg: var(--app-accent-hover);
+    --bs-btn-active-border-color: var(--app-accent-hover);
+    --bs-btn-disabled-bg: var(--app-accent);
+    --bs-btn-disabled-border-color: var(--app-accent);
+    --bs-btn-color: var(--app-accent-contrast);
+    --bs-btn-hover-color: var(--app-accent-contrast);
+    --bs-btn-active-color: var(--app-accent-contrast);
+    --bs-btn-disabled-color: var(--app-accent-contrast);
+  }
+
+  &[variant="primary"][outline]::part(button) {
+    --bs-btn-color: var(--app-accent-fg);
+    --bs-btn-border-color: var(--app-accent);
+    --bs-btn-hover-color: var(--app-accent-contrast);
+    --bs-btn-hover-bg: var(--app-accent);
+    --bs-btn-hover-border-color: var(--app-accent);
+    --bs-btn-active-color: var(--app-accent-contrast);
+    --bs-btn-active-bg: var(--app-accent-hover);
+  }
+
+  &[variant="secondary"][outline]::part(button),
+  &.nav-btn::part(button) {
+    --bs-btn-color: var(--bs-fg-body);
+    --bs-btn-border-color: var(--app-border);
+    --bs-btn-hover-color: var(--bs-fg-body);
+    --bs-btn-hover-bg: var(--app-surface-alt);
+    --bs-btn-hover-border-color: var(--app-border);
+    --bs-btn-active-color: var(--app-accent-contrast);
+    --bs-btn-active-bg: var(--app-accent);
+    --bs-btn-active-border-color: var(--app-accent);
+  }
+
+  &.nav-btn::part(button) { --bs-btn-bg: var(--app-surface); }
+  &.app-mode-btn::part(button) { min-inline-size: calc(1.5em + 0.75rem + 2px); }
+
+  &.app-lang-btn.active::part(button) {
+    --bs-btn-bg: var(--app-accent-tint);
+    --bs-btn-color: var(--app-accent-fg);
+    --bs-btn-border-color: var(--app-accent);
+  }
+}
+
+.menu {
+  --bs-menu-item-active-bg: var(--app-accent);
+  --bs-menu-item-active-color: var(--app-accent-contrast);
+  --bs-menu-border-radius: var(--app-btn-radius);
+}
+
+/* --- Cards --------------------------------------------------------------------------------------------------------- */
+ui-card {
+  &::part(card) {
+    --bs-card-bg: var(--app-surface);
+    --bs-card-cap-bg: transparent;
+    --bs-card-spacer-y: 1.25rem;
+    --bs-card-spacer-x: 1.5rem;
+    --bs-card-cap-padding-y: 1rem;
+    --bs-card-cap-padding-x: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--app-card-border);
+    border-radius: var(--app-card-radius);
+    background: var(--app-surface);
+    box-shadow: var(--app-card-shadow);
+  }
+
+  /* The card body stacks its children with a gap; wide content shrinks instead of widening the card. */
+  &::part(body) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start; /* a card stretched to its row's height keeps its rows together at the top */
+    gap: 1rem;
+  }
+
+  &::part(header) {
+    padding-block-end: 0.85rem;
+    border-block-end: 1px solid var(--app-chrome-border);
+    background: transparent;
+  }
+
+  &::part(footer) {
+    padding-block-start: 0.85rem;
+    border-block-start: 1px solid var(--app-chrome-border);
+    background: transparent;
+  }
+
+  > [slot="header"] {
+    color: var(--bs-heading-color, inherit);
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  /* The heading of ui-card heading="…" (icon, title, actions). */
+  --ui-card-icon-color: var(--app-card-icon-color);
+
+  &::part(heading) {
+    color: var(--bs-heading-color, inherit);
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+}
+
+/* Sections inside a card: a title row (with actions at the end), the content, an optional footer row.
+   <section class="app-section"><div class="app-section-head"><h2 class="app-section-title">…</h2>…</div>…
+   <div class="app-section-foot">…</div></section>; app-sections spaces several apart. */
+.app-sections > * + * { margin-block-start: 2.75rem; }
+
+.app-section-head,
+.app-section-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.app-section-head { margin-block-end: 0.75rem; }
+.app-section-foot { margin-block-start: 0.75rem; }
+
+.app-section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+
+  :is(.bi, .bi-svg) {
+    margin-inline-end: 0.4rem;
+    color: var(--app-card-icon-color);
+  }
+}
+
+/* A card header with actions on the right. */
+.app-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+
+  :is(.bi, .bi-svg) {
+    margin-inline-end: 0.4rem;
+    color: var(--app-card-icon-color);
+  }
+}
+
+ui-tabs {
+  &[card]::part(card) {
+    --bs-card-bg: var(--app-surface);
+    --bs-card-cap-bg: transparent;
+    border: 1px solid var(--app-card-border);
+    border-radius: var(--app-card-radius);
+    background: var(--app-surface);
+    box-shadow: var(--app-card-shadow);
+  }
+
+  &::part(nav) {
+    --bs-nav-tabs-link-active-color: var(--bs-heading-color, inherit);
+    --bs-nav-link-color: var(--bs-fg-3);
+    --bs-nav-link-hover-color: var(--bs-fg-body);
+    --bs-nav-link-font-weight: 600;
+    --bs-nav-tabs-link-active-border-color: var(--app-accent) var(--app-chrome-border) var(--app-surface);
+  }
+}
+
+/* --- Tables, fields, checks ---------------------------------------------------------------------------------------- */
+ui-table {
+  --ui-table-head-color: var(--bs-fg-3);
+  --ui-table-head-font-weight: 500;
+  font-variant-numeric: tabular-nums;
+
+  &::part(table) { --bs-table-bg: transparent; }
+}
+
+ui-table { --ui-table-last-row-border-width: var(--app-table-last-row-border-width); }
+
+.table.app-table {
+  --bs-table-bg: transparent;
+  font-variant-numeric: tabular-nums;
+
+  > thead th {
+    color: var(--bs-fg-3);
+    font-weight: 500;
+  }
+
+  > :not(caption) > * > * {
+    padding-block: var(--app-table-cell-padding-y, var(--bs-table-cell-padding-y));
+  }
+
+  > tbody:last-child > tr:last-child > *,
+  > tfoot > tr:last-child > * {
+    border-block-end-width: var(--app-table-last-row-border-width);
+  }
+
+  /* A total row (usually in <tfoot>): a stronger line above, bold. In ui-table: class table-total. */
+  > :is(tbody, tfoot) > tr:is(.app-total-row, .table-total) > * {
+    border-block-start: 2px solid var(--bs-table-border-color);
+    font-weight: 600;
+  }
+}
+
+:is(ui-input, ui-select, ui-textarea, ui-check, ui-combobox, ui-datepicker) {
+  --ui-focus-border-color: color-mix(in srgb, var(--app-accent) 55%, transparent);
+  --ui-focus-box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--app-accent) 22%, transparent);
+}
+
+:is(ui-input, ui-select, ui-textarea) {
+  &::part(control) {
+    --bs-control-bg: var(--app-field-bg);
+    border-color: var(--app-border);
+    border-radius: var(--app-radius-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  &::part(label) { font-size: 0.875em; }
+}
+
+ui-textarea {
+  &::part(control) {
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  &.app-mono::part(control) { font-family: var(--bs-font-monospace, ui-monospace, monospace); }
+}
+
+/* Input groups: the attached texts (prefix, suffix) in the surface's colour; the corners on the attached side are
+   square, the outer ones take the fields' radius. A multi-line field keeps its prefix at the top. */
+:is(ui-input, ui-select, ui-textarea, ui-richtext) {
+  &::part(prefix),
+  &::part(suffix) {
+    border-color: var(--app-border);
+    background-color: var(--app-surface-alt);
+    color: var(--bs-fg-3);
+    font-size: 0.8125rem;
+  }
+
+  &::part(prefix) {
+    border-start-start-radius: var(--app-radius-sm);
+    border-end-start-radius: var(--app-radius-sm);
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  &::part(suffix) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    border-start-end-radius: var(--app-radius-sm);
+    border-end-end-radius: var(--app-radius-sm);
+  }
+
+  &[prefix]::part(control) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+
+  &[suffix]::part(control) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+}
+
+:is(ui-textarea, ui-richtext)::part(prefix) { align-items: flex-start; }
+
+ui-check {
+  --bs-check-checked-bg: var(--app-accent);
+  --bs-check-checked-border-color: var(--app-accent);
+}
+
+/* A chip's own colours (--ui-chip-active-bg, --ui-chip-active-border-color, e.g. a category's) win over the accent. */
+ui-chip::part(chip) {
+  --bs-chip-selected-bg: var(--ui-chip-active-bg, var(--app-accent-tint));
+  --bs-chip-selected-border-color: var(--ui-chip-active-border-color, var(--app-accent));
+  --bs-chip-selected-color: var(--bs-fg-body);
+}
+
+ui-accordion {
+  &::part(accordion) {
+    --bs-accordion-bg: transparent;
+    --bs-accordion-border-color: var(--app-border);
+    --bs-accordion-border-radius: var(--app-radius-sm);
+    --bs-accordion-btn-bg: var(--app-surface-alt);
+    --bs-accordion-active-bg: var(--app-accent-tint);
+  }
+
+  /* An accordion whose items look like cards (class app-card-accordion): the cards' surface, border and corners. */
+  &.app-card-accordion::part(accordion) {
+    --bs-accordion-bg: var(--app-surface);
+    --bs-accordion-btn-bg: var(--app-surface);
+    --bs-accordion-border-color: var(--app-card-border);
+    --bs-accordion-border-radius: var(--app-card-radius);
+  }
+}
+
+ui-progress { --bs-progress-bar-bg: var(--app-accent); }
+
+ui-popover::part(popover) {
+  --bs-popover-bg: var(--app-surface);
+  --bs-popover-border-color: var(--app-border);
+  --bs-popover-border-radius: var(--app-radius);
+}
+
+ui-dialog::part(dialog) { --bs-dialog-border-radius: var(--app-radius); }
+
+ui-tooltip {
+  &::part(tooltip) { --bs-tooltip-max-width: var(--app-tooltip-max-width); }
+  &::part(inner) { text-align: var(--app-tooltip-text-align); }
+}
+
+/* A toggle that folds something away (a card's body, a list of options): text at the start, a chevron at the end
+   that turns while open. <button class="app-fold-toggle" aria-expanded="false">Title <span class="app-fold-chevron"
+   aria-hidden="true">▸</span></button>; the page's script flips aria-expanded (or a ui-collapse it controls). */
+.app-fold-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  .app-fold-chevron {
+    color: var(--bs-fg-3);
+    transition: transform 0.15s ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &[aria-expanded="true"] .app-fold-chevron { transform: rotate(90deg); }
+
+  &:focus-visible {
+    border-radius: var(--app-radius-sm);
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem var(--bs-primary-focus-ring);
+  }
+}
+
+/* Icons from the sprite (flaskspark/icons.js, flaskspark/icons.html): like the font's, on the text's baseline. */
+.bi-svg {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+}
+
+/* [hidden] hides everything, also web components whose host sets its own display (ui-card, ui-alert, …). */
+[hidden] { display: none !important; }

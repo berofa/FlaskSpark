@@ -1,0 +1,140 @@
+/* ui-calendar: FullCalendar's classic theme (loaded before this sheet) on Bootstrap 6 tokens.
+   The --ui-calendar-* tokens are the knobs for pages; the --fc-* ones map them onto FullCalendar. */
+:host {
+  --ui-calendar-height: max(30rem, 75vh);
+  --ui-calendar-font-size: 0.875rem;
+  --ui-calendar-event-font-size: 0.75rem;
+  --ui-calendar-color: var(--bs-fg-body);
+  --ui-calendar-muted-color: var(--bs-fg-2);
+  --ui-calendar-faint-color: var(--bs-fg-3);
+  --ui-calendar-bg: var(--bs-bg-body);
+  --ui-calendar-border-color: var(--bs-border-color);
+  --ui-calendar-strong-border-color: var(--bs-fg-3);
+  --ui-calendar-today-bg: color-mix(in srgb, var(--bs-warning-bg) 14%, transparent);
+  --ui-calendar-weekend-bg: color-mix(in srgb, var(--bs-fg-body) 4%, transparent);
+  --ui-calendar-highlight-bg: color-mix(in srgb, var(--bs-primary-bg) 15%, transparent);
+  --ui-calendar-now-color: var(--bs-danger-bg);
+  --ui-calendar-event-bg: var(--bs-primary-bg);
+  --ui-calendar-event-color: var(--bs-primary-contrast, #fff);
+  --ui-calendar-background-event-bg: var(--bs-success-bg);
+  --ui-calendar-button-bg: var(--bs-bg-2);
+  --ui-calendar-button-border-color: var(--bs-border-color);
+  --ui-calendar-button-color: var(--bs-fg-body);
+  --ui-calendar-button-active-bg: var(--bs-primary-bg);
+  --ui-calendar-button-active-color: var(--bs-primary-contrast, #fff);
+  --ui-calendar-focus-color: var(--bs-focus-ring-color);
+  --ui-calendar-error-color: var(--bs-danger-fg);
+
+  /* FullCalendar declares these on :root, which does not reach into a shadow tree */
+  --fc-sticky-header-footer-z: 3;
+  --fc-popover-z: 4;
+
+  --fc-classic-button: var(--ui-calendar-button-bg);
+  --fc-classic-button-border: var(--ui-calendar-button-border-color);
+  --fc-classic-button-strong: var(--ui-calendar-button-active-bg);
+  --fc-classic-button-strong-border: var(--ui-calendar-button-active-bg);
+  --fc-classic-button-outline: var(--ui-calendar-focus-color);
+  --fc-classic-button-foreground: var(--ui-calendar-button-color);
+
+  --fc-classic-primary: var(--ui-calendar-event-bg);
+  --fc-classic-primary-foreground: var(--ui-calendar-event-color);
+  --fc-classic-event: var(--fc-classic-primary);
+  --fc-classic-event-contrast: var(--fc-classic-primary-foreground);
+  --fc-classic-background-event: var(--ui-calendar-background-event-bg);
+  --fc-classic-background-event-opacity: 15%;
+  --fc-classic-background-event-foreground-opacity: 50%;
+  --fc-classic-highlight: var(--ui-calendar-highlight-bg);
+  --fc-classic-today: var(--ui-calendar-today-bg);
+  --fc-classic-now: var(--ui-calendar-now-color);
+  --fc-classic-small-dot-width: 8px;
+  --fc-classic-large-dot-width: 10px;
+
+  --fc-classic-background: var(--ui-calendar-bg);
+  --fc-classic-faint: color-mix(in srgb, var(--ui-calendar-color) 4%, transparent);
+  --fc-classic-muted: color-mix(in srgb, var(--ui-calendar-color) 8%, transparent);
+  --fc-classic-strong: color-mix(in srgb, var(--ui-calendar-color) 14%, transparent);
+
+  --fc-classic-foreground: var(--ui-calendar-color);
+  --fc-classic-faint-foreground: var(--ui-calendar-faint-color);
+  --fc-classic-muted-foreground: var(--ui-calendar-muted-color);
+
+  --fc-classic-border: var(--ui-calendar-border-color);
+  --fc-classic-strong-border: var(--ui-calendar-strong-border-color);
+
+  /* The height sits on the host: FullCalendar sets height 100% on the element it renders into. */
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+  height: var(--ui-calendar-height);
+  font-family: var(--bs-body-font-family, inherit);
+  font-size: var(--ui-calendar-font-size);
+  color: var(--ui-calendar-color);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.ui-calendar {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The active view button: its text on the active background */
+.ui-calendar [aria-pressed="true"] {
+  color: var(--ui-calendar-button-active-color);
+}
+
+/* Saturday and Sunday a shade darker (not today: its own colour stays) */
+.ui-calendar-weekend {
+  background-color: var(--ui-calendar-weekend-bg);
+}
+
+/* soft: title bold, below it time and subtitle; events that are over faded */
+.ui-calendar-soft {
+  height: 100%;
+  padding: 0.125rem 0.25rem;
+  overflow: hidden;
+  font-size: var(--ui-calendar-event-font-size);
+  line-height: 1.3;
+}
+
+.ui-calendar-soft__title {
+  font-weight: 600;
+}
+
+.ui-calendar-soft__meta {
+  font-size: 0.9em;
+  opacity: 0.85;
+}
+
+/* a short event: one line, cut off with «…» */
+.ui-calendar-soft.is-short {
+  padding-block: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-calendar-event--past {
+  opacity: 0.5;
+}
+
+.ui-calendar-event {
+  cursor: pointer;
+}
+
+/* muted events (e.g. done): struck through, faded */
+.ui-calendar-event--muted {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.ui-calendar__error {
+  margin-bottom: 0.5rem;
+  color: var(--ui-calendar-error-color);
+}

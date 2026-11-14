@@ -15,6 +15,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql import text
 import importlib
 import importlib.util
+from jinja2 import TemplateNotFound
 import logging
 import os
 import pkgutil
@@ -43,7 +44,8 @@ class FlaskSpark:
         module_packages (list[str]): Extra packages of the app's modules (see `modules`).
         static_dirs (list[str]): Static directories in lookup order: app, modules, FlaskSpark.
     """
-    def __init__(self, app_module="app", config=None, login_provider=None, dotenv_path=".env", modules=None):
+    def __init__(self, app_module="app", config=None, login_provider=None, dotenv_path=".env", modules=None,
+                 app_dir=None):
         """
         Initializes the Flask application.
 
@@ -52,6 +54,8 @@ class FlaskSpark:
             config (dict, optional): Custom configuration settings.
             login_provider (LoginProvider, optional): The login provider name or instance.
             dotenv_path (str, optional): Path to the .env file.
+            app_dir (str, optional): The directory of the application package (its templates/ and static/);
+                default: `app_module` in the working directory. An installed package passes its own directory.
             modules (list[str], optional): Packages of self-contained app modules (e.g. 'modules.mail.web').
                 Each one is set up like the app itself: its `views` and `models` subpackages are registered,
                 its `templates` directory is searched after the app's, its `static` directory is served under
@@ -84,7 +88,7 @@ class FlaskSpark:
                 None
             """
             self.app_module = app_module
-            self.app_base_dir = os.path.abspath(os.path.join(os.getcwd(), self.app_module))
+            self.app_base_dir = os.path.abspath(app_dir or os.path.join(os.getcwd(), self.app_module))
             self.app_static_dir = os.path.join(self.app_base_dir, "static")
             self.app_template_dir = os.path.join(self.app_base_dir, "templates")
             self.flaskspark_static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "static"))
@@ -145,7 +149,10 @@ class FlaskSpark:
                 return "Static file not found", 404
 
             # Load configuration
-            self.app.config.from_object("flaskspark.config.Config")
+            # Built now: variables loaded after FlaskSpark's import (the .env above, env files) count.
+            from flaskspark.config import from_environment
+
+            self.app.config.from_object(from_environment())
             if config:
                 self.app.config.update(config)
 
@@ -193,6 +200,9 @@ class FlaskSpark:
 
             # Opt-in web components with Bootstrap 6 (VENDOR_INCLUDE_WEBCOMPONENTS)
             self._register_webcomponents()
+
+            # The Jinja filter «markdown» (flaskspark.markdown)
+            self._register_markdown()
 
             # Return errors as JSON to clients that requested JSON
             self._register_error_handlers()
@@ -262,6 +272,11 @@ class FlaskSpark:
         """
         imported_modules = {}
 
+        try:
+            if importlib.util.find_spec(package) is None:  # the package has no such part (e.g. no models)
+                return imported_modules
+        except ModuleNotFoundError:
+            pass
         try:
             module = importlib.import_module(package)
         except ModuleNotFoundError as e:
@@ -367,6 +382,7 @@ class FlaskSpark:
         views = {}
         for package in [f"{self.app_module}.views", *self._module_subpackages("views")]:
             views.update(self._import_submodules(package))
+        found = []
         for module_name, module in views.items():
             # Register views dynamically
             for attribute_name in dir(module):
@@ -382,7 +398,13 @@ class FlaskSpark:
                     if require_login and not self.login_provider:
                         raise ValueError(f"Login is required for view {endpoint}, but no login provider is configured.")
 
-                    self.app.add_url_rule(url, view_func=attribute.as_view(endpoint))
+                    found.append((url, endpoint, attribute))
+        # A view with `fallback = True` (e.g. a default start page) gives way to any other view on the same URL.
+        claimed = {url for url, _endpoint, view in found if not getattr(view, "fallback", False)}
+        for url, endpoint, view in found:
+            if getattr(view, "fallback", False) and url in claimed:
+                continue
+            self.app.add_url_rule(url, view_func=view.as_view(endpoint))
 
     def _register_error_handlers(self):
         """
@@ -471,10 +493,11 @@ class FlaskSpark:
         """
         Opt-in web components with Bootstrap 6 (``VENDOR_INCLUDE_WEBCOMPONENTS``).
 
-        When enabled, ``layouts/framework.html`` loads the Bootstrap 6 CSS for the page and the ``bootstrap`` module of
-        the web components. The files come from the ``webcomponents`` blueprint when the app registers one (the package
-        is installed), otherwise from the snapshot FlaskSpark ships under ``static/vendor/webcomponents``. Templates
-        get ``vendor_include_webcomponents`` and ``webcomponents_url(filename)``.
+        The web components are part of FlaskSpark (package ``webcomponents``). When enabled, FlaskSpark registers their
+        blueprint (``/webcomponents/…``, versioned URLs cached for a year) and ``layouts/framework.html`` loads the
+        Bootstrap 6 CSS for the page and the ``bootstrap`` module of the components. Templates get
+        ``vendor_include_webcomponents`` and ``webcomponents_url(filename)``. An app must not register the blueprint
+        itself any more.
 
         Raises:
             ValueError: If ``VENDOR_INCLUDE_BOOTSTRAP`` (Bootstrap 5) is enabled as well.
@@ -485,15 +508,26 @@ class FlaskSpark:
                 "VENDOR_INCLUDE_WEBCOMPONENTS and VENDOR_INCLUDE_BOOTSTRAP exclude each other: "
                 "the web components bring Bootstrap 6."
             )
+        if enabled and "webcomponents" not in self.app.blueprints:
+            from webcomponents import create_blueprint
+
+            self.app.register_blueprint(create_blueprint())
 
         def webcomponents_url(filename):
-            if "webcomponents.static" in self.app.view_functions:
-                return url_for("webcomponents.static", filename=filename)
-            return url_for("static", filename=f"vendor/webcomponents/{filename}")
+            return url_for("webcomponents.static", filename=filename)
 
         @self.app.context_processor
         def inject_webcomponents():
             return {"vendor_include_webcomponents": enabled, "webcomponents_url": webcomponents_url}
+
+    def _register_markdown(self):
+        """
+        The Jinja filter ``markdown``: Markdown as sanitised HTML (``flaskspark.markdown.render``), e.g.
+        ``{{ text|markdown }}`` or ``{{ text|markdown(base_url=project_url) }}``.
+        """
+        from flaskspark import markdown
+
+        self.app.jinja_env.filters.setdefault("markdown", markdown.template_filter)
 
     def _register_user_layout(self):
         """
@@ -510,9 +544,8 @@ class FlaskSpark:
             """
             Injects the user's chosen layout into all templates.
 
-            Checks if the layout specified in the session exists in the 
-            'app/resources/templates/layouts' directory. If not found or 
-            invalid, defaults to 'layouts/framework.html'.
+            Uses APP_LAYOUT_TEMPLATE if a template folder (the app's, a module's or
+            FlaskSpark's) has it, otherwise 'layouts/framework.html'.
 
             Args:
                 None
@@ -520,17 +553,12 @@ class FlaskSpark:
             Returns:
                 dict: Layout mapping for template context.
             """
-            layouts_dir = os.path.join(self.app.root_path, 'templates', 'layouts')
+            # Any template folder counts (the app's, the modules', FlaskSpark's): ask the Jinja loader.
             user_layout = self.app.config.get("APP_LAYOUT_TEMPLATE", "layouts/framework.html")
-
             try:
-                self.search_directory(user_layout, dir_type="template")
-            except FileNotFoundError as e:
-                print(e)
-            
-            # Validate the user-selected layout.
-            layout_path = os.path.join(layouts_dir, user_layout)
-            if not os.path.isfile(layout_path):
+                self.app.jinja_env.loader.get_source(self.app.jinja_env, user_layout)
+            except TemplateNotFound:
+                logging.getLogger(__name__).warning("Layout %r not found, using layouts/framework.html", user_layout)
                 user_layout = "layouts/framework.html"
 
             return {'layout': user_layout}
@@ -549,9 +577,18 @@ class FlaskSpark:
         self.app.config.setdefault("BABEL_SUPPORTED_LOCALES", ["en"])
         self.app.config.setdefault("BABEL_TRANSLATION_DIRECTORIES", "locales")
 
+        # Callables asked before the cookie (e.g. flaskspark.core: the signed-in user's language in the profile):
+        # the first code of BABEL_SUPPORTED_LOCALES one returns wins.
+        if not hasattr(self, "locale_preferences"):
+            self.locale_preferences = []
+
         def select_locale():
             cookie_lang = request.cookies.get("lang")
             supported = self.app.config.get("BABEL_SUPPORTED_LOCALES", ["en"])
+            for preference in self.locale_preferences:
+                chosen = preference()
+                if chosen in supported:
+                    return chosen
             if cookie_lang in supported:
                 return cookie_lang
             return request.accept_languages.best_match(supported) or self.app.config.get(
@@ -559,6 +596,14 @@ class FlaskSpark:
             )
 
         self.babel = Babel(self.app, locale_selector=select_locale)
+
+        @self.app.context_processor
+        def inject_html_lang():
+            """The language of the page for <html lang> (layouts/framework.html)."""
+            from flask_babel import get_locale
+
+            locale = get_locale()
+            return {"html_lang": locale.language if locale else self.app.config.get("BABEL_DEFAULT_LOCALE", "en")}
         self._register_i18n_endpoint()
 
     def _register_i18n_endpoint(self):
