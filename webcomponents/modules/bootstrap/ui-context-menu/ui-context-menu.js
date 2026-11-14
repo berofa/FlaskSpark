@@ -21,12 +21,15 @@ export function atPoint(x, y, box, viewport, margin = MARGIN) {
   return { left: Math.round(left), top: Math.round(top) };
 }
 
+const VARIANTS = new Set(["primary", "secondary", "success", "info", "warning", "danger"]);
+
 /** The markup of the items: Bootstrap 6's menu (.menu-item with .menu-item-icon, .menu-divider, .menu-header). */
 export function itemsHtml(items) {
   return items.map((item, i) => {
     if (item.divider) return '<hr class="menu-divider">';
     if (item.header) return `<h6 class="menu-header">${escapeHtml(item.header)}</h6>`;
-    const classes = ["menu-item", item.danger ? "theme-danger" : "", item.disabled ? "disabled" : ""].filter(Boolean);
+    const variant = item.danger ? "danger" : VARIANTS.has(item.variant) ? item.variant : "";
+    const classes = ["menu-item", variant ? `theme-${variant}` : "", item.disabled ? "disabled" : ""].filter(Boolean);
     const icon = item.icon ? `<span class="menu-item-icon" aria-hidden="true">${item.icon}</span>` : "";
     const content = item.description
       ? `<span class="menu-item-content"><span>${escapeHtml(item.label)}</span><small class="menu-item-description">${escapeHtml(item.description)}</small></span>`
@@ -58,19 +61,21 @@ export function tidy(items) {
  * <ui-context-menu> (Bootstrap 6 menu as a context menu): the menu of an element on a right click, on a touch
  * screen when a finger rests on it (LONG_PRESS), and with the keyboard's context menu key (Shift+F10). One element
  * for the page, added by attach(); the markup is Bootstrap's own (.menu, .menu-item with .menu-item-icon,
- * .menu-divider, .menu-header, .theme-danger), styled by the page's Bootstrap CSS, opened in the top layer.
+ * .menu-divider, .menu-header, .theme-<variant>), styled by the page's Bootstrap CSS, opened in the top layer.
  *
  *   const detach = UiContextMenu.attach(root, {
  *     selector: ".message",                      // the elements with a menu (inside root)
  *     items: (target, event) => [                // null or [] : the browser's own menu
  *       { label: "Antworten", icon: "<svg…>", action: (target) => reply(target) },
  *       { divider: true },
+ *       { label: "Als Spam", icon: "<svg…>", variant: "warning", action: … },
  *       { label: "Löschen", icon: "<svg…>", danger: true, action: … },
  *     ],
  *     enabled: () => true,                       // false: the browser's own menu (e.g. switched off for an area)
  *   });
  *
- * An item: label, icon (SVG markup, trusted), description, danger, disabled, action(target, event); or {divider:
+ * An item: label, icon (SVG markup, trusted), description, variant (a theme colour: primary, secondary, success, info,
+ * warning, danger), danger (variant "danger"), disabled, action(target, event); or {divider:
  * true}, {header: "…"}. Falsy items are left out (conditions inline), dividers tidied. Keyboard in the menu: ↓ ↑
  * Home End, Enter or Space, Esc (back to the element), Tab. It closes on a click outside, scrolling, resizing and
  * when the window loses focus. A long press does not also click the element (the click after it is swallowed).

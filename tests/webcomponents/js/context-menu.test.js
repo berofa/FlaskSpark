@@ -11,6 +11,12 @@ const { matches, remember } = await import("../../../webcomponents/modules/boots
 const VIEW = { width: 1000, height: 800 };
 const BOX = { width: 200, height: 150 };
 
+test("an item takes a theme colour (variant), danger is the red one, an unknown variant none", () => {
+  assert.match(itemsHtml([{ label: "Spam", variant: "warning" }]), /class="menu-item theme-warning"/);
+  assert.match(itemsHtml([{ label: "Weg", danger: true }]), /class="menu-item theme-danger"/);
+  assert.match(itemsHtml([{ label: "X", variant: "nope" }]), /class="menu-item"/);
+});
+
 test("the menu opens right of and below the pointer", () => {
   assert.deepEqual(atPoint(100, 100, BOX, VIEW), { left: 100, top: 100 });
 });
