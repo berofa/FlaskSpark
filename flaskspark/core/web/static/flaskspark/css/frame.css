@@ -1012,6 +1012,7 @@ body.app-screen-body {
   flex: 0 0 auto;
   align-items: center;
   gap: 1rem;
+  margin-block-end: calc(var(--app-screen-gap) * 0.75); /* some air between the logo and the first section */
 
   .brand-logo { block-size: var(--app-screen-logo-height); }
 }
