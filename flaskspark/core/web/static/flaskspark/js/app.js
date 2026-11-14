@@ -4,7 +4,13 @@
  *   [data-theme-value] buttons); the layout and the themes key on html.theme-dark / html.theme-light.
  * - Background requests that come back with 401 (a sign-in that expired, once SSO comes) reload the page, which then
  *   goes to the sign-in.
+ * - Emoticons typed into any text field become emoji (webcomponents/core/emoticons.js; [data-emoticons="off"] keeps
+ *   them as typed).
  */
+import { installEmoticons } from "webcomponents/core/emoticons.js";
+
+installEmoticons();
+
 const root = document.documentElement;
 
 function syncModeClasses() {

@@ -1653,6 +1653,12 @@ Pages extend `layouts/main.html` (sidebar navigation from the manifests, the the
 | `page_scripts` | The page's scripts (after the core's script). |
 | `sidebar_footer` | Extra content in the sidebar's footer. |
 
+On every page of the layout, emoticons typed into a text field (inputs, textareas, the editable area of
+`ui-markdown-editor` and `ui-richtext`) become emoji: `:-)` → 🙂, `;)` → 😉, `<3` → ❤️ and more
+(`webcomponents/core/emoticons.js`). Only at the start or after a space; those that could go on as a word (`:D`, `:P`,
+`:/`) turn when a space or punctuation follows. Ctrl+Z brings the emoticon back; password, e-mail, URL, phone and
+number fields, code, and anything inside `data-emoticons="off"` keep what was typed.
+
 Helper classes for pages (from `frame.css`):
 - `app-page-head` (with `app-page-actions`): the page's heading with its buttons
 - `app-stack`: a vertical stack with gaps
