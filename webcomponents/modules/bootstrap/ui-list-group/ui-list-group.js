@@ -5,6 +5,7 @@ import { escapeHtml } from "../../../core/escape.js";
 import { morph } from "../../../core/morph.js";
 import { assignItemSlots, observeItems } from "../../../core/slotted-items.js";
 import { BOOTSTRAP_SHADOW_STYLES, themeColor } from "../shadow-styles.js";
+import { clickedIndex } from "./list-group-click.js";
 
 const ITEM_ATTRIBUTES = ["href", "target", "rel", "action", "active", "disabled", "variant", "class"];
 const BREAKPOINTS = new Set(["sm", "md", "lg", "xl", "2xl"]);
@@ -44,15 +45,11 @@ export class UiListGroup extends ShadowComponentElement {
   constructor() {
     super();
     this.shadowRoot.addEventListener("click", (event) => {
-      const wrapper = event.target instanceof Element ? event.target.closest("[data-index]") : null;
-      const item = wrapper && this.#items[Number(wrapper.dataset.index)];
-      if (!item || !wrapper.classList.contains("list-group-item-action") || item.hasAttribute("disabled")) {
-        return;
-      }
-      this.dispatchEvent(new CustomEvent("ui-list-group:action", {
-        bubbles: true,
-        detail: { item, index: Number(wrapper.dataset.index) },
-      }));
+      // Through the composed path: a click on an item's slotted content has a target outside this shadow tree.
+      const index = clickedIndex(event.composedPath(), this.shadowRoot);
+      const item = index >= 0 ? this.#items[index] : null;
+      if (!item || item.hasAttribute("disabled")) return;
+      this.dispatchEvent(new CustomEvent("ui-list-group:action", { bubbles: true, detail: { item, index } }));
     });
   }
 

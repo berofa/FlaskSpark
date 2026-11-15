@@ -9,7 +9,8 @@
   "files": [
     "ui-list-group.js",
     "ui-list-group.css",
-    "ui-list-group.document.css"
+    "ui-list-group.document.css",
+    "list-group-click.js"
   ],
   "tokens": {
     "sources": [

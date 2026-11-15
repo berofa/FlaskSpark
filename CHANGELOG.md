@@ -275,6 +275,8 @@ All notable changes to this project are documented in this file.
 - `Area.position`: the order of the areas across the modules.
 
 ### Fixed
+- `<ui-list-group>`: a click on an action item's content (its text, an icon) chose nothing, only a click on its padding
+  did (`ui-list-group:action`); the item is now found in the click's composed path (`list-group-click.js`).
 - `ui-calendar`: dates are formatted with the full language tag (`locale` or `<html lang>`, e.g. `en-CH` or
   `en-GB`: day before month, not the US order) and the week starts on the locale's first day (Monday for `de`,
   `de-CH`, `en-GB`, `en-CH`); the new attribute `first-day` (`0`–`6` or a weekday name) sets it explicitly.
