@@ -14,6 +14,7 @@
 import { notice, request } from "flaskspark/ui.js";
 import { preload, t } from "flaskspark/i18n.js";
 import { refreshPage, validateForm } from "flaskspark/forms.js";
+import { findInPath, hostOf, inTables } from "flaskspark/shadow-paths.js";
 
 preload(["Nothing changed.", "Saved", "Removed"]);
 
@@ -47,10 +48,13 @@ async function saveSettings(form, values) {
   await refreshPage();
 }
 
-document.addEventListener("change", async (event) => {
-  const check = event.target.closest?.("ui-check[data-role][data-area]");
+/** The tables of the page: their controls live in the <ui-table>'s shadow tree (see shadow-paths.js). */
+const tables = () => document.querySelectorAll("ui-table");
+
+async function accessChanged(event) {
+  const check = findInPath(event.composedPath(), "ui-check[data-role][data-area]");
   if (!check) return;
-  const table = check.closest("[data-access-url]");
+  const table = hostOf(check).closest("[data-access-url]");
   try {
     const data = await request(table.dataset.accessUrl, "POST", {
       role_id: Number(check.dataset.role),
@@ -62,16 +66,15 @@ document.addEventListener("change", async (event) => {
     check.checked = !check.checked;
     notice(error.message, "danger");
   }
-});
+}
 
 /** The role each user's select showed last (to go back to when saving fails). */
 const shownRoles = new Map();
-for (const select of document.querySelectorAll("ui-select[data-user]")) shownRoles.set(select, select.value);
 
-document.addEventListener("change", async (event) => {
-  const select = event.target.closest?.("ui-select[data-user]");
+async function userRoleChanged(event) {
+  const select = findInPath(event.composedPath(), "ui-select[data-user]");
   if (!select) return;
-  const box = select.closest("[data-users-url]");
+  const box = hostOf(select).closest("[data-users-url]");
   try {
     const data = await request(box.dataset.usersUrl, "POST", {
       user_id: Number(select.dataset.user),
@@ -83,6 +86,16 @@ document.addEventListener("change", async (event) => {
     select.value = shownRoles.get(select) ?? "";
     notice(error.message, "danger");
   }
+}
+
+// A change in a <ui-table> stays in its shadow tree: listened for on the tables once they are upgraded.
+customElements.whenDefined("ui-table").then(() => {
+  for (const box of tables()) {
+    const table = box.table ?? box;
+    table.addEventListener("change", accessChanged);
+    table.addEventListener("change", userRoleChanged);
+  }
+  for (const select of inTables(tables(), "ui-select[data-user]")) shownRoles.set(select, select.value);
 });
 
 document.addEventListener("submit", async (event) => {
@@ -118,7 +131,7 @@ document.addEventListener("click", async (event) => {
 let cleaning = [];
 
 function leftoverRows(ids) {
-  const rows = [...document.querySelectorAll("tr[data-leftover]")];
+  const rows = inTables(tables(), "tr[data-leftover]");
   return ids === "all" ? rows : rows.filter((row) => ids.includes(row.dataset.leftover));
 }
 
@@ -152,8 +165,8 @@ function confirmCleanup(ids) {
 }
 
 document.addEventListener("click", async (event) => {
-  const one = event.target.closest?.("[data-clean]");
-  const all = event.target.closest?.("[data-clean-all]");
+  const one = findInPath(event.composedPath(), "[data-clean]");
+  const all = findInPath(event.composedPath(), "[data-clean-all]");
   if (one || all) {
     event.preventDefault();
     confirmCleanup(all ? "all" : [one.dataset.clean]);

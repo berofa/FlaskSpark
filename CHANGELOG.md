@@ -278,6 +278,10 @@ All notable changes to this project are documented in this file.
 - `Area.position`: the order of the areas across the modules.
 
 ### Fixed
+- «Settings»: the switches of «Access» and the role selects of «Users» saved nothing, and «Remove» on «Data» did
+  nothing: `<ui-table>` moves its table into its shadow tree, where a control's change stays and a click reaches the
+  page retargeted. `settings.js` listens on the tables and finds the controls on the composed path (new
+  `flaskspark/shadow-paths.js`: `findInPath`, `hostOf`, `inTables`).
 - OAuth sign-in: the very first user becomes an administrator again (the users were counted after the new one was
   added, so it got the role Guests).
 - `<ui-list-group>`: a click on an action item's content (its text, an icon) chose nothing, only a click on its padding
