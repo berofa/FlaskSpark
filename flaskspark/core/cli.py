@@ -158,7 +158,10 @@ def run_module_command(words: list[str], prog: str) -> int:
     try:
         group.main(args=words, prog_name=prog, standalone_mode=True)
     except SystemExit as done:
-        return done.code if isinstance(done.code, int) else (0 if done.code is None else 1)
+        if isinstance(done.code, str):  # e.g. the web app refused to start (database not at the head): say why
+            print(done.code, file=sys.stderr)
+            return 1
+        return done.code if isinstance(done.code, int) else 0
     return 0
 
 

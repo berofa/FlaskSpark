@@ -661,3 +661,23 @@ def test_gunicorns_control_socket_is_the_apps_own(monkeypatch):
     assert web.control_socket_args() == ["--control-socket", str(paths.STATE_DIR / "gunicorn.ctl")]
     monkeypatch.setattr(config, "KNOWN_SETTINGS", [SimpleNamespace(name="bind")])  # an older gunicorn: no such option
     assert web.control_socket_args() == []
+
+
+def test_a_module_command_that_cannot_start_says_why(monkeypatch, capsys):
+    # e.g. the web app stops at its start because the database is not at the head: the message must reach the console
+    from flaskspark.core import cli
+    from flaskspark.core.web import app as web_app
+
+    def refuse():
+        raise SystemExit("Database schema: demo not at the head. Run `app db upgrade`.")
+
+    monkeypatch.setattr(web_app, "create_app", refuse)
+    import click
+
+    @click.command("hello")
+    def hello():
+        print("hello")
+
+    monkeypatch.setattr(cli, "module_commands", lambda cfg: {"hello": hello})
+    assert cli.run_module_command(["hello"], "app") == 1
+    assert "not at the head" in capsys.readouterr().err
