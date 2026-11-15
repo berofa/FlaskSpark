@@ -117,3 +117,31 @@ def test_the_gate_sends_a_visitor_who_may_not_use_the_start_page_elsewhere(sso, 
     assert guest.get("/").headers["Location"].endswith("/demo/notes")
     answer = guest.get("/demo/notes")  # the start page: the first area the visitor may use instead
     assert answer.status_code == 302 and answer.headers["Location"].endswith("/elsewhere")
+
+
+def test_the_start_pages_title_can_be_left_out(client, monkeypatch):
+    from flaskspark.core import config
+
+    assert "<h1>" in client.get("/").get_data(as_text=True)
+    load = config.load
+
+    def patched(path=None):
+        cfg = load(path)
+        return config.Config({**cfg.data, "app": {**cfg.section("app"), "home_title": False}}, cfg.defaults)
+
+    monkeypatch.setattr(config, "load", patched)
+    assert "<h1>" not in client.get("/").get_data(as_text=True)
+
+
+def test_the_sections_of_a_page_follow_their_positions():
+    from types import SimpleNamespace
+
+    from flaskspark.core.module import Section, page_sections
+
+    first = SimpleNamespace(POSITION=10, PAGE_SECTIONS={"home": ("a/one.html", Section("a/late.html", 30), "a/two.html")})
+    second = SimpleNamespace(POSITION=20, PAGE_SECTIONS={"home": ("b/one.html",), "profile": ("b/profile.html",)})
+
+    # a plain template keeps its module's place (POSITION), a Section has its own; equal ones keep their order
+    assert page_sections([first, second], "home") == ["a/one.html", "a/two.html", "b/one.html", "a/late.html"]
+    assert page_sections([first, second], "profile") == ["b/profile.html"]
+    assert page_sections([first, second], "nothing") == []

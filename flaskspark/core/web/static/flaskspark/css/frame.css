@@ -533,7 +533,14 @@ html.theme-dark {
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: 1rem;
+
+  /* A child with .app-area begins a group of sections with a title of its own (e.g. «Hardware» on the start page):
+     more room above it than between the cards of a group (not above the first one). */
+  > .app-area ~ .app-area { margin-block-start: 1.5rem; }
 }
+
+/* The title of such an area (.app-section-title in it) a little larger than a section's. */
+.app-area .app-section-title { font-size: 1.15rem; }
 
 .app-grid-2,
 .app-grid-3 {
@@ -547,7 +554,7 @@ html.theme-dark {
 }
 
 .app-grid-3 {
-  @container (min-width: 1300px) {
+  @container (min-width: 1100px) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

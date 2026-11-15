@@ -113,6 +113,23 @@ class Tile:
 
 
 @dataclass(frozen=True)
+class Section:
+    """A template a module adds to a page (Module.PAGE_SECTIONS) at a position of its own, e.g. between two sections
+    of another module. A plain template name has its module's POSITION; equal positions keep the order of the
+    modules."""
+
+    template: str
+    position: int
+
+
+def page_sections(manifests, page: str) -> list[str]:
+    """The templates the modules add to `page` (Module.PAGE_SECTIONS), in the order of their positions (Section)."""
+    entries = [(entry.position, entry.template) if isinstance(entry, Section) else (module.POSITION, entry)
+               for module in manifests for entry in module.PAGE_SECTIONS.get(page, ())]
+    return [template for _, template in sorted(entries, key=lambda entry: entry[0])]
+
+
+@dataclass(frozen=True)
 class Screen:
     """A page for an info screen (a display on the wall that nobody operates): /screen/<key>, without navigation, page
     chrome, buttons or context menus, filling the viewport (designed for 1920 x 1080). What it shows are the sections
@@ -196,8 +213,8 @@ class Module(ABC):
     SETTINGS: tuple[str, ...] = ()  # templates of its own sections in its tab of «Settings» (admins; e.g.
     # "shop/settings.html"), above the generated form of CONFIG; each brings its own script
     PUBLIC_ENDPOINTS: tuple[str, ...] = ()  # endpoints reachable without a session once sign-in comes (e.g. agents)
-    PAGE_SECTIONS: dict[str, tuple[str, ...]] = {}  # page -> templates it adds there (e.g. "home", "profile",
-    # "screen:<key>" for a screen of any module)
+    PAGE_SECTIONS: dict[str, tuple] = {}  # page -> templates it adds there (e.g. "home", "profile", "screen:<key>"
+    # for a screen of any module); a Section(template, position) instead of a name places one elsewhere
     SCREENS: tuple[Screen, ...] = ()  # its pages for info screens (/screen/<key>, sections: PAGE_SECTIONS["screen:<key>"])
     LAYOUT: tuple[str, ...] = ()  # templates included in every page (dialogs, scripts of the navigation)
     CLI: str = ""  # "<module>:<click group or command>" added to the flask CLI

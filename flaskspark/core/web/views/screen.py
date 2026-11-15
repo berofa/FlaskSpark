@@ -16,7 +16,7 @@ from flask_babel import gettext
 from flaskspark.views.flaskspark_method_view import FlaskSparkMethodView
 
 from flaskspark.core import config, modules
-from flaskspark.core.module import SCREEN_MODES, Screen
+from flaskspark.core.module import SCREEN_MODES, Screen, page_sections
 from flaskspark.core.web import OPEN, can
 
 SCALE_MIN, SCALE_MAX = 0.5, 3.0
@@ -43,7 +43,7 @@ def find(key: str, manifests=None) -> Screen | None:
 def sections(screen: Screen, manifests=None) -> list[str]:
     """The templates the loaded modules add to the screen, in the order of the modules."""
     loaded = manifests if manifests is not None else modules.load(config.load())
-    return [t for m in loaded for t in m.PAGE_SECTIONS.get(screen.page, ())]
+    return page_sections(loaded, screen.page)
 
 
 def colour_mode(screen: Screen, asked: str | None) -> str:

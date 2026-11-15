@@ -8,7 +8,8 @@ import logging
 from flask import request
 from flask_babel import gettext
 
-from flaskspark.core import web
+from flaskspark.core import config as _config, web
+from flaskspark.core.module import page_sections
 
 
 def _translate(text: str) -> str:
@@ -128,7 +129,9 @@ def context(cfg, theme, manifests, locales: list[str]) -> dict:
         "home_entry": home_entry(),
         "home_tiles": lambda: tiles(manifests),
         "module_layouts": [t for m in manifests for t in m.LAYOUT],
-        "page_sections": lambda page: [t for m in manifests for t in m.PAGE_SECTIONS.get(page, ())],
+        "page_sections": lambda page: page_sections(manifests, page),
+        # config.yaml app.home_title: false leaves the start page's title (the app's name) out
+        "home_title": lambda: bool(_config.load().section("app").get("home_title", True)),
         "can": web.can,
         "admin_links": admin_links(manifests),
         "profile_link": profile_link(),

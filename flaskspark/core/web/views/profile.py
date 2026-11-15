@@ -28,7 +28,7 @@ from flaskspark.views.flaskspark_method_view import FlaskSparkMethodView
 
 from flaskspark.core import accounts, config, db, shares
 from flaskspark.core.accounts import store
-from flaskspark.core.module import N_
+from flaskspark.core.module import N_, page_sections
 from flaskspark.core.secrets import SecretKeyError
 from flaskspark.core.web import OPEN, can, get_access, user_id
 
@@ -75,7 +75,7 @@ def sections(cfg=None) -> list[str]:
     """The templates the modules the visitor may use add to the profile (PAGE_SECTIONS["profile"])."""
     from flaskspark.core import modules
 
-    return [t for m in modules.load(cfg or config.load()) if _usable(m) for t in m.PAGE_SECTIONS.get("profile", ())]
+    return page_sections([m for m in modules.load(cfg or config.load()) if _usable(m)], "profile")
 
 
 def _signed_in() -> bool:

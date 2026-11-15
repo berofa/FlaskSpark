@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added
+- Pages of sections (`PAGE_SECTIONS`): `Section(template, position)` places a section of a module elsewhere than at its
+  module's `POSITION` (`flaskspark.core.module.page_sections()`, used by the start page, the profile and the info
+  screens), e.g. between two sections of another module.
+- Layout: `.app-area` on a child of `.app-stack` begins a group of sections with its own title (more room above);
+  `.app-grid-3` has three columns from a container width of 1100px (was 1300px).
+- Start page: `config.yaml` `app.home_title: false` leaves out its title.
 - OAuth sign-in: the username's claim is configurable (`OAUTH_USERNAME_CLAIM`, default `username`), a username needs
   no dot any more, the names come from `given_name`/`family_name` or `name` first, and the groups from the userinfo
   endpoint when the ID token has none. So GitLab works as the identity provider.
