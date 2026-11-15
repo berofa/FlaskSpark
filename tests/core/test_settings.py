@@ -123,7 +123,8 @@ def test_other_processes_see_changes_after_the_check_interval(app, clean_setting
 
 def test_settings_page_has_a_tab_per_module(client):
     html = client.get("/settings").get_data(as_text=True)
-    assert 'name="demo"' in html and "data-settings-form" in html
+    # the demo module declares dashboards: its settings are in the tab «Dashboards», not in a tab of their own
+    assert 'data-settings-screen-module="demo"' in html and "data-settings-form" in html
     assert 'name="demo.page_size"' in html and 'min="1"' in html and 'max="100"' in html
     assert "<ui-check switch" in html and "<ui-select" in html and "Newest first" in html
     assert 'name="access"' not in html  # no sign-in: no matrix

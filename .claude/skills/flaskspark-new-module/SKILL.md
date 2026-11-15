@@ -93,7 +93,7 @@ Entscheide:
   deklariert ihn mit `SCREENS = (Screen(key, title, area, …),)`, jedes Modul füllt ihn mit
   `PAGE_SECTIONS["screen:<key>"]`; URL `/screen/<key>`, Liste `/screen`. Ein Abschnitt erkennt den Bildschirm an
   `screen` (nur dort definiert) und lässt dann z.B. seine Dialoge weg. Admins finden alle Bildschirme unter
-  «Einstellungen › Bildschirme». Details: Skill `flaskspark-ui` §6, README
+  «Einstellungen › Dashboards» (dort auch die Einstellungen des Moduls). Details: Skill `flaskspark-ui` §6, README
   «Info screens».
 
 ## 3. Views

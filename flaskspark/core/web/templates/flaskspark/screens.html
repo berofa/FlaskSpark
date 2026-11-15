@@ -1,11 +1,11 @@
 {% extends "layouts/main.html" %}
 {#- The info screens the visitor may use (Module.SCREENS, views/screen.py), each a link to /screen/<key>. -#}
-{% block page_title %}{{ _("Screens") }}{% endblock %}
+{% block page_title %}{{ _("Dashboards") }}{% endblock %}
 {% block content %}
   <div class="app-page-head">
     <div>
-      <h1>{{ _("Screens") }}</h1>
-      <p>{{ _("Pages for an info screen on the wall: no navigation, no buttons, they update themselves.") }}</p>
+      <h1>{{ _("Dashboards") }}</h1>
+      <p>{{ _("Pages for a display on the wall: no navigation, no buttons, they update themselves.") }}</p>
     </div>
   </div>
   {% if screens %}
@@ -21,6 +21,6 @@
       {% endfor %}
     </div>
   {% else %}
-    <ui-alert>{{ _("No screens.") }}</ui-alert>
+    <ui-alert>{{ _("No dashboards.") }}</ui-alert>
   {% endif %}
 {% endblock %}

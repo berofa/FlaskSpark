@@ -280,12 +280,17 @@ class SettingsView(FlaskSparkMethodView):
 
         access = get_access()
         tabs = [{"name": m.NAME, "label": _t(m.LABEL), "sections": tuple(m.SETTINGS),
-                 "groups": grouped(fields(m)) if m.CONFIG else []}
+                 "groups": grouped(fields(m)) if m.CONFIG else [], "screens": bool(m.SCREENS)}
                 for m in modules.load(config.load()) if m.CONFIG or m.SETTINGS]
-        return render_template("flaskspark/settings.html", tabs=tabs,
+        screens = screen_items()
+        # a module that declares dashboards (screens) shows its settings in the tab «Dashboards», below the list, not
+        # in a tab of its own
+        own = [tab for tab in tabs if not (tab["screens"] and screens)]
+        return render_template("flaskspark/settings.html", tabs=own,
+                               screen_tabs=[tab for tab in tabs if tab["screens"] and screens],
                                matrix=matrix(access) if access.HAS_MATRIX else None,
                                users=access.users() if access.HAS_USERS else None, me=user_id(),
-                               app_accounts=bool(app_offered()), screens=screen_items(), leftovers=data_items())
+                               app_accounts=bool(app_offered()), screens=screens, leftovers=data_items())
 
 
 class AccessApiView(FlaskSparkMethodView):

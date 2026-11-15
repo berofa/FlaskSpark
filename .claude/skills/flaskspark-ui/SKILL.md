@@ -97,7 +97,7 @@ Ziel: alles möglichst generisch, und was spezifisch ist, sauber getrennt dort, 
   eigenen Bedienelementen markiert sie mit `data-screen-hide`.
 - Farbmodus wie in der App, ausser `Screen.mode` oder `?mode=` legt ihn fest (`<html data-theme-fixed>`).
 - Admins sehen alle Bildschirme der Module (Titel, Modul, Bereich, Farbmodus, Neuladen, Link) unter «Einstellungen ›
-  Bildschirme» (`/settings#screens`); `/screen` listet die, die der Besucher nutzen darf.
+  Dashboards» (`/settings#screens`; dort auch die Einstellungen des Moduls, das die Bildschirme deklariert); `/screen` listet die, die der Besucher nutzen darf.
 - Prüfen: Headless-Screenshot bei 1920 × 1080 hell und dunkel; alles sichtbar ohne Scrollen.
 
 ## 7. Prüfen

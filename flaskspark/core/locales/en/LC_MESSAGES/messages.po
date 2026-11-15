@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FlaskSpark \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 17:50+0100\n"
+"POT-Creation-Date: 2026-11-15 01:21+0100\n"
 "PO-Revision-Date: 2026-11-13 16:19+0100\n"
 "Last-Translator: FlaskSpark\n"
 "Language: en\n"
@@ -154,7 +154,7 @@ msgstr ""
 msgid "1 warning"
 msgstr ""
 
-msgid "A screen needs its area, like any other page; each module's section asks for its own."
+msgid "A dashboard needs its area, like any other page; each module's section asks for its own."
 msgstr ""
 
 msgid "Access"
@@ -208,7 +208,7 @@ msgstr ""
 msgid "Alert"
 msgstr ""
 
-msgid "All screens"
+msgid "All dashboards"
 msgstr ""
 
 msgid ""
@@ -351,6 +351,12 @@ msgid "Daily reload"
 msgstr ""
 
 msgid "Dark"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Dashboards"
 msgstr ""
 
 msgid "Data"
@@ -648,6 +654,9 @@ msgstr ""
 msgid "No account connected yet."
 msgstr ""
 
+msgid "No dashboards."
+msgstr ""
+
 msgid "No files."
 msgstr ""
 
@@ -671,9 +680,6 @@ msgid "No module uses accounts of the application."
 msgstr ""
 
 msgid "No role to share this with."
-msgstr ""
-
-msgid "No screens."
 msgstr ""
 
 msgid "No settings."
@@ -721,7 +727,7 @@ msgstr ""
 msgid "Nothing left over."
 msgstr ""
 
-msgid "Nothing on this screen yet."
+msgid "Nothing on this dashboard yet."
 msgstr ""
 
 msgid "Notifications"
@@ -762,7 +768,7 @@ msgstr ""
 msgid "Pages"
 msgstr ""
 
-msgid "Pages for an info screen on the wall: no navigation, no buttons, they update themselves."
+msgid "Pages for a display on the wall: no navigation, no buttons, they update themselves."
 msgstr ""
 
 msgid "Password"
@@ -862,12 +868,6 @@ msgid "Saved. Takes effect after a restart of: %(services)s"
 msgstr ""
 
 msgid "Saving…"
-msgstr ""
-
-msgid "Screen"
-msgstr ""
-
-msgid "Screens"
 msgstr ""
 
 #, python-format
@@ -1034,6 +1034,11 @@ msgstr ""
 msgid "The checks fail: %(error)s"
 msgstr ""
 
+msgid ""
+"The dashboards of the modules: pages for a display on the wall, without navigation and buttons. Open one on the "
+"display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there."
+msgstr ""
+
 msgid "The defaults come from config.yaml; an empty field takes the default again."
 msgstr ""
 
@@ -1048,11 +1053,6 @@ msgid "The file is too large."
 msgstr ""
 
 msgid "The file storage is not available. Please try again later."
-msgstr ""
-
-msgid ""
-"The info screens of the modules: pages for a display on the wall, without navigation and buttons. Open one on the "
-"display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there."
 msgstr ""
 
 msgid "The order is not readable."

@@ -1,10 +1,32 @@
 {% extends "layouts/main.html" %}
 {#- «Settings» (admins): the access (role x area, with sign-in), the users' roles (with sign-in), the application's
-    accounts (when a module names APP_ACCOUNT_TYPES; <ui-user-accounts> on /api/settings/accounts), the info screens
-    (Module.SCREENS; when there are any), a tab per module
+    accounts (when a module names APP_ACCOUNT_TYPES; <ui-user-accounts> on /api/settings/accounts), «Dashboards»
+    (Module.SCREENS; when there are any) with, below the list, the settings of the modules that declare them, a tab per
+    other module
     with its own sections (Module.SETTINGS) and its settings of config.yaml (Module.CONFIG, generated from the
     manifest), and «Data»: what modules no longer delivered left behind (flaskspark.core.leftovers), to clean up.
     Script: flaskspark/settings.js. -#}
+{%- macro module_settings(tab) -%}
+          {#- the module's own sections (Module.SETTINGS), above the generated form of its CONFIG #}
+          {% for section in tab.sections %}{% include section %}{% endfor %}
+          {% if tab.groups %}
+          <form data-settings-form action="{{ url_for('core_settings_config', name=tab.name) }}" novalidate{% if tab.sections %} class="mt-4"{% endif %}>
+            <p class="small fg-3">{{ _("The defaults come from config.yaml; an empty field takes the default again.") }}</p>
+            {% for group in tab.groups %}
+              <fieldset class="mb-3">
+                <legend class="h6">{{ group.label or _("General") }}</legend>
+                <div class="row g-2">
+                  {% for f in group.fields %}{{ field(f) }}{% endfor %}
+                </div>
+              </fieldset>
+            {% endfor %}
+            <div class="d-flex justify-content-end">
+              <ui-button type="submit" size="sm" variant="primary">{{ _("Save") }}</ui-button>
+            </div>
+          </form>
+          {% endif %}
+{%- endmacro %}
+
 {% block page_title %}{{ _("Settings") }}{% endblock %}
 {% from "flaskspark/icons.html" import icon %}
 
@@ -123,13 +145,13 @@
         </ui-tab-panel>
       {% endif %}
       {% if screens %}
-        <ui-tab-panel heading="{{ _('Screens') }}" name="screens">
+        <ui-tab-panel heading="{{ _('Dashboards') }}" name="screens">
           <div data-settings-screens>
-            <p class="small fg-3 mb-3">{{ _("The info screens of the modules: pages for a display on the wall, without navigation and buttons. Open one on the display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there.") }}</p>
+            <p class="small fg-3 mb-3">{{ _("The dashboards of the modules: pages for a display on the wall, without navigation and buttons. Open one on the display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there.") }}</p>
             <ui-table size="sm" valign="middle" responsive><table class="mb-0">
               <thead>
                 <tr>
-                  <th>{{ _("Screen") }}</th><th>{{ _("Module") }}</th><th>{{ _("Area") }}</th>
+                  <th>{{ _("Dashboard") }}</th><th>{{ _("Module") }}</th><th>{{ _("Area") }}</th>
                   <th>{{ _("Colour mode") }}</th><th>{{ _("Daily reload") }}</th><th>{{ _("Address") }}</th>
                 </tr>
               </thead>
@@ -152,30 +174,17 @@
                 {% endfor %}
               </tbody>
             </table></ui-table>
-            <p class="small fg-3 mt-3 mb-0">{{ _("A screen needs its area, like any other page; each module's section asks for its own.") }} <a href="{{ url_for('flaskspark_screens') }}">{{ _("All screens") }}</a></p>
+            <p class="small fg-3 mt-3 mb-0">{{ _("A dashboard needs its area, like any other page; each module's section asks for its own.") }} <a href="{{ url_for('flaskspark_screens') }}">{{ _("All dashboards") }}</a></p>
           </div>
+          {#- the settings of the modules that declare dashboards (instead of a tab of their own) #}
+          {% for tab in screen_tabs %}
+            <div class="mt-4" data-settings-screen-module="{{ tab.name }}">{{ module_settings(tab) }}</div>
+          {% endfor %}
         </ui-tab-panel>
       {% endif %}
       {% for tab in tabs %}
         <ui-tab-panel heading="{{ tab.label }}" name="{{ tab.name }}">
-          {#- the module's own sections (Module.SETTINGS), above the generated form of its CONFIG #}
-          {% for section in tab.sections %}{% include section %}{% endfor %}
-          {% if tab.groups %}
-          <form data-settings-form action="{{ url_for('core_settings_config', name=tab.name) }}" novalidate{% if tab.sections %} class="mt-4"{% endif %}>
-            <p class="small fg-3">{{ _("The defaults come from config.yaml; an empty field takes the default again.") }}</p>
-            {% for group in tab.groups %}
-              <fieldset class="mb-3">
-                <legend class="h6">{{ group.label or _("General") }}</legend>
-                <div class="row g-2">
-                  {% for f in group.fields %}{{ field(f) }}{% endfor %}
-                </div>
-              </fieldset>
-            {% endfor %}
-            <div class="d-flex justify-content-end">
-              <ui-button type="submit" size="sm" variant="primary">{{ _("Save") }}</ui-button>
-            </div>
-          </form>
-          {% endif %}
+          {{ module_settings(tab) }}
         </ui-tab-panel>
       {% endfor %}
       <ui-tab-panel heading="{{ _('Data') }}" name="data">

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FlaskSpark \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 17:50+0100\n"
+"POT-Creation-Date: 2026-11-15 01:21+0100\n"
 "PO-Revision-Date: 2026-11-13 16:19+0100\n"
 "Last-Translator: FlaskSpark\n"
 "Language: de\n"
@@ -159,8 +159,8 @@ msgstr "1 Zeile"
 msgid "1 warning"
 msgstr "1 Warnung"
 
-msgid "A screen needs its area, like any other page; each module's section asks for its own."
-msgstr "Ein Bildschirm braucht seinen Bereich wie jede andere Seite; jeder Abschnitt eines Moduls fragt nach seinem eigenen."
+msgid "A dashboard needs its area, like any other page; each module's section asks for its own."
+msgstr "Ein Dashboard braucht seinen Bereich wie jede andere Seite; jeder Abschnitt eines Moduls fragt nach seinem eigenen."
 
 msgid "Access"
 msgstr "Zugriff"
@@ -213,8 +213,8 @@ msgstr "Administratoren dürfen immer alles nutzen."
 msgid "Alert"
 msgstr "Hinweisbox"
 
-msgid "All screens"
-msgstr "Alle Bildschirme"
+msgid "All dashboards"
+msgstr "Alle Dashboards"
 
 msgid ""
 "An account is one sign-in (user name and password) with everything its server offers. The password is stored "
@@ -360,6 +360,12 @@ msgstr "Tägliches Neuladen"
 
 msgid "Dark"
 msgstr "Dunkel"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Dashboards"
+msgstr "Dashboards"
 
 msgid "Data"
 msgstr "Daten"
@@ -658,6 +664,9 @@ msgstr "Kein Zugriff"
 msgid "No account connected yet."
 msgstr "Noch kein Konto verbunden."
 
+msgid "No dashboards."
+msgstr "Keine Dashboards."
+
 msgid "No files."
 msgstr "Keine Dateien."
 
@@ -684,9 +693,6 @@ msgstr "Kein Modul verwendet Konten der App."
 
 msgid "No role to share this with."
 msgstr "Keine Rolle, mit der sich das teilen lässt."
-
-msgid "No screens."
-msgstr "Keine Bildschirme."
 
 msgid "No settings."
 msgstr "Keine Einstellungen."
@@ -733,8 +739,8 @@ msgstr "Unter dieser Adresse wurde nichts gefunden."
 msgid "Nothing left over."
 msgstr "Nichts übrig."
 
-msgid "Nothing on this screen yet."
-msgstr "Auf diesem Bildschirm ist noch nichts."
+msgid "Nothing on this dashboard yet."
+msgstr "Auf diesem Dashboard ist noch nichts."
 
 msgid "Notifications"
 msgstr "Benachrichtigungen"
@@ -774,8 +780,8 @@ msgstr "PID %(pid)s auf %(host)s"
 msgid "Pages"
 msgstr "Seiten"
 
-msgid "Pages for an info screen on the wall: no navigation, no buttons, they update themselves."
-msgstr "Seiten für einen Infobildschirm an der Wand: ohne Navigation, ohne Buttons, sie aktualisieren sich selbst."
+msgid "Pages for a display on the wall: no navigation, no buttons, they update themselves."
+msgstr "Seiten für einen Bildschirm an der Wand: ohne Navigation und Buttons, sie aktualisieren sich selbst."
 
 msgid "Password"
 msgstr "Passwort"
@@ -875,12 +881,6 @@ msgstr "Gespeichert. Gilt nach einem Neustart von: %(services)s"
 
 msgid "Saving…"
 msgstr "Speichere…"
-
-msgid "Screen"
-msgstr "Bildschirm"
-
-msgid "Screens"
-msgstr "Bildschirme"
 
 #, python-format
 msgid "Secure connection failed: %(error)s"
@@ -1046,6 +1046,13 @@ msgstr "Die Adresse der GitLab-Instanz, ohne /api/v4."
 msgid "The checks fail: %(error)s"
 msgstr "Die Prüfungen schlagen fehl: %(error)s"
 
+msgid ""
+"The dashboards of the modules: pages for a display on the wall, without navigation and buttons. Open one on the "
+"display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there."
+msgstr ""
+"Die Dashboards der Module: Seiten für einen Bildschirm an der Wand, ohne Navigation und Buttons. Öffne eines auf dem "
+"Bildschirm; ?mode=dark und ?scale=1.5 in der Adresse legen dort Farbmodus und Grösse fest."
+
 msgid "The defaults come from config.yaml; an empty field takes the default again."
 msgstr "Die Standardwerte kommen aus config.yaml; ein leeres Feld setzt den Standardwert wieder."
 
@@ -1061,13 +1068,6 @@ msgstr "Die Datei ist zu gross."
 
 msgid "The file storage is not available. Please try again later."
 msgstr "Die Dateiablage ist nicht verfügbar. Bitte später nochmals versuchen."
-
-msgid ""
-"The info screens of the modules: pages for a display on the wall, without navigation and buttons. Open one on the "
-"display; ?mode=dark and ?scale=1.5 in the address fix the colour mode and the size there."
-msgstr ""
-"Die Infobildschirme der Module: Seiten für einen Bildschirm an der Wand, ohne Navigation und Buttons. Öffne einen auf"
-" dem Bildschirm; ?mode=dark und ?scale=1.5 in der Adresse legen dort Farbmodus und Grösse fest."
 
 msgid "The order is not readable."
 msgstr "Die Reihenfolge ist nicht lesbar."

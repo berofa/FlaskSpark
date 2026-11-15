@@ -74,7 +74,7 @@ def test_the_title_beside_the_logo_or_only_for_screen_readers(client):
 
 def test_an_empty_screen_says_so(client):
     html = client.get("/screen/empty").get_data(as_text=True)
-    assert "Nothing on this screen yet." in html
+    assert "Nothing on this dashboard yet." in html
 
 
 def test_an_unknown_screen_is_not_found(client):
@@ -89,7 +89,7 @@ def test_the_list_of_screens(client):
 
 def test_a_screen_in_german(client):
     html = client.get("/screen/empty", headers={"Accept-Language": "de"}).get_data(as_text=True)
-    assert "Auf diesem Bildschirm ist noch nichts." in html
+    assert "Auf diesem Dashboard ist noch nichts." in html
 
 
 def test_ordinary_pages_are_no_screens(client):
@@ -117,11 +117,15 @@ def test_the_settings_tab_screens(client):
     assert 'href="/screen/wall" target="_blank"' in html and "Notes on the wall" in html
     row = html.split('data-screen-row="empty"')[1].split("</tr>")[0]
     assert "never" in row and "As in the app" in row and "No module adds anything to it yet." in row
+    # the settings of the module that declares the dashboards: in this tab, below the list, not in a tab of their own
+    panel = html.split('name="screens"')[1].split("</ui-tab-panel>")[0]
+    assert 'data-settings-screen-module="demo"' in panel and 'action="/api/settings/config/demo"' in panel
+    assert '<ui-tab-panel heading="Demo"' not in html
 
 
 def test_the_settings_tab_screens_in_german(client):
     html = client.get("/settings", headers={"Accept-Language": "de"}).get_data(as_text=True)
-    assert 'heading="Bildschirme"' in html and "Tägliches Neuladen" in html and "Wie in der App" in html
+    assert 'heading="Dashboards"' in html and "Tägliches Neuladen" in html and "Wie in der App" in html
 
 
 @pytest.fixture(scope="module")

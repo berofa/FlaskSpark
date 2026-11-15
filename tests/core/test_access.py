@@ -64,7 +64,7 @@ def test_admins_may_everything(sso):
     admin = client_for(sso, "admin")
     assert admin.get("/demo/notes").status_code == 200
     html = admin.get("/settings").get_data(as_text=True)
-    assert 'name="access"' in html and 'data-area="demo"' in html and 'name="demo"' in html
+    assert 'name="access"' in html and 'data-area="demo"' in html and 'data-settings-screen-module="demo"' in html
     assert client_for(sso, "user").get("/settings").status_code == 403
     assert client_for(sso, "user").get("/api/settings/access", headers={"Accept": "application/json"}).status_code == 403
     # «Data»: what modules left behind, only for admins
