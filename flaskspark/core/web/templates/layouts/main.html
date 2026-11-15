@@ -89,13 +89,13 @@
             {% if locales | length > 1 %}
               <ui-button-group size="sm" label="{{ _('Language') }}">
                 {% for code in locales %}
-                  <ui-button class="nav-btn app-lang-btn{% if code == language_cookie %} active{% endif %}" variant="secondary" outline
+                  <ui-button class="nav-btn app-lang-btn" variant="secondary" outline
                              href="{{ url_for('set_language', code=code, next=request.full_path.rstrip('?')) }}"
-                             title="{{ code | upper }}" label="{{ _('Language') }}: {{ code | upper }}"{% if code == language_cookie %} aria-pressed="true"{% endif %}>{{ code | upper }}</ui-button>
+                             title="{{ code | upper }}" label="{{ _('Language') }}: {{ code | upper }}"{% if code == language_cookie %} active aria-pressed="true"{% endif %}>{{ code | upper }}</ui-button>
                 {% endfor %}
-                <ui-button class="nav-btn app-lang-btn{% if language_cookie == 'system' %} active{% endif %}" variant="secondary" outline
+                <ui-button class="nav-btn app-lang-btn" variant="secondary" outline
                            href="{{ url_for('set_language', code='system', next=request.full_path.rstrip('?')) }}"
-                           title="{{ _('Browser default') }}" label="{{ _('Language: browser default') }}"><i class="bi bi-globe2" aria-hidden="true"></i></ui-button>
+                           title="{{ _('Browser default') }}" label="{{ _('Language: browser default') }}"{% if language_cookie == 'system' %} active aria-pressed="true"{% endif %}><i class="bi bi-globe2" aria-hidden="true"></i></ui-button>
               </ui-button-group>
             {% endif %}
             {% if admin_links or access.signed_in or profile_link %}

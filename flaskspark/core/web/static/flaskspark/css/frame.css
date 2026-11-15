@@ -676,13 +676,8 @@ ui-button {
   }
 
   &.nav-btn::part(button) { --bs-btn-bg: var(--app-surface); }
-  &.app-mode-btn::part(button) { min-inline-size: calc(1.5em + 0.75rem + 2px); }
-
-  &.app-lang-btn.active::part(button) {
-    --bs-btn-bg: var(--app-accent-tint);
-    --bs-btn-color: var(--app-accent-fg);
-    --bs-btn-border-color: var(--app-accent);
-  }
+  /* The language buttons as wide as the colour mode's; the chosen one of both is the button's own active state. */
+  &:is(.app-mode-btn, .app-lang-btn)::part(button) { min-inline-size: calc(1.5em + 0.75rem + 2px); }
 }
 
 .menu {
