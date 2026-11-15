@@ -39,6 +39,10 @@ PORT = int(os.environ.get("APP_PORT") or os.environ.get("ROUTER_PORT") or "8100"
 WEB_PORT = int(os.environ.get("WEB_PORT", "8101"))
 WINDOW = 60.0  # seconds of the counts in the heartbeat (requests and upstream failures per minute)
 NATS_RETRY = 5.0  # seconds between attempts to reach NATS while it is not there
+# How long an idle browser connection stays open: longer than the browsers keep one (Firefox 115 s, Chrome 300 s).
+# With aiohttp's 75 s the router closed connections a browser was about to reuse; a GET is then sent again by the
+# browser, a POST fails ("NetworkError when attempting to fetch resource") without reaching the service.
+KEEPALIVE_SECONDS = 330.0
 HOP_HEADERS = {"connection", "keep-alive", "proxy-authenticate", "proxy-authorization", "te", "trailers",
                "transfer-encoding", "upgrade", "host", "content-length"}
 
@@ -185,7 +189,8 @@ class Router:
         self.http = aiohttp.ClientSession(auto_decompress=False, timeout=aiohttp.ClientTimeout(total=None, sock_connect=10))
         app = web.Application(client_max_size=256 * 1024 * 1024)
         app.router.add_route("*", "/{tail:.*}", self.handle)
-        runner = web.AppRunner(app, access_log=None, handle_signals=True, handler_cancellation=True)
+        runner = web.AppRunner(app, access_log=None, handle_signals=True, handler_cancellation=True,
+                               keepalive_timeout=KEEPALIVE_SECONDS)
         await runner.setup()
         await web.TCPSite(runner, host, port).start()
         log.info("router on %s:%d (web %d, %s)", host, port, self.web_port,

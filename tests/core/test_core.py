@@ -342,6 +342,31 @@ def test_the_router_passes_a_refused_websocket_on_and_counts_only_what_does_not_
     asyncio.run(main())
 
 
+def test_router_keeps_idle_browser_connections_longer_than_the_browsers():
+    """A browser reuses an idle connection for up to 115 s (Firefox) or 300 s (Chrome); a router that closed it earlier
+    made a POST fail in the browser ("NetworkError") without reaching the service."""
+    import asyncio
+    import socket
+
+    from flaskspark.core.services.router import service as router_service
+
+    def free_port() -> int:
+        with socket.socket() as s:
+            s.bind(("127.0.0.1", 0))
+            return s.getsockname()[1]
+
+    async def main():
+        router = Router([], web_port=free_port())
+        runner = await router.start("127.0.0.1", free_port())
+        try:
+            assert runner.server._kwargs["keepalive_timeout"] == router_service.KEEPALIVE_SECONDS > 300
+        finally:
+            await runner.cleanup()
+            await router.close()
+
+    asyncio.run(main())
+
+
 def test_core_imports_no_application_code():
     for path in CORE.rglob("*.py"):
         for node in ast.walk(ast.parse(path.read_text())):
