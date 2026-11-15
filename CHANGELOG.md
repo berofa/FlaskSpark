@@ -5,6 +5,9 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added
+- OAuth sign-in: the username's claim is configurable (`OAUTH_USERNAME_CLAIM`, default `username`), a username needs
+  no dot any more, the names come from `given_name`/`family_name` or `name` first, and the groups from the userinfo
+  endpoint when the ID token has none. So GitLab works as the identity provider.
 - Navigation: `Module.nav_disabled()` names menu entries (of any module) that can't be used right now, asked for every
   page; the layout greys them out and makes them not clickable (`aria-disabled="true"`, `tabindex="-1"`, token
   `--app-nav-disabled-opacity`). Groups and entries carry `data-nav-group` for the modules' navigation scripts.
@@ -275,6 +278,8 @@ All notable changes to this project are documented in this file.
 - `Area.position`: the order of the areas across the modules.
 
 ### Fixed
+- OAuth sign-in: the very first user becomes an administrator again (the users were counted after the new one was
+  added, so it got the role Guests).
 - `<ui-list-group>`: a click on an action item's content (its text, an icon) chose nothing, only a click on its padding
   did (`ui-list-group:action`); the item is now found in the click's composed path (`list-group-click.js`).
 - `ui-calendar`: dates are formatted with the full language tag (`locale` or `<html lang>`, e.g. `en-CH` or

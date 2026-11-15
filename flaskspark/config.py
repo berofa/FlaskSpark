@@ -107,6 +107,7 @@ def from_environment() -> type:
         OAUTH_CLIENT_SECRET = os.environ.get("OAUTH_CLIENT_SECRET")
         OAUTH_SCOPE = os.environ.get("OAUTH_SCOPE")
         OAUTH_REDIRECT_URI = os.environ.get("OAUTH_REDIRECT_URI")
+        OAUTH_USERNAME_CLAIM = os.environ.get("OAUTH_USERNAME_CLAIM", "username")
         OAUTH_GROUPS_CLAIM = os.environ.get("OAUTH_GROUPS_CLAIM", "groups")
         OAUTH_ROLE_PRIORITY = _split_csv(os.environ.get("OAUTH_ROLE_PRIORITY"))
         OAUTH_ROLE_MAP = _parse_role_map(os.environ.get("OAUTH_ROLE_MAP"))

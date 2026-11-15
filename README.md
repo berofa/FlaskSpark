@@ -493,6 +493,7 @@ Why not just `app.run()`?
 | `OAUTH_CLIENT_SECRET` | `None` | OAuth client secret. |
 | `OAUTH_SCOPE` | `None` | OAuth scope string. |
 | `OAUTH_REDIRECT_URI` | `None` | Optional explicit callback URL (otherwise auto-generated). |
+| `OAUTH_USERNAME_CLAIM` | `username` | Claim name of the username (GitLab: `preferred_username`). |
 | `OAUTH_GROUPS_CLAIM` | `groups` | Claim name used for group extraction. |
 | `OAUTH_ROLE_PRIORITY` | `[]` | Ordered group names for role mapping (CSV env input). |
 | `OAUTH_ROLE_MAP` | `{}` | Group-to-role mapping (format: `group:Role,group2:Role2`). |
@@ -894,6 +895,7 @@ Optional:
 
 ```dotenv
 OAUTH_REDIRECT_URI=https://your-app.example.com/auth/callback
+OAUTH_USERNAME_CLAIM=username
 OAUTH_GROUPS_CLAIM=groups
 OAUTH_ROLE_PRIORITY=admins,editors,users
 OAUTH_ROLE_MAP=admins:Administrators,editors:Editors,users:Users
@@ -901,6 +903,13 @@ OAUTH_ROLE_MAP=admins:Administrators,editors:Editors,users:Users
 
 Notes:
 - If `OAUTH_REDIRECT_URI` is not set, FlaskSpark builds the callback URL automatically.
+- The user is the claim `OAUTH_USERNAME_CLAIM` (default `username`, as Synology SSO sends it) together with `email`;
+  the names come from `given_name`/`family_name`, else from `name`, else from a username `first.last`.
+- When the ID token has no groups claim, FlaskSpark asks the userinfo endpoint for it (GitLab sends the groups only
+  there).
+- GitLab as the identity provider (an OAuth application with the scopes `openid profile email`; the endpoints are
+  in `<gitlab>/.well-known/openid-configuration`): `OAUTH_USERNAME_CLAIM=preferred_username`, the groups are the full
+  paths of the user's groups (e.g. `OAUTH_ROLE_MAP=company/admins:Administrators,company:Users`).
 - OAuth routes are provided by FlaskSpark (`/auth/login`, `/auth/callback`, `/auth/logout`).
 
 #### Build your own login provider

@@ -92,6 +92,8 @@ class OAuthLoginProvider(AbstractLoginProvider):
                 "scope": self.app.config["OAUTH_SCOPE"],
             },
             jwks_uri=self.app.config["OAUTH_JWKS_URI"],
+            # server metadata: authlib's userinfo() looks the endpoint up there
+            userinfo_endpoint=self.app.config["OAUTH_USERINFO_ENDPOINT"],
             client_id=self.app.config["OAUTH_CLIENT_ID"],
             client_secret=self.app.config["OAUTH_CLIENT_SECRET"],
         )
@@ -158,12 +160,20 @@ class OAuthLoginProvider(AbstractLoginProvider):
             if not user_info:
                 return "User info not found in token", 400
 
-            username = user_info.get("username")
-            if not username or "." not in username:
-                return "Invalid username format", 400
-            first_name, last_name = _extract_names_from_username(username)
+            groups_claim = self.app.config.get("OAUTH_GROUPS_CLAIM", "groups")
+            if groups_claim not in user_info:
+                # Some providers (GitLab) put the groups only into the userinfo endpoint's answer.
+                user_info = {**client.userinfo(token=token), **user_info}
+
+            username_claim = self.app.config.get("OAUTH_USERNAME_CLAIM") or "username"
+            username = user_info.get(username_claim)
+            if not username or not user_info.get("email"):
+                return "Username or email missing in the claims", 400
+            first_name, last_name = _extract_names(user_info, username)
 
             Role.ensure_defaults()
+            # counted before the new user is added (the query would flush it first)
+            first_user = User.query.count() == 0
             user = User.query.filter_by(username=username).first()
             if not user:
                 user = User(username=username, email=user_info["email"])
@@ -172,7 +182,6 @@ class OAuthLoginProvider(AbstractLoginProvider):
             user.email = user_info["email"]
             user.first_name = first_name
             user.last_name = last_name
-            groups_claim = self.app.config.get("OAUTH_GROUPS_CLAIM", "groups")
             groups = user_info.get(groups_claim) or []
             if isinstance(groups, str):
                 groups = [item.strip() for item in groups.split(",") if item.strip()]
@@ -190,10 +199,9 @@ class OAuthLoginProvider(AbstractLoginProvider):
             if resolved_role:
                 user.role = resolved_role
             else:
-                total_users = User.query.count()
                 admin_role = Role.query.filter_by(name="Administrators").first()
                 guest_role = Role.query.filter_by(name="Guests").first()
-                if total_users == 0 and admin_role:
+                if first_user and admin_role:
                     user.role = admin_role
                 elif guest_role:
                     user.role = guest_role
@@ -258,6 +266,28 @@ def _local_path(target: str | None) -> str | None:
     if target and target.startswith("/") and not target.startswith("//") and "\\" not in target:
         return target
     return None
+
+
+def _extract_names(user_info: dict, username: str):
+    """
+    First and last name of the signing-in user: the claims given_name/family_name, else the claim name split at its
+    first space, else the username as "first.last".
+
+    Args:
+        user_info (dict): Claims of the identity provider.
+        username (str): The user's username.
+
+    Returns:
+        tuple[str | None, str | None]: First and last name.
+    """
+    given, family = user_info.get("given_name"), user_info.get("family_name")
+    if given or family:
+        return given or None, family or None
+    name = (user_info.get("name") or "").strip()
+    if name:
+        first, _, last = name.partition(" ")
+        return first, last.strip() or None
+    return _extract_names_from_username(username)
 
 
 def _extract_names_from_username(username: str):
