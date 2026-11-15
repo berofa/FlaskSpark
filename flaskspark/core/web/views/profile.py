@@ -93,10 +93,21 @@ def languages(cfg=None) -> list[str]:
     return found if len(found) > 1 else []
 
 
+def _without_sign_in() -> bool:
+    """The app has no sign-in at all (auth: none, OpenAccess): everyone is the same visitor."""
+    from ..access import OpenAccess
+
+    return isinstance(get_access(), OpenAccess)
+
+
 def available() -> bool:
     """The profile exists for the visitor: signed in, and a section or accounts to show (the language alone makes no
-    profile: the sidebar's language buttons keep a signed-in user's choice too)."""
-    return bool(_signed_in() and (sections() or offered()))
+    profile: the sidebar's language buttons keep a signed-in user's choice too). In an app without sign-in (auth: none)
+    it exists as soon as a module adds a section: settings of this workstation or browser (e.g. kept by an agent on
+    it); accounts and the personal language need a sign-in."""
+    if _signed_in():
+        return bool(sections() or offered())
+    return bool(_without_sign_in() and sections())
 
 
 def _username() -> str:
@@ -214,8 +225,8 @@ class ProfilePageView(FlaskSparkMethodView):
             abort(404)
         from .. import language
 
-        locales = languages()
-        return render_template("flaskspark/profile.html", sections=sections(), accounts=bool(offered()),
+        locales = languages() if _signed_in() else []  # without sign-in the sidebar's buttons choose the language
+        return render_template("flaskspark/profile.html", sections=sections(), accounts=accounts_available(),
                                languages=language.options(locales) if locales else [],
                                language_choice=language.choice(locales) if locales else "")
 

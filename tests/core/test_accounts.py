@@ -284,9 +284,21 @@ def test_listeners_hear_of_changes(app):
 
 
 # --- the profile ----------------------------------------------------------------------------------------------------
-def test_without_sign_in_there_is_no_profile(client):
-    assert client.get("/profile").status_code == 404
+def test_without_sign_in_the_profile_has_the_modules_sections_only(client):
+    """auth: none - no sign-in exists: the profile holds the modules' sections (settings of this workstation), no
+    accounts and no personal language."""
+    page = client.get("/profile")
+    assert page.status_code == 200 and b"data-demo-profile" in page.data
+    assert b"<ui-user-accounts" not in page.data and b"data-profile-language" not in page.data
     assert client.get("/api/accounts").status_code == 404
+    assert b"data-profile-link" in client.get("/").data
+
+
+def test_without_sign_in_and_without_sections_there_is_no_profile(client, monkeypatch):
+    from flaskspark.core.web.views import profile
+
+    monkeypatch.setattr(profile, "sections", lambda cfg=None: [])
+    assert client.get("/profile").status_code == 404
     assert b"data-profile-link" not in client.get("/").data
 
 

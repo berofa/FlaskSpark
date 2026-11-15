@@ -1,5 +1,5 @@
 {% extends "layouts/main.html" %}
-{#- The profile of the signed-in user: the language, the modules' sections (PAGE_SECTIONS["profile"]) and «Accounts»
+{#- The profile (signed in; without any sign-in, auth: none, only the modules' sections): the language, the modules' sections (PAGE_SECTIONS["profile"]) and «Accounts»
     (flaskspark.core.accounts) in <ui-user-accounts> (flaskspark/ui-user-accounts.js, JSON API /api/accounts). -#}
 {% block page_title %}{{ _("Profile") }}{% endblock %}
 {% block content %}
