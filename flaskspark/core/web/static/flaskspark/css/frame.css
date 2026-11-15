@@ -40,6 +40,8 @@
  *   --app-screen-logo-height                                 info screens: the logo in the head row
  *   --app-screen-aside-width                                 info screens: the column on the right (.app-screen-aside)
  *   --app-screen-section-title-size                         info screens: the titles of the sections
+ *   --app-screen-text-value, -text, -text-small              info screens: a few sizes for everything else (figures,
+ *                                                            texts, secondary texts), so a screen stays calm
  */
 
 /* A length, so a theme may write 0 (attached sidebar) and calc()/min() still get a length. */
@@ -973,6 +975,9 @@ ui-tooltip {
   --app-screen-logo-height: 2.25rem;
   --app-screen-aside-width: 28%;
   --app-screen-section-title-size: 1.05rem;
+  --app-screen-text-value: 1.45rem; /* a key figure */
+  --app-screen-text: 0.85rem; /* names, texts */
+  --app-screen-text-small: 0.72rem; /* legends, dates, secondary texts */
 }
 
 html[data-screen] {

@@ -1665,6 +1665,7 @@ The layout lives in FlaskSpark only (`flaskspark/core/web/static/flaskspark/css/
 | `--app-screen-logo-height` | `2.25rem` | Info screens: the logo in the head row. |
 | `--app-screen-aside-width` | `28%` | Info screens: the width of the column on the right (a section with `.app-screen-aside`). |
 | `--app-screen-section-title-size` | `1.05rem` | Info screens: the titles of the sections (`.app-screen-section-title`). |
+| `--app-screen-text-value`, `--app-screen-text`, `--app-screen-text-small` | `1.45rem`, `0.85rem`, `0.72rem` | Info screens: the few text sizes for everything else (key figures, texts, secondary texts); a screen that keeps to them stays calm. |
 
 A page background per colour mode that `light-dark()` cannot hold (a gradient) is the same token set per mode:
 `html.theme-dark { --app-page-bg: linear-gradient(…); }` (likewise `html.theme-light`).
