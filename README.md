@@ -1693,6 +1693,7 @@ number fields, code, and anything inside `data-emoticons="off"` keep what was ty
 
 Helper classes for pages (from `frame.css`):
 - `app-page-head` (with `app-page-actions`): the page's heading with its buttons
+- `app-page-title` with `app-page-icon`: a large icon before the heading (`<div class="app-page-title"><span class="app-page-icon"><i class="bi bi-…"></i></span><div><h1>…</h1></div></div>`)
 - `app-stack`: a vertical stack with gaps
 - `app-grid-2`, `app-grid-3`: responsive columns (container queries)
 - `app-toolbar` (with `app-grow`): a row of controls

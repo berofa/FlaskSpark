@@ -457,6 +457,27 @@ html.theme-dark {
   gap: 0.5rem;
 }
 
+/* A large icon before the heading: <div class="app-page-title"><span class="app-page-icon"><i class="bi bi-…"></i>
+   </span><div><h1>…</h1><p>…</p></div></div> as the first child of .app-page-head. */
+.app-page-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-inline-size: 0;
+}
+
+.app-page-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 3.25rem;
+  block-size: 3.25rem;
+  border-radius: var(--app-radius);
+  background: var(--app-accent-tint);
+  color: var(--app-accent-fg);
+  font-size: 1.6rem;
+}
+
 /* --- Start page tiles ---------------------------------------------------------------------------------------------- */
 .app-tiles {
   display: grid;
