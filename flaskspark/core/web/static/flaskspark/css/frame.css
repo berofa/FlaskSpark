@@ -25,6 +25,7 @@
  *   --app-nav-radius, --app-nav-font-weight                  the navigation's entries
  *   --app-nav-group-color                                    the titles of the navigation's groups
  *   --app-nav-hover-bg                                       an entry under the pointer
+ *   --app-nav-disabled-opacity                               an entry that can't be used right now (aria-disabled)
  *   --app-nav-active-bg, --app-nav-active-fg,                the current entry: its background, text and the bar
  *   --app-nav-active-border, --app-nav-active-border-width   at its start
  *   --app-btn-radius, --app-btn-font-weight                  buttons (and menus)
@@ -83,6 +84,7 @@
   --app-nav-font-weight: 600;
   --app-nav-hover-bg: light-dark(rgba(15, 23, 42, 0.05), rgba(255, 255, 255, 0.06));
   --app-nav-group-color: var(--bs-fg-3);
+  --app-nav-disabled-opacity: 0.45;
   --app-nav-active-bg: var(--app-accent-tint);
   --app-nav-active-fg: var(--app-accent-fg);
   --app-nav-active-border: var(--app-accent);
@@ -284,6 +286,12 @@ body.app-body {
   &:hover {
     background: var(--app-nav-hover-bg);
     color: var(--bs-fg-body);
+  }
+
+  /* An entry that can't be used right now (Module.nav_disabled(), or a module's script): greyed out, no click. */
+  &[aria-disabled="true"] {
+    opacity: var(--app-nav-disabled-opacity);
+    pointer-events: none;
   }
 
   &.active {

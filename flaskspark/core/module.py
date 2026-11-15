@@ -221,6 +221,12 @@ class Module(ABC):
         """Jinja globals its templates need (name -> value or function)."""
         return {}
 
+    def nav_disabled(self) -> tuple[str, ...]:
+        """Hrefs of menu entries (of any module) that can't be used right now, asked for every page (e.g. pages that
+        need a device the visitor has not connected): shown greyed out and not clickable (aria-disabled). A script of
+        the module (LAYOUT) may switch them live ([aria-disabled] and tabindex="-1" on the .app-nav-link)."""
+        return ()
+
     def start_web(self, cfg) -> None:
         """Once in the web app's process (not in tests), e.g. its connections to other services."""
 

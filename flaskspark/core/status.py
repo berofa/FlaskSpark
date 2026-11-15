@@ -3,7 +3,7 @@
 who leads, how old their last heartbeat is) plus what the service itself tells (its heartbeat's details).
 
 Every tile: {key, name, service, process, unit, level ok|warning|error, summary, details: [[label, text(, full text)]],
-instances}; service: the short name (ServiceInfo.name, as in the service directory), process: the name shown outside the
+instances, href (a page with more, "" for none)}; service: the short name (ServiceInfo.name, as in the service directory), process: the name shown outside the
 code ("flaskspark-<service>", flaskspark.core.service.process_name), "" for a tile without a service.
 
 A tile is a StatusTile; every module brings its own (Module.status_tiles()), the core its tiles for the web app,
@@ -270,13 +270,14 @@ class StatusTile(ABC):
     NAME: str = ""
     SERVICE: str = ""
     UNIT: str = ""  # its systemd unit, default the ServiceInfo.unit of SERVICE (the fallback without the directory)
+    HREF: str = ""  # a page with more about it: the tile links there (e.g. a module's list page)
 
     def base(self, ctx: StatusContext) -> dict:
         """The tile before fill(): from the service's instances in the directory, or empty without a service."""
         t = {"key": self.KEY, "name": _(self.NAME), "service": self.SERVICE,
              "process": process_name(self.SERVICE) if self.SERVICE else "",
              "unit": self.UNIT or (ctx.unit_of(self.SERVICE) if self.SERVICE else ""), "level": OK,
-             "summary": "", "details": [], "instances": [], "since": None}
+             "summary": "", "details": [], "instances": [], "since": None, "href": self.HREF}
         if self.SERVICE:
             service_base(t, ctx)
         return t
@@ -385,7 +386,8 @@ def collect(cfg, now: float | None = None, ctx: StatusContext | None = None,
             log.exception("status tile %s", tile.KEY)
             t = {"key": tile.KEY, "name": _(tile.NAME), "service": tile.SERVICE,
                  "process": process_name(tile.SERVICE) if tile.SERVICE else "", "level": ERROR,
-                 "summary": _("tile failed"), "details": [], "instances": [], "since": None}
+                 "summary": _("tile failed"), "details": [], "instances": [], "since": None,
+                 "href": getattr(tile, "HREF", "")}
             problem(t, _("Error"), str(exc))
         out.append(t)
     return out

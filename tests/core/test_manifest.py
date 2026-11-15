@@ -39,6 +39,25 @@ def test_the_layout_renders_the_entry_badge_and_the_badges_of_other_modules(clie
     assert spans == ["demo-new", "demo-open", "demo-admin"]
 
 
+# --- nav_disabled() -------------------------------------------------------------------------------------------------
+def test_an_entry_a_module_disables_is_greyed_out_and_not_clickable(client, monkeypatch):
+    from flaskspark.core.web import navigation
+
+    def entry(html):
+        start = html.index('href="/demo/notes" data-nav-group=')
+        return html[start:html.index(">", start)]
+
+    assert "aria-disabled" not in entry(client.get("/").get_data(as_text=True))
+    assert 'data-nav-group="Demo"' in client.get("/").get_data(as_text=True)
+
+    monkeypatch.setattr(Module, "nav_disabled", lambda self: ("/demo/notes",))
+    html = client.get("/").get_data(as_text=True)
+    assert 'aria-disabled="true" tabindex="-1"' in entry(html)
+    with client.application.test_request_context("/"):
+        (group,) = navigation.navigation(modules.load(config.load())[1:])
+        assert group["items"][0]["disabled"] is True
+
+
 # --- SETTINGS -------------------------------------------------------------------------------------------------------
 def test_a_modules_sections_come_into_its_settings_tab_above_its_form(client):
     html = client.get("/settings").get_data(as_text=True)

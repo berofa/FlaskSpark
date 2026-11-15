@@ -68,10 +68,10 @@
               </a>
             {% endif %}
             {% for group in navigation %}
-              <div class="app-nav-group">{{ group.label }}</div>
+              <div class="app-nav-group" data-nav-group="{{ group.key }}">{{ group.label }}</div>
               {% for item in group["items"] %}
                 {% set current = item.href == nav_active %}
-                <a class="app-nav-link{% if current %} active{% endif %}" href="{{ item.href }}"{% if current %} aria-current="page"{% endif %}>
+                <a class="app-nav-link{% if current %} active{% endif %}" href="{{ item.href }}" data-nav-group="{{ group.key }}"{% if current %} aria-current="page"{% endif %}{% if item.disabled %} aria-disabled="true" tabindex="-1"{% endif %}>
                   {% if item.icon %}<i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>{% endif %}<span>{{ item.label }}</span>
                   {% for badge in item.badges %}<span class="badge rounded-pill theme-primary app-nav-badge" data-nav-badge="{{ badge }}" hidden></span>{% endfor %}
                 </a>

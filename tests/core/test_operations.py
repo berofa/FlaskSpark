@@ -358,6 +358,21 @@ def test_a_broken_tile_does_not_take_the_others():
     assert tiles[1]["level"] == "ok"
 
 
+def test_a_tile_may_link_to_a_page():
+    class Linked(status.StatusTile):
+        KEY, NAME, HREF = "linked", "Linked", "/things"
+
+        def fill(self, t, ctx):
+            t["summary"] = "fine"
+
+    class Broken(Linked):
+        def fill(self, t, ctx):
+            raise RuntimeError("boom")
+
+    linked, broken, nats = status.collect(None, ctx=ctx_with(), shown=[Linked(), Broken(), status.NatsTile()])
+    assert linked["href"] == broken["href"] == "/things" and nats["href"] == ""
+
+
 def test_the_router_tile_shows_its_heartbeat():
     details = {"routes": 2, "open": 3, "websockets": 1, "requests_per_minute": 1200, "upstream_failures": 0}
     (t,) = status.collect(config.load(), ctx=ctx_with([instance("router", details=details)]),

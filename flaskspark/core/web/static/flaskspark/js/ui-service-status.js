@@ -5,9 +5,9 @@
  *
  * Collapsed (default) it shows a one-line summary, a tile for each service with a warning or a problem and a row of
  * small dots for the services that run fine. Expanded (a click on the heading, remembered per browser) it shows a
- * tile per service: a coloured dot (ok, warning, error), the name and a short summary. Hovering or focusing a tile
- * or a dot shows the details (instances, version, memory, findings); an error row shows the error shortened, a click
- * on it the whole message in a dialog.
+ * tile per service: a coloured dot (ok, warning, error), the name and a short summary. A tile with a page of its own
+ * (href) links there. Hovering or focusing a tile or a dot shows the details (instances, version, memory, findings);
+ * an error row shows the error shortened, a click on it the whole message in a dialog.
  *
  * Data: GET `src` (default /api/status/services) every `interval` seconds while the page is visible, and at once
  * when the server announces a change on the live channel (`topic`, default ev.all.services; the guardian sends it
@@ -27,6 +27,11 @@ const TEXTS = [
 
 function esc(text) {
   return String(text ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+/** The opening tag's name and attributes of a tile or dot: a link to the tile's page (href), else a button. */
+function trigger(s) {
+  return s.href ? `a href="${esc(s.href)}"` : `button type="button"`;
 }
 
 function level(name) {
@@ -181,20 +186,20 @@ export class UiServiceStatus extends LightComponentElement {
 
   #tile(s) {
     return this.#popover(s, `
-        <button type="button" class="ui-service-status__tile ui-service-status__tile--${esc(s.level)}" aria-label="${esc(s.name)}: ${esc(level(s.level))}, ${esc(s.summary)}">
+        <${trigger(s)} class="ui-service-status__tile ui-service-status__tile--${esc(s.level)}" aria-label="${esc(s.name)}: ${esc(level(s.level))}, ${esc(s.summary)}">
           <span class="ui-service-status__dot" aria-hidden="true"></span>
           <span class="ui-service-status__name">${esc(s.name)}</span>
           <span class="ui-service-status__summary">${esc(s.summary)}</span>
-        </button>`);
+        </${s.href ? "a" : "button"}>`);
   }
 
   // The box sits above the whole row of dots at its width (only the arrow follows the dot), so it covers none of
   // the other dots and they stay reachable by hover.
   #dot(s) {
     return this.#popover(s, `
-        <button type="button" class="ui-service-status__chip ui-service-status__tile--${esc(s.level)}" title="${esc(s.name)}" aria-label="${esc(s.name)}: ${esc(level(s.level))}, ${esc(s.summary)}">
+        <${trigger(s)} class="ui-service-status__chip ui-service-status__tile--${esc(s.level)}" title="${esc(s.name)}" aria-label="${esc(s.name)}: ${esc(level(s.level))}, ${esc(s.summary)}">
           <span class="ui-service-status__dot" aria-hidden="true"></span>
-        </button>`, ` placement="top" anchor=".ui-service-status__dots" fit-anchor`);
+        </${s.href ? "a" : "button"}>`, ` placement="top" anchor=".ui-service-status__dots" fit-anchor`);
   }
 
   // "12 running" or "10 running · 1 warning · 1 problem"

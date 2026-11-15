@@ -17,8 +17,9 @@ def _translate(text: str) -> str:
 
 def navigation(manifests) -> list[dict]:
     """Groups in the order of their first entry (modules in config order), entries by position; only what the visitor
-    may use."""
+    may use. An entry a module names in Module.nav_disabled() is "disabled" (greyed out, not clickable)."""
     groups: list[dict] = []
+    disabled = {href for module in manifests for href in module.nav_disabled()}
     for module in manifests:
         for entry in module.NAVIGATION:
             if not web.can(entry.area):
@@ -29,7 +30,8 @@ def navigation(manifests) -> list[dict]:
                 group = {"key": entry.group, "label": label, "items": []}
                 groups.append(group)
             group["items"].append({"label": _translate(entry.label), "href": entry.href, "icon": entry.icon,
-                                   "position": entry.position, "badge": entry.badge})
+                                   "position": entry.position, "badge": entry.badge,
+                                   "disabled": entry.href in disabled})
     # counts of any module on an entry (Module.NAV_BADGES), each only for visitors with its own area
     extra = [b for module in manifests for b in module.NAV_BADGES if web.can(b.area)]
     for group in groups:

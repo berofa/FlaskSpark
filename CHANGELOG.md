@@ -5,6 +5,10 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added
+- Navigation: `Module.nav_disabled()` names menu entries (of any module) that can't be used right now, asked for every
+  page; the layout greys them out and makes them not clickable (`aria-disabled="true"`, `tabindex="-1"`, token
+  `--app-nav-disabled-opacity`). Groups and entries carry `data-nav-group` for the modules' navigation scripts.
+- Status tiles: `StatusTile.HREF` links a tile (and its dot) in `<ui-service-status>` to a page (`href` in the JSON).
 - Info screens: pages for a display on the wall nobody operates. A module declares them in its manifest
   (`Module.SCREENS`, `Screen(key, title, area, description, icon, mode, reload_at, position)`), any module fills them
   with `PAGE_SECTIONS["screen:<key>"]`; `/screen/<key>` (and the list `/screen`) renders them with the new layout
