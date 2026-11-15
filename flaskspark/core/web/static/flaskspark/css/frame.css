@@ -832,6 +832,9 @@ ui-table { --ui-table-last-row-border-width: var(--app-table-last-row-border-wid
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
+  /* An invalid field (the component sets [invalid]) keeps Bootstrap's red border, which the rule above would hide. */
+  &[invalid]::part(control) { border-color: var(--bs-danger-border); }
+
   &::part(label) { font-size: 0.875em; }
 }
 
