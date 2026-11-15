@@ -51,6 +51,17 @@ async function saveSettings(form, values) {
 /** The tables of the page: their controls live in the <ui-table>'s shadow tree (see shadow-paths.js). */
 const tables = () => document.querySelectorAll("ui-table");
 
+/** The matrix as the server has it now (an area's switch changes its pages, a page its area's): every switch. */
+function showMatrix(data) {
+  for (const role of data.roles || []) {
+    for (const check of inTables(tables(), `ui-check[data-role="${role.id}"][data-area]`)) {
+      const key = check.dataset.area;
+      check.checked = Boolean(role.allowed?.[key]);
+      check.indeterminate = Boolean(role.partly?.[key]);
+    }
+  }
+}
+
 async function accessChanged(event) {
   const check = findInPath(event.composedPath(), "ui-check[data-role][data-area]");
   if (!check) return;
@@ -61,6 +72,7 @@ async function accessChanged(event) {
       area: check.dataset.area,
       allowed: Boolean(check.checked),
     });
+    showMatrix(data);
     notice(data.message || t("Saved"));
   } catch (error) {
     check.checked = !check.checked;

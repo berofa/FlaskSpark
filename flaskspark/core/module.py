@@ -55,7 +55,9 @@ class Route:
 @dataclass(frozen=True)
 class Area:
     """An access area (with sign-in: role x area, flaskspark.core.web.access.RoleAccess). defaults: the names of the
-    roles that get it until an admin changes it. start: the area's start page (default: its first navigation entry)."""
+    roles that get it until an admin changes it. start: the area's start page (default: its first navigation entry).
+    parent: the key of the area this one is a page of (e.g. "warehouse.tracking" of "warehouse"): its own right, listed
+    right below its area on «Settings › Access»; a new one starts with the rights its area has then."""
 
     key: str
     label: str
@@ -63,7 +65,8 @@ class Area:
     defaults: frozenset[str] = frozenset()
     start: str = ""
     position: int = 100  # order of the areas (matrix, start page: the first one a visitor may use); equal ones in the
-    # order of the modules
+    # order of the modules; a page (parent) among the pages of its area
+    parent: str = ""
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,5 @@
 {% extends "layouts/main.html" %}
-{#- The profile (signed in; without any sign-in, auth: none, only the modules' sections): the language, the modules' sections (PAGE_SECTIONS["profile"]) and «Accounts»
+{#- The profile (signed in; without any sign-in, auth: none, only the modules' sections): the modules' sections (PAGE_SECTIONS["profile"]) and «Accounts»
     (flaskspark.core.accounts) in <ui-user-accounts> (flaskspark/ui-user-accounts.js, JSON API /api/accounts). -#}
 {% block page_title %}{{ _("Profile") }}{% endblock %}
 {% block content %}
@@ -9,19 +9,6 @@
     </div>
   </div>
   <div class="app-stack">
-    {% if languages %}
-      {#- The user's language (the personal setting core.language): the same on every device; the sidebar's language
-          buttons change it too. Picking one goes through /language/<code> like the sidebar. #}
-      <ui-card class="d-block" heading="{{ _('Language') }}" icon="translate" data-profile-language>
-        <ui-select label="{{ _('Language of the pages') }}" help="{{ _('Kept for your account, on every device.') }}"
-                   value="{{ language_choice }}" data-language-select>
-          {% for option in languages %}
-            <option value="{{ option.code }}" data-href="{{ url_for('set_language', code=option.code, next=request.path) }}"
-                    {%- if option.code == language_choice %} selected{% endif %}>{{ option.label }}</option>
-          {% endfor %}
-        </ui-select>
-      </ui-card>
-    {% endif %}
     {% for template in sections %}{% include template %}{% endfor %}
     {% if accounts %}
       <ui-card class="d-block">
@@ -31,15 +18,6 @@
   </div>
 {% endblock %}
 {% block page_scripts %}
-  {% if languages %}
-    <script type="module">
-      const select = document.querySelector("[data-language-select]");
-      select?.addEventListener("change", () => {
-        const option = [...select.querySelectorAll("option")].find((o) => o.value === select.value);
-        if (option) location.assign(option.dataset.href);
-      });
-    </script>
-  {% endif %}
   {% if accounts %}
     <script type="module" src="{{ url_for('static', filename='flaskspark/js/ui-user-accounts.js') }}"></script>
   {% endif %}

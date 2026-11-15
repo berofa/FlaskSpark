@@ -89,7 +89,7 @@ def test_access_matrix_api(sso):
     data = admin.get("/api/settings/access").get_json()
     row = next(r for r in data["roles"] if r["id"] == guests)
     assert row["allowed"] == {"demo": False}
-    assert data["areas"] == [{"key": "demo", "label": "Demo", "description": "The demo pages"}]
+    assert data["areas"] == [{"key": "demo", "label": "Demo", "description": "The demo pages", "parent": ""}]
 
     response = admin.post("/api/settings/access", json={"role_id": guests, "area": "demo", "allowed": True})
     assert response.status_code == 200 and response.get_json()["message"] == "Saved."
@@ -252,3 +252,118 @@ def test_nav_badges_follow_their_area(sso):
     html = client_for(sso, "user").get("/demo/notes").get_data(as_text=True)
     spans = [part.split('"')[0] for part in html.split('data-nav-badge="')[1:]]
     assert spans == ["demo-new", "demo-open"]  # not the one of the admins
+
+
+def _with_app_config(monkeypatch, **sections):
+    from flaskspark.core import config
+
+    load = config.load
+
+    def patched(path=None):
+        cfg = load(path)
+        data = dict(cfg.data)
+        for key, values in sections.items():
+            data[key] = {**cfg.section(key), **values}
+        return config.Config(data, cfg.defaults)
+
+    monkeypatch.setattr(config, "load", patched)
+
+
+def test_the_user_is_a_button_to_the_profile_above_the_colour_mode(sso, monkeypatch):
+    html = client_for(sso, "user").get("/").get_data(as_text=True)
+    user = html.index("data-signed-in-user")
+    assert user < html.index('data-theme-value="system"')  # above the colour mode
+    assert "<ui-button" in html[html.rindex("<", 0, user) - 40:user]  # a button like the others
+
+
+def test_an_app_may_leave_out_sign_out(sso, monkeypatch):
+    _with_app_config(monkeypatch, app={"sign_out": False})
+    html = client_for(sso, "user").get("/").get_data(as_text=True)
+    assert 'href="/auth/logout"' not in html and "data-sign-out" not in html
+
+
+def test_the_services_for_everyone_when_the_app_says_so(sso, monkeypatch):
+    user = client_for(sso, "user")
+    json_only = {"Accept": "application/json"}
+    assert user.get("/api/status/services", headers=json_only).status_code == 403
+    assert "<ui-service-status" not in user.get("/").get_data(as_text=True)
+    _with_app_config(monkeypatch, status={"everyone": True})
+    assert user.get("/api/status/services", headers=json_only).status_code == 200
+    assert "<ui-service-status" in user.get("/").get_data(as_text=True)
+
+
+
+def test_pages_of_an_area_follow_it():
+    from types import SimpleNamespace
+
+    from flaskspark.core.module import Area
+    from flaskspark.core.web.access import areas
+
+    first = SimpleNamespace(AREAS=(Area("store", "Store", position=20), Area("store.slips", "Slips", parent="store"),
+                                   Area("store.prices", "Prices", parent="store", position=10)))
+    second = SimpleNamespace(AREAS=(Area("plan", "Plan", position=10),))
+    # the areas by position, each area's pages (parent) right below it, by their position
+    assert list(areas([first, second])) == ["plan", "store", "store.prices", "store.slips"]
+
+
+def test_a_new_page_area_starts_with_the_rights_of_its_area(sso):
+    from types import SimpleNamespace
+
+    from flaskspark.core import db
+    from flaskspark.core.models import RoleArea
+    from flaskspark.core.module import Area
+    from flaskspark.core.web import EXTENSION
+
+    access = sso.extensions[EXTENSION]
+    users, guests = sso.test_roles["Users"], sso.test_roles["Guests"]
+    before = access.manifests
+    page = SimpleNamespace(AREAS=(Area("demo.page", "Page", parent="demo"),))
+    access.manifests = (*before, page)
+    try:
+        with sso.app_context():
+            access.ensure_defaults()
+            cells = access.matrix()["roles"]
+        allowed = {r["id"]: r["allowed"]["demo.page"] for r in cells}
+        assert allowed[users] is True and allowed[guests] is False  # as «demo» (Users by default)
+    finally:
+        access.manifests = before
+        with db.session() as s:
+            s.execute(db.delete(RoleArea).where(RoleArea.area == "demo.page"))
+
+
+def test_the_matrix_has_the_roles_as_columns_and_the_areas_as_rows(sso):
+    html = client_for(sso, "admin").get("/settings").get_data(as_text=True)
+    table = html[html.index("data-access-url"):]
+    head = table[:table.index("</thead>")]
+    assert "Administrators" in head and "Guests" in head  # the roles are the columns
+    assert '<tr data-area-row="demo"' in table  # an area per row
+
+
+def test_the_switch_of_an_area_switches_its_pages_and_shows_them(sso):
+    from types import SimpleNamespace
+
+    from flaskspark.core import db
+    from flaskspark.core.models import RoleArea
+    from flaskspark.core.module import Area
+    from flaskspark.core.web import EXTENSION
+
+    access = sso.extensions[EXTENSION]
+    guests = sso.test_roles["Guests"]
+    before = access.manifests
+    pages = SimpleNamespace(AREAS=(Area("demo.one", "One", parent="demo"), Area("demo.two", "Two", parent="demo")))
+    access.manifests = (*before, pages)
+    try:
+        with sso.test_request_context():
+            access.ensure_defaults()
+            access.set_allowed(guests, "demo", True)  # the area's switch: every page of it
+            row = next(r for r in access.matrix()["roles"] if r["id"] == guests)
+            assert row["allowed"]["demo.one"] and row["allowed"]["demo.two"] and row["allowed"]["demo"]
+            access.set_allowed(guests, "demo.two", False)  # one page off: the area's switch is partly on
+            row = next(r for r in access.matrix()["roles"] if r["id"] == guests)
+            assert row["allowed"]["demo"] is False and row["partly"]["demo"] is True
+    finally:
+        access.manifests = before
+        with sso.test_request_context():
+            access.set_allowed(guests, "demo", False)
+        with db.session() as s:
+            s.execute(db.delete(RoleArea).where(RoleArea.area.in_(("demo.one", "demo.two"))))

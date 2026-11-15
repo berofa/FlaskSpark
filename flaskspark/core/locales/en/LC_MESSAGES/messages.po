@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FlaskSpark \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-15 01:21+0100\n"
+"POT-Creation-Date: 2026-11-16 00:08+0100\n"
 "PO-Revision-Date: 2026-11-13 16:19+0100\n"
 "Last-Translator: FlaskSpark\n"
 "Language: en\n"
@@ -540,9 +540,6 @@ msgstr ""
 msgid "Joined."
 msgstr ""
 
-msgid "Kept for your account, on every device."
-msgstr ""
-
 msgid "Kind"
 msgstr ""
 
@@ -550,9 +547,6 @@ msgid "Language"
 msgstr ""
 
 msgid "Language (e.g. python)"
-msgstr ""
-
-msgid "Language of the pages"
 msgstr ""
 
 msgid "Language: browser default"
@@ -1058,7 +1052,9 @@ msgstr ""
 msgid "The order is not readable."
 msgstr ""
 
-msgid "The role comes from the sign-in (the identity provider's groups). An area without the right is invisible and closed."
+msgid ""
+"The role comes from the sign-in (the identity provider's groups). An area or page without the right is invisible and "
+"closed; a page has its own right, independent of its area."
 msgstr ""
 
 msgid "The role of each user. Changes apply at once."

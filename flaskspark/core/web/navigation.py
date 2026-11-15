@@ -130,6 +130,10 @@ def context(cfg, theme, manifests, locales: list[str]) -> dict:
         "home_tiles": lambda: tiles(manifests),
         "module_layouts": [t for m in manifests for t in m.LAYOUT],
         "page_sections": lambda page: page_sections(manifests, page),
+        # config.yaml status.everyone: the services' status in the sidebar for everyone (else admins only)
+        "status_for_me": lambda: web.can(web.ADMIN) or bool(_config.load().section("status").get("everyone", False)),
+        # config.yaml app.sign_out: false leaves «Sign out» out of the sidebar (e.g. a sign-in that is the company's)
+        "sign_out": lambda: bool(_config.load().section("app").get("sign_out", True)),
         # config.yaml app.home_title: false leaves the start page's title (the app's name) out
         "home_title": lambda: bool(_config.load().section("app").get("home_title", True)),
         "can": web.can,

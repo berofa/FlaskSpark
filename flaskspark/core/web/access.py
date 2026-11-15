@@ -35,12 +35,20 @@ def background() -> bool:
 
 def areas(manifests) -> dict:
     """Every area of the core and the enabled modules: key -> Area, by Area.position (equal ones in the order of the
-    modules)."""
+    modules), the pages of an area (Area.parent) right below it, by their position."""
     out = {}
     for module in manifests:
         for area in module.AREAS:
             out.setdefault(area.key, area)
-    return dict(sorted(out.items(), key=lambda item: item[1].position))
+    ordered = sorted(out.items(), key=lambda item: item[1].position)
+    tops = [(k, a) for k, a in ordered if not a.parent or a.parent not in out]
+    result = {}
+    for key, area in tops:
+        result[key] = area
+        for child_key, child in ordered:
+            if child.parent == key:
+                result[child_key] = child
+    return result
 
 
 def start_of(area_key: str, manifests) -> str | None:
@@ -272,29 +280,48 @@ class RoleAccess(Access):
                 for row in rows:
                     if row.role_id not in ids:
                         s.delete(row)
+                cells = {(r.role_id, r.area): bool(r.allowed) for r in rows}
                 for role in roles:
                     for key, area in known.items():
-                        if (role.id, key) not in have:
-                            s.add(RoleArea(role_id=role.id, area=key,
-                                           allowed=bool(role.is_admin) or role.name in area.defaults))
+                        if (role.id, key) in have:
+                            continue
+                        allowed = bool(role.is_admin) or role.name in area.defaults
+                        if area.parent in known:  # a new page starts with the rights its area has now
+                            parent = known[area.parent]
+                            allowed = bool(role.is_admin) or cells.get((role.id, area.parent),
+                                                                       role.name in parent.defaults)
+                        s.add(RoleArea(role_id=role.id, area=key, allowed=allowed))
+                        cells[(role.id, key)] = allowed
         except Exception as exc:  # noqa: BLE001 - no tables yet: the defaults apply until the migration
             log.warning("access: the role x area matrix is not ready (%s); run the migrations", exc)
 
     def matrix(self) -> dict:
-        """Roles x areas for «Settings › Access»: {areas: [{key, label, description}], roles: [{id, name, admin,
+        """Roles x areas for «Settings › Access»: {areas: [{key, label, description, parent}], roles: [{id, name, admin,
         allowed: {key: bool}}]} (labels: the source texts)."""
         known = areas(self.manifests)
         cells = self._cells()
         return {
-            "areas": [{"key": k, "label": a.label, "description": a.description} for k, a in known.items()],
-            "roles": [{"id": r.id, "name": r.name, "admin": bool(r.is_admin),
-                       "allowed": {k: bool(r.is_admin) or cells.get((r.id, k), r.name in a.defaults)
-                                   for k, a in known.items()}}
-                      for r in self._roles()],
+            "areas": [{"key": k, "label": a.label, "description": a.description, "parent": a.parent}
+                      for k, a in known.items()],
+            "roles": [self._role_row(r, known, cells) for r in self._roles()],
         }
 
+    @staticmethod
+    def _role_row(role, known: dict, cells: dict) -> dict:
+        """A role's row of the matrix: allowed per area; an area with pages (Area.parent) is allowed when all its pages
+        are, and partly when only some are."""
+        allowed = {k: bool(role.is_admin) or cells.get((role.id, k), role.name in a.defaults) for k, a in known.items()}
+        partly = {}
+        for key in known:
+            pages = [allowed[k] for k, a in known.items() if a.parent == key]
+            if pages:
+                allowed[key] = all(pages)
+                partly[key] = any(pages) and not all(pages)
+        return {"id": role.id, "name": role.name, "admin": bool(role.is_admin), "allowed": allowed, "partly": partly}
+
     def set_allowed(self, role_id: int, area: str, allowed: bool) -> None:
-        """Switch one cell of the matrix; an admin role cannot be changed (it may always)."""
+        """Switch one cell of the matrix; an admin role cannot be changed (it may always). The cell of an area with pages
+        (Area.parent) switches all its pages; a page's cell keeps its area's cell in step (on when all pages are)."""
         from flaskspark import db as flask_db
         from flaskspark.core import db
         from flaskspark.core.models import RoleArea
@@ -305,12 +332,26 @@ class RoleAccess(Access):
             raise AccessError(N_("Unknown role or area."))
         if role.is_admin:
             raise AccessError(N_("Administrators may always use everything."))
+        known = areas(self.manifests)
+        pages = [k for k, a in known.items() if a.parent == area]
         with db.session() as s:
-            row = s.scalars(db.select(RoleArea).where(RoleArea.role_id == role.id, RoleArea.area == area)).first()
-            if row is None:
-                row = RoleArea(role_id=role.id, area=area)
-                s.add(row)
-            row.allowed = bool(allowed)
+            def put(key: str, value: bool) -> None:
+                row = s.scalars(db.select(RoleArea).where(RoleArea.role_id == role.id, RoleArea.area == key)).first()
+                if row is None:
+                    row = RoleArea(role_id=role.id, area=key)
+                    s.add(row)
+                row.allowed = bool(value)
+
+            put(area, allowed)
+            for page in pages:
+                put(page, allowed)
+            parent = known[area].parent
+            if parent in known:
+                s.flush()
+                siblings = [k for k, a in known.items() if a.parent == parent]
+                rows = {r.area: bool(r.allowed) for r in s.scalars(
+                    db.select(RoleArea).where(RoleArea.role_id == role.id, RoleArea.area.in_(siblings)))}
+                put(parent, all(rows.get(k, False) for k in siblings))
         if has_request_context():
             g.pop("_core_role_areas", None)
 

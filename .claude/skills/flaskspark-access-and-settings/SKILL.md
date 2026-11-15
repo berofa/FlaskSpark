@@ -33,7 +33,9 @@ area = ADMIN                       # Admin-Rollen
 area = {"GET": "notes", "*": ADMIN}
 ```
 
-- Bereiche: `Area(key, label, description, defaults=frozenset({"Users"}), start="/notes", position=100)`;
+- Bereiche: `Area(key, label, description, defaults=frozenset({"Users"}), start="/notes", position=100, parent="")`;
+  `parent` macht eine Seite eines Bereichs mit eigenem Recht (z.B. `"lager.tracking"` von `"lager"`; in der Matrix
+  eingerückt unter dem Bereich, ein neuer übernimmt die Rechte des Bereichs; Views und Navigation der Seite tragen ihn);
   `defaults` = Rollennamen, die den Bereich haben, bis ein Admin die Matrix ändert («Settings › Access»,
   Tabelle `core_role_area`). Navigation, Kacheln, Push-Themen tragen ebenfalls einen Bereich.
 - In Code und Templates: `can("notes")`, `user_id()` (0 ohne Anmeldung), `user_name()`, `roles_with("notes")`

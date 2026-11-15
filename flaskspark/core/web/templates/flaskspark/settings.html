@@ -80,31 +80,36 @@
         <ui-tab-panel heading="{{ _('Access') }}" name="access">
           <div data-access-url="{{ url_for('core_settings_access') }}">
             <p class="small fg-3 mb-3">{{ _("Which role may use which area. Changes apply at once.") }}</p>
-            <ui-table size="sm" valign="middle" responsive><table class="mb-0">
+            {#- The roles are the columns, the areas the rows (many areas fit); the pages of an area (Area.parent) right
+                below it, indented. #}
+            <ui-table size="sm" valign="middle" responsive><table class="mb-0 app-access-matrix">
               <thead>
                 <tr>
-                  <th>{{ _("Role") }}</th>
-                  {% for area in matrix.areas %}
-                    <th title="{{ area.description }}">{{ area.label }}{% if area.description %}<br><small class="fw-normal fg-3">{{ area.description }}</small>{% endif %}</th>
+                  <th>{{ _("Area") }}</th>
+                  {% for role in matrix.roles %}
+                    <th class="text-center" data-role-column="{{ role.id }}">{{ role.name }}{% if role.admin %}<br><small class="fw-normal fg-3">{{ _("always everything") }}</small>{% endif %}</th>
                   {% endfor %}
                 </tr>
               </thead>
               <tbody>
-                {% for role in matrix.roles %}
-                  <tr data-role-row="{{ role.id }}">
-                    <td class="fw-semibold text-nowrap">{{ role.name }}{% if role.admin %}<br><small class="fw-normal fg-3">{{ _("always everything") }}</small>{% endif %}</td>
-                    {% for area in matrix.areas %}
-                      <td>
+                {% for area in matrix.areas %}
+                  <tr data-area-row="{{ area.key }}"{% if area.parent %} class="app-access-page"{% endif %}>
+                    <th scope="row" class="fw-normal{{ ' ps-4' if area.parent }}" title="{{ area.description }}">
+                      <span class="{{ 'fg-2' if area.parent else 'fw-semibold' }}">{{ area.label }}</span>
+                      {% if area.description %}<br><small class="fg-3">{{ area.description }}</small>{% endif %}
+                    </th>
+                    {% for role in matrix.roles %}
+                      <td class="text-center">
                         <ui-check switch data-role="{{ role.id }}" data-area="{{ area.key }}"
                                   aria-label="{{ _('%(area)s for %(role)s', area=area.label, role=role.name) }}"
-                                  {% if role.allowed[area.key] %}checked{% endif %} {% if role.admin %}disabled{% endif %}></ui-check>
+                                  {% if role.allowed[area.key] %}checked{% endif %} {% if role.partly[area.key] %}indeterminate{% endif %} {% if role.admin %}disabled{% endif %}></ui-check>
                       </td>
                     {% endfor %}
                   </tr>
                 {% endfor %}
               </tbody>
             </table></ui-table>
-            <p class="small fg-3 mt-3 mb-0">{{ _("The role comes from the sign-in (the identity provider's groups). An area without the right is invisible and closed.") }}</p>
+            <p class="small fg-3 mt-3 mb-0">{{ _("The role comes from the sign-in (the identity provider's groups). An area or page without the right is invisible and closed; a page has its own right, independent of its area.") }}</p>
           </div>
         </ui-tab-panel>
       {% endif %}

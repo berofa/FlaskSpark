@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added
+- Access: pages of an area (`Area(..., parent="<area>")`), each with its own right, listed indented right below their
+  area on «Settings › Access»; a new one starts with the rights its area has then. The area's switch switches all its
+  pages and shows whether all (on), some (half) or none are allowed.
+- Layout: `.app-third` on children of `.app-stack` puts them three in a row (two where narrower), e.g. cards of
+  several modules on the start page.
+- Info screens: two or three sections with `.app-screen-aside` share the column on the right one below the other,
+  each an equal share of its height.
 - Pages of sections (`PAGE_SECTIONS`): `Section(template, position)` places a section of a module elsewhere than at its
   module's `POSITION` (`flaskspark.core.module.page_sections()`, used by the start page, the profile and the info
   screens), e.g. between two sections of another module.
@@ -118,6 +125,12 @@ All notable changes to this project are documented in this file.
   Icons' sprite.
 
 ### Changed
+- «Settings › Access»: the roles are the columns, the areas (and their pages) the rows, so many areas fit.
+- Sidebar: the signed-in user is a button to the profile above the colour mode (the separate profile button is gone);
+  `config.yaml` `app.sign_out: false` leaves «Sign out» out, `status.everyone: true` shows the services' status to
+  everyone (and opens `/api/status/services` to them).
+- The profile has no language of its own any more (the sidebar's buttons keep a signed-in user's language on every
+  device); the sidebar's «Browser default» comes first, before the languages.
 - `flaskspark.core.i18n.gettext()`/`translations()`: the catalogues are cached per process and language and loaded
   again when a `.mo` file changes (mtime), instead of looking up the configuration and the modules on every call
   (in the demo app 6–8 ms per call before, about 0.002–0.015 ms now).

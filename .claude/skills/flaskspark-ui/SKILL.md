@@ -89,7 +89,8 @@ Ziel: alles möglichst generisch, und was spezifisch ist, sauber getrennt dort, 
   Container (`cqi`), nicht in festen `px`.
 - Helfer des Kerns: `app-screen-section`, `app-screen-section-head`, `app-screen-section-title` (Icon davor),
   `app-screen-fill` (nimmt die restliche Höhe), `app-screen-aside` (Spalte rechts über die ganze Höhe, Breite
-  `--app-screen-aside-width`, Standard 28 %; die anderen Abschnitte bleiben links untereinander; was nicht Platz hat,
+  `--app-screen-aside-width`, Standard 28 %; zwei oder drei solche Abschnitte teilen sich die Spalte untereinander zu
+  gleichen Teilen; die anderen Abschnitte bleiben links untereinander; was nicht Platz hat,
   wird abgeschnitten).
 - `<html data-screen>` blendet aus: `ui-button`, `ui-button-group`, `ui-dialog`, `button`, `.btn`, `.app-toolbar`,
   `.app-page-actions` …; in den Web Components deren eigene Bedienelemente (`--ui-screen: on`). Opt-out

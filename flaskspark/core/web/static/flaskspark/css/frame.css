@@ -347,12 +347,13 @@ body.app-body {
   min-inline-size: 0;
 }
 
+/* The signed-in user (or the workstation's profile) as a button over the whole width, the name cut with «…». */
 .app-sidebar-user {
-  flex: 1 1 auto;
+  display: block;
+  inline-size: 100%;
   min-inline-size: 0;
-  overflow: hidden;
-  color: var(--bs-secondary-color);
-  white-space: nowrap;
+
+  &::part(button) { justify-content: flex-start; inline-size: 100%; overflow: hidden; white-space: nowrap; }
 }
 
 /* --- Top bar: only below lg (hamburger + logo) --------------------------------------------------------------------- */
@@ -537,6 +538,20 @@ html.theme-dark {
   /* A child with .app-area begins a group of sections with a title of its own (e.g. «Hardware» on the start page):
      more room above it than between the cards of a group (not above the first one). */
   > .app-area ~ .app-area { margin-block-start: 1.5rem; }
+
+  /* Children with .app-third share a row three by three (two by two where the container is narrower), e.g. the cards
+     of several modules on the start page; every other child spans the whole width. */
+  &:has(> .app-third) {
+    @container (min-width: 700px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      > :not(.app-third) { grid-column: 1 / -1; }
+    }
+
+    @container (min-width: 1100px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
 }
 
 /* The title of such an area (.app-section-title in it) a little larger than a section's. */
@@ -1103,7 +1118,9 @@ body.app-screen-body {
 
 /* The sections of the modules, one below the other; a section with .app-screen-fill takes the height that is left. A
    section with .app-screen-aside is a column on the right instead (--app-screen-aside-width, the whole height; what
-   it holds beyond the height is cut off): the others stay one below the other on the left. */
+   it holds beyond the height is cut off): the others stay one below the other on the left. Two or three such sections
+   share the column one below the other (in their order), each an equal share of its height; a hidden one does not
+   count. */
 .app-screen-sections {
   position: relative;
   display: flex;
@@ -1120,6 +1137,25 @@ body.app-screen-body {
     inset-inline-end: 0;
     inline-size: var(--app-screen-aside-width);
     overflow: hidden;
+  }
+
+  /* (a hidden one, e.g. a section with nothing to show, leaves the column to the others) */
+  &:has(> .app-screen-aside:not([hidden]) ~ .app-screen-aside:not([hidden])) {
+    --app-screen-aside-share: calc((100% - var(--app-screen-gap)) / 2);
+
+    > .app-screen-aside { inset-block: auto; block-size: var(--app-screen-aside-share); }
+    > :nth-child(1 of .app-screen-aside:not([hidden])) { inset-block-start: 0; }
+    > :nth-child(2 of .app-screen-aside:not([hidden])) {
+      inset-block-start: calc(var(--app-screen-aside-share) + var(--app-screen-gap));
+    }
+  }
+
+  &:has(> .app-screen-aside:not([hidden]) ~ .app-screen-aside:not([hidden]) ~ .app-screen-aside:not([hidden])) {
+    --app-screen-aside-share: calc((100% - 2 * var(--app-screen-gap)) / 3);
+
+    > :nth-child(3 of .app-screen-aside:not([hidden])) {
+      inset-block-start: calc(2 * (var(--app-screen-aside-share) + var(--app-screen-gap)));
+    }
   }
 }
 

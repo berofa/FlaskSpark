@@ -295,8 +295,11 @@ def test_a_signed_in_users_language_is_kept_in_the_profile(sso):
         assert _lang(html) == "de" and 'aria-pressed="true">DE<' in html
         laptop.set_cookie("lang", "en")
         assert _lang(laptop.get("/demo/notes").get_data(as_text=True)) == "de"  # profile > cookie
-        page = laptop.get("/profile").get_data(as_text=True)
-        assert "data-profile-language" in page and 'value="de"' in page and "Sprache der Seiten" in page
+        # the profile has no language of its own: the sidebar's buttons are the place (browser default first)
+        page = laptop.get("/profile").get_data(as_text=True) if laptop.get("/profile").status_code == 200 else ""
+        assert "data-profile-language" not in page
+        buttons = html[html.index('label="Sprache"'):]
+        assert buttons.index("bi-globe2") < min(buttons.index(">DE<"), buttons.index(">EN<"))
         # «browser default» removes the choice: the cookie and the browser decide again
         laptop.get("/language/system")
         assert _lang(client_for(sso, "user").get("/demo/notes").get_data(as_text=True)) == "en"

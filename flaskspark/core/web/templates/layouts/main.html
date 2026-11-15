@@ -79,8 +79,18 @@
             {% endfor %}
           </nav>
           <div class="app-sidebar-footer">
-            {% if can("admin") %}{% include "flaskspark/service-status.html" %}{% endif %}
+            {% if status_for_me() %}{% include "flaskspark/service-status.html" %}{% endif %}
             {% block sidebar_footer %}{% endblock %}
+            {#- The signed-in user as a button to their profile (without a profile: just the name); without a sign-in the
+                profile of the workstation, when there is one. #}
+            {% if access.signed_in and access.user_name() %}
+              <ui-button class="nav-btn app-sidebar-user{% if profile_link and request.path == profile_link %} active{% endif %}" variant="secondary" outline size="sm"
+                         {% if profile_link %}href="{{ profile_link }}" data-profile-link title="{{ _('Profile') }}"{% else %}disabled{% endif %}
+                         label="{{ access.user_name() }}" data-signed-in-user><i class="bi bi-person-circle" aria-hidden="true"></i> <span class="text-truncate">{{ access.user_name() }}</span></ui-button>
+            {% elif profile_link %}
+              <ui-button class="nav-btn app-sidebar-user{% if request.path == profile_link %} active{% endif %}" variant="secondary" outline size="sm"
+                         href="{{ profile_link }}" data-profile-link title="{{ _('Profile') }}" label="{{ _('Profile') }}"><i class="bi bi-person-gear" aria-hidden="true"></i> {{ _("Profile") }}</ui-button>
+            {% endif %}
             <ui-button-group size="sm" label="{{ _('Colour mode') }}">
               <ui-button class="nav-btn app-mode-btn" variant="secondary" outline data-theme-value="system" title="{{ _('System') }}" label="{{ _('Colour mode: system') }}"><i class="bi bi-circle-half" aria-hidden="true"></i></ui-button>
               <ui-button class="nav-btn app-mode-btn" variant="secondary" outline data-theme-value="light" title="{{ _('Light') }}" label="{{ _('Colour mode: light') }}"><i class="bi bi-sun" aria-hidden="true"></i></ui-button>
@@ -88,30 +98,24 @@
             </ui-button-group>
             {% if locales | length > 1 %}
               <ui-button-group size="sm" label="{{ _('Language') }}">
+                <ui-button class="nav-btn app-lang-btn" variant="secondary" outline
+                           href="{{ url_for('set_language', code='system', next=request.full_path.rstrip('?')) }}"
+                           title="{{ _('Browser default') }}" label="{{ _('Language: browser default') }}"{% if language_cookie == 'system' %} active aria-pressed="true"{% endif %}><i class="bi bi-globe2" aria-hidden="true"></i></ui-button>
                 {% for code in locales %}
                   <ui-button class="nav-btn app-lang-btn" variant="secondary" outline
                              href="{{ url_for('set_language', code=code, next=request.full_path.rstrip('?')) }}"
                              title="{{ code | upper }}" label="{{ _('Language') }}: {{ code | upper }}"{% if code == language_cookie %} active aria-pressed="true"{% endif %}>{{ code | upper }}</ui-button>
                 {% endfor %}
-                <ui-button class="nav-btn app-lang-btn" variant="secondary" outline
-                           href="{{ url_for('set_language', code='system', next=request.full_path.rstrip('?')) }}"
-                           title="{{ _('Browser default') }}" label="{{ _('Language: browser default') }}"{% if language_cookie == 'system' %} active aria-pressed="true"{% endif %}><i class="bi bi-globe2" aria-hidden="true"></i></ui-button>
               </ui-button-group>
             {% endif %}
-            {% if admin_links or access.signed_in or profile_link %}
-              {#- The admins' pages (e.g. «Settings») and the signed-in user with «Sign out». #}
+            {% if admin_links or (access.signed_in and sign_out()) %}
+              {#- The admins' pages (e.g. «Settings») and «Sign out» (unless config.yaml app.sign_out: false). #}
               <div class="app-sidebar-account">
-                {% if access.signed_in and access.user_name() %}
-                  <span class="app-sidebar-user small text-truncate" data-signed-in-user><i class="bi bi-person-circle" aria-hidden="true"></i> {{ access.user_name() }}</span>
-                {% endif %}
                 <ui-button-group size="sm" label="{{ _('Account') }}">
-                  {% if profile_link %}
-                    <ui-button class="nav-btn{% if request.path == profile_link %} active{% endif %}" variant="secondary" outline href="{{ profile_link }}" title="{{ _('Profile') }}" label="{{ _('Profile') }}" data-profile-link><i class="bi bi-person-gear" aria-hidden="true"></i></ui-button>
-                  {% endif %}
                   {% for link in admin_links %}
                     <ui-button class="nav-btn{% if request.path == link.href %} active{% endif %}" variant="secondary" outline href="{{ link.href }}" title="{{ link.label }}" label="{{ link.label }}"><i class="bi bi-{{ link.icon }}" aria-hidden="true"></i></ui-button>
                   {% endfor %}
-                  {% if access.signed_in %}
+                  {% if access.signed_in and sign_out() %}
                     <ui-button class="nav-btn" variant="secondary" outline href="{{ access.logout_url }}" title="{{ _('Sign out') }} ({{ access.user_name() }})" label="{{ _('Sign out') }}" data-sign-out><i class="bi bi-box-arrow-right" aria-hidden="true"></i></ui-button>
                   {% endif %}
                 </ui-button-group>

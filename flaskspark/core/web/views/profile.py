@@ -1,5 +1,4 @@
-"""The profile of the signed-in user: the language (with more than one in `app.locales`; flaskspark.core.web.language),
-the sections the modules add (Module.PAGE_SECTIONS["profile"], of the modules the visitor may use) and «Accounts»
+"""The profile of the signed-in user: the sections the modules add (Module.PAGE_SECTIONS["profile"], of the modules the visitor may use) and «Accounts»
 (flaskspark.core.accounts). Only with sign-in (RoleAccess) and only when there is something to show: a section, or a
 loaded module names account types (Module.ACCOUNT_TYPES); else the page answers 404 (the sidebar's language buttons
 keep a signed-in user's language then), and the accounts' API whenever no type is offered. A type is offered to users
@@ -85,12 +84,6 @@ def _signed_in() -> bool:
 def accounts_available() -> bool:
     """The visitor has accounts: signed in, and some module they may use uses accounts."""
     return bool(_signed_in() and offered())
-
-
-def languages(cfg=None) -> list[str]:
-    """The languages a user may choose in the profile (config.yaml `app.locales`; none with a single language)."""
-    found = list((cfg or config.load()).section("app").get("locales") or ["en"])
-    return found if len(found) > 1 else []
 
 
 def _without_sign_in() -> bool:
@@ -223,12 +216,8 @@ class ProfilePageView(FlaskSparkMethodView):
     def get(self):
         if not available():
             abort(404)
-        from .. import language
-
-        locales = languages() if _signed_in() else []  # without sign-in the sidebar's buttons choose the language
-        return render_template("flaskspark/profile.html", sections=sections(), accounts=accounts_available(),
-                               languages=language.options(locales) if locales else [],
-                               language_choice=language.choice(locales) if locales else "")
+        # the language: the sidebar's buttons (kept for a signed-in user, on every device)
+        return render_template("flaskspark/profile.html", sections=sections(), accounts=accounts_available())
 
 
 class AccountsApiView(FlaskSparkMethodView):
