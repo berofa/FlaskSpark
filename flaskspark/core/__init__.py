@@ -30,4 +30,9 @@ modules in src/modules/) keeps working.
 The README of FlaskSpark («Modular apps») describes the structure.
 """
 
-__version__ = "0.1.0"
+from importlib.metadata import PackageNotFoundError, version as _package_version
+
+try:
+    __version__ = _package_version("FlaskSpark")  # the version in pyproject.toml
+except PackageNotFoundError:  # a source tree that is not installed
+    __version__ = "0.0.0"

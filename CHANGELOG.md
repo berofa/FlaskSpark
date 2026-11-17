@@ -2,7 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
-## [Unreleased]
+## [1.0.0] - 2026-11-17
+
+### Highlights
+- `flaskspark.core`: a framework for modular apps on Flask: modules with a manifest, services over NATS, live data in
+  the browser, access by role and area, settings, accounts, sharing, attachments, migrations per module and backups.
+- The `ui-*` web components with Bootstrap 6 are part of FlaskSpark.
+- Bootstrap 5 and SCSS are gone: FlaskSpark's assets are plain, modern CSS. Apps on 0.x see README «Upgrading from
+  0.x»; a retired setting stops the start and names its replacement.
+- Python 3.11 or newer.
 
 ### Added
 - Access: pages of an area (`Area(..., parent="<area>")`), each with its own right, listed indented right below their
@@ -123,73 +131,6 @@ All notable changes to this project are documented in this file.
   `--ui-card-icon-color`. `ui-table`: a total row (`class="table-total"`). `webcomponents/core/icons.js`: icons by name
   from the page's sprite (`<meta name="ui-icon-sprite">`, `setIconSprite()`); the core's layout names Bootstrap
   Icons' sprite.
-
-### Changed
-- «Settings › Access»: the roles are the columns, the areas (and their pages) the rows, so many areas fit.
-- Sidebar: the signed-in user is a button to the profile above the colour mode (the separate profile button is gone);
-  `config.yaml` `app.sign_out: false` leaves «Sign out» out, `status.everyone: true` shows the services' status to
-  everyone (and opens `/api/status/services` to them).
-- The profile has no language of its own any more (the sidebar's buttons keep a signed-in user's language on every
-  device); the sidebar's «Browser default» comes first, before the languages.
-- `flaskspark.core.i18n.gettext()`/`translations()`: the catalogues are cached per process and language and loaded
-  again when a `.mo` file changes (mtime), instead of looking up the configuration and the modules on every call
-  (in the demo app 6–8 ms per call before, about 0.002–0.015 ms now).
-- `accounts.for_module(...).all(type)` returns the users' accounts only, never the application's;
-  `for_user(0, …)` returns nothing.
-- The core's `ui-chip` rule respects a chip's own `--ui-chip-active-bg` and `--ui-chip-active-border-color`.
-- `--app-chrome-blur` is `18px` (with a little saturation) for the sidebar and the top bar; `.app-card-head` and the
-  section titles colour their icon with `--app-card-icon-color`.
-- `ui-table` and `.app-table` drop the line under the last row by default (`--app-table-last-row-border-width`).
-- The core's CSS (`frame.css`, `ui-service-status.css`, the components' stylesheets) is plain modern CSS: native
-  nesting, custom properties, `color-mix()`, `light-dark()`, logical properties; the rendering stays the same.
-- Assets of FlaskSpark apps are plain CSS (no preprocessor): the bundle `css` (was `scss`) builds `ASSETS_CSS_ENTRY`
-  (default `css/app.css`, was `scss/app.scss`) into `styles/app.min.css`, minified with `rcssmin` in production
-  (`ASSETS_CSS_FILTERS`, `ASSETS_CSS_OUTPUT`); `ASSETS_BUNDLES` take the types `css` and `js`. Without a stylesheet of
-  its own an app gets FlaskSpark's default `css/app.css`: a small base in modern CSS (cascade layer `flaskspark`,
-  `:where()`, tokens `--fs-*` with `light-dark()`/`color-mix()`, nesting, a modular type scale with `pow()`, logical
-  properties, styled flash messages) that follows Bootstrap 6's colour mode and yields to Bootstrap 6 and the app.
-  A setting of the former pipeline (`ASSETS_SCSS_*`, `LIBSASS_INCLUDES`, `VENDOR_INCLUDE_BOOTSTRAP`) or a bundle of
-  type `scss` stops the start with the replacement named (README «Upgrading from 0.x»).
-- The logo in the docked sidebar takes the column's width (up to `--app-brand-max-height`, default `8rem`, aligned
-  to the start); the top bar and the drawer's heading keep the small logo (`--app-brand-compact-height`). Themes no
-  longer set the logo's height.
-- `flaskspark.core.accounts.types()` is now `account_types()`: the function hid the submodule
-  `flaskspark.core.accounts.types`. Calling `accounts.types()` still works (the submodule is callable) but warns
-  (`DeprecationWarning`).
-- FlaskSpark reads its settings from the environment when `FlaskSpark(...)` is created, not at the import of
-  `flaskspark.config` (`flaskspark.config.from_environment()`; `Config` stays as the import's snapshot): values from
-  `.env` or `CONFIG_DIR/app.env` loaded after the import (e.g. `ROLE_DEFAULTS`) count.
-- `flaskspark.core.bus.ENV_FILE` is `None` by default; `bus.env_file()` reads `NATS_ENV_FILE` when NATS is first
-  needed, after the env files (it may be set in `CONFIG_DIR/app.env`). Setting `ENV_FILE` still overrides it.
-- `flaskspark.core.secrets`: the env files are loaded before the key's variable is named, so `APP_SECRET_KEY_ENV` may
-  be set in `CONFIG_DIR/app.env`.
-- The guardian's `Finding` has `params`; the core's checks give English source texts with `%(name)s` (no longer
-  composed texts) and the guardian sends them in the application's language. A module's composed texts are sent as
-  they are. `Finding.render(locale=None, cfg=None)` gives (title, message); the heartbeat's findings carry their
-  `source` for the status tile (the visitor's language).
-- The profile (`/profile`) exists with sign-in when a module adds a section (`PAGE_SECTIONS["profile"]`) or uses
-  accounts; `/api/accounts` still only when a type is offered.
-- `flaskspark.core`: outside the code every service is named `flaskspark-<service>` (e.g. `flaskspark-push`,
-  `flaskspark-releases`), not after the application: the supervisor's children and log lines, the NATS connection
-  names, gunicorn's process name, the status tiles (`process`), the guardian's findings and the command line
-  (`services` with process name and unit, `status`, `service flaskspark-<name>`). `ServiceInfo.unit` defaults to
-  `flaskspark-<name>.service`; a unit systemd does not know leaves a tile «unknown». Helpers
-  `flaskspark.core.service.process_name()` / `unit_name()`. NATS subjects (`ms.<service>.heartbeat`), the service
-  directory's keys, the NATS users and permissions and the guardian's finding keys keep the short name.
-- `flaskspark.core`: an application is an installed package that delivers modules, and FlaskSpark is the runtime.
-  Every installed module (entry point group `flaskspark.modules`) is loaded automatically, ordered by the manifest's
-  new `POSITION`; `config.yaml` `modules:` / `APP_MODULES` are optional and restrict and order them. A module whose
-  `DEPENDS` is not loaded is no longer a start failure: it is left out and logged. The app's package (entry point
-  `flaskspark.apps`) brings `config.yaml`; themes come from the entry point group `flaskspark.themes`. The classic
-  layout (`config.yaml`, `themes/`, `web/` in the project, modules as `modules.<name>`) keeps working.
-- `flaskspark.core` migrations: one Alembic history per module (`<package>/migrations/versions`, its own branch), the
-  core's own history `core` (and `signin` with sign-in); the web service and the supervisor upgrade at their start,
-  with a backup first. No Flask-Migrate for them (the classic layout's `web/migrations` stays with Flask-Migrate).
-- Python 3.11 or newer.
-- The snapshot of the web components under `static/vendor/webcomponents` is gone (they are part of FlaskSpark);
-  apps no longer register the `webcomponents` blueprint themselves.
-
-### Added
 - Layout tokens so a theme stays token-only (`frame.css`, README «Themes»): `--app-sidebar-bg`, `--app-chrome-blur`,
   `--app-card-radius`, `--app-card-shadow`, `--app-card-border`, `--app-nav-radius`, `--app-nav-font-weight`,
   `--app-nav-hover-bg`, `--app-nav-active-bg`, `--app-nav-active-fg`, `--app-nav-active-border`,
@@ -303,6 +244,71 @@ All notable changes to this project are documented in this file.
 - Backups: `backup.mirror_dir` copies the backup folder to a second folder; the backup tile shows the mirror.
 - `Area.position`: the order of the areas across the modules.
 
+### Changed
+- «Settings › Access»: the roles are the columns, the areas (and their pages) the rows, so many areas fit.
+- Sidebar: the signed-in user is a button to the profile above the colour mode (the separate profile button is gone);
+  `config.yaml` `app.sign_out: false` leaves «Sign out» out, `status.everyone: true` shows the services' status to
+  everyone (and opens `/api/status/services` to them).
+- The profile has no language of its own any more (the sidebar's buttons keep a signed-in user's language on every
+  device); the sidebar's «Browser default» comes first, before the languages.
+- `flaskspark.core.i18n.gettext()`/`translations()`: the catalogues are cached per process and language and loaded
+  again when a `.mo` file changes (mtime), instead of looking up the configuration and the modules on every call
+  (in the demo app 6–8 ms per call before, about 0.002–0.015 ms now).
+- `accounts.for_module(...).all(type)` returns the users' accounts only, never the application's;
+  `for_user(0, …)` returns nothing.
+- The core's `ui-chip` rule respects a chip's own `--ui-chip-active-bg` and `--ui-chip-active-border-color`.
+- `--app-chrome-blur` is `18px` (with a little saturation) for the sidebar and the top bar; `.app-card-head` and the
+  section titles colour their icon with `--app-card-icon-color`.
+- `ui-table` and `.app-table` drop the line under the last row by default (`--app-table-last-row-border-width`).
+- The core's CSS (`frame.css`, `ui-service-status.css`, the components' stylesheets) is plain modern CSS: native
+  nesting, custom properties, `color-mix()`, `light-dark()`, logical properties; the rendering stays the same.
+- Assets of FlaskSpark apps are plain CSS (no preprocessor): the bundle `css` (was `scss`) builds `ASSETS_CSS_ENTRY`
+  (default `css/app.css`, was `scss/app.scss`) into `styles/app.min.css`, minified with `rcssmin` in production
+  (`ASSETS_CSS_FILTERS`, `ASSETS_CSS_OUTPUT`); `ASSETS_BUNDLES` take the types `css` and `js`. Without a stylesheet of
+  its own an app gets FlaskSpark's default `css/app.css`: a small base in modern CSS (cascade layer `flaskspark`,
+  `:where()`, tokens `--fs-*` with `light-dark()`/`color-mix()`, nesting, a modular type scale with `pow()`, logical
+  properties, styled flash messages) that follows Bootstrap 6's colour mode and yields to Bootstrap 6 and the app.
+  A setting of the former pipeline (`ASSETS_SCSS_*`, `LIBSASS_INCLUDES`, `VENDOR_INCLUDE_BOOTSTRAP`) or a bundle of
+  type `scss` stops the start with the replacement named (README «Upgrading from 0.x»).
+- The logo in the docked sidebar takes the column's width (up to `--app-brand-max-height`, default `8rem`, aligned
+  to the start); the top bar and the drawer's heading keep the small logo (`--app-brand-compact-height`). Themes no
+  longer set the logo's height.
+- `flaskspark.core.accounts.types()` is now `account_types()`: the function hid the submodule
+  `flaskspark.core.accounts.types`. Calling `accounts.types()` still works (the submodule is callable) but warns
+  (`DeprecationWarning`).
+- FlaskSpark reads its settings from the environment when `FlaskSpark(...)` is created, not at the import of
+  `flaskspark.config` (`flaskspark.config.from_environment()`; `Config` stays as the import's snapshot): values from
+  `.env` or `CONFIG_DIR/app.env` loaded after the import (e.g. `ROLE_DEFAULTS`) count.
+- `flaskspark.core.bus.ENV_FILE` is `None` by default; `bus.env_file()` reads `NATS_ENV_FILE` when NATS is first
+  needed, after the env files (it may be set in `CONFIG_DIR/app.env`). Setting `ENV_FILE` still overrides it.
+- `flaskspark.core.secrets`: the env files are loaded before the key's variable is named, so `APP_SECRET_KEY_ENV` may
+  be set in `CONFIG_DIR/app.env`.
+- The guardian's `Finding` has `params`; the core's checks give English source texts with `%(name)s` (no longer
+  composed texts) and the guardian sends them in the application's language. A module's composed texts are sent as
+  they are. `Finding.render(locale=None, cfg=None)` gives (title, message); the heartbeat's findings carry their
+  `source` for the status tile (the visitor's language).
+- The profile (`/profile`) exists with sign-in when a module adds a section (`PAGE_SECTIONS["profile"]`) or uses
+  accounts; `/api/accounts` still only when a type is offered.
+- `flaskspark.core`: outside the code every service is named `flaskspark-<service>` (e.g. `flaskspark-push`,
+  `flaskspark-releases`), not after the application: the supervisor's children and log lines, the NATS connection
+  names, gunicorn's process name, the status tiles (`process`), the guardian's findings and the command line
+  (`services` with process name and unit, `status`, `service flaskspark-<name>`). `ServiceInfo.unit` defaults to
+  `flaskspark-<name>.service`; a unit systemd does not know leaves a tile «unknown». Helpers
+  `flaskspark.core.service.process_name()` / `unit_name()`. NATS subjects (`ms.<service>.heartbeat`), the service
+  directory's keys, the NATS users and permissions and the guardian's finding keys keep the short name.
+- `flaskspark.core`: an application is an installed package that delivers modules, and FlaskSpark is the runtime.
+  Every installed module (entry point group `flaskspark.modules`) is loaded automatically, ordered by the manifest's
+  new `POSITION`; `config.yaml` `modules:` / `APP_MODULES` are optional and restrict and order them. A module whose
+  `DEPENDS` is not loaded is no longer a start failure: it is left out and logged. The app's package (entry point
+  `flaskspark.apps`) brings `config.yaml`; themes come from the entry point group `flaskspark.themes`. The classic
+  layout (`config.yaml`, `themes/`, `web/` in the project, modules as `modules.<name>`) keeps working.
+- `flaskspark.core` migrations: one Alembic history per module (`<package>/migrations/versions`, its own branch), the
+  core's own history `core` (and `signin` with sign-in); the web service and the supervisor upgrade at their start,
+  with a backup first. No Flask-Migrate for them (the classic layout's `web/migrations` stays with Flask-Migrate).
+- Python 3.11 or newer.
+- The snapshot of the web components under `static/vendor/webcomponents` is gone (they are part of FlaskSpark);
+  apps no longer register the `webcomponents` blueprint themselves.
+
 ### Removed
 - Bootstrap 5 (`flaskspark/static/vendor/bootstrap`, `VENDOR_INCLUDE_BOOTSTRAP`): Bootstrap 6 comes with the web
   components (`VENDOR_INCLUDE_WEBCOMPONENTS`).
@@ -344,8 +350,7 @@ All notable changes to this project are documented in this file.
 - The OAuth login provider loads the user with `db.session.get()` (no `LegacyAPIWarning`).
 - View discovery registers only the view classes defined in a module: the imported `FlaskSparkMethodView` no longer
   gets a stray route `/<module_name>` in every view module.
-- Production no longer overrides `ASSETS_CACHE`: apps can disable the webassets filter cache, which
-  missed changes in imported SCSS partials.
+- Production no longer overrides `ASSETS_CACHE`: apps can disable the webassets filter cache.
 
 ## [0.1.2] - 2026-02-22
 

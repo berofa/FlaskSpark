@@ -487,8 +487,6 @@ class FlaskSpark:
             except OperationalError:
                 raise DatabaseConnectionError()
 
-    # Get the layout from the session
-    # @todo: Implement this functionality. Currently it is static...
     def _register_webcomponents(self):
         """
         Opt-in web components with Bootstrap 6 (``VENDOR_INCLUDE_WEBCOMPONENTS``).
