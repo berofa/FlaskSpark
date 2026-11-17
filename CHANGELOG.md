@@ -141,8 +141,15 @@ All notable changes to this project are documented in this file.
   section titles colour their icon with `--app-card-icon-color`.
 - `ui-table` and `.app-table` drop the line under the last row by default (`--app-table-last-row-border-width`).
 - The core's CSS (`frame.css`, `ui-service-status.css`, the components' stylesheets) is plain modern CSS: native
-  nesting, custom properties, `color-mix()`, `light-dark()`, logical properties; the rendering stays the same. The
-  old SCSS pipeline of FlaskSpark (`flaskspark/static/scss`) stays for apps without the core; the core uses none of it.
+  nesting, custom properties, `color-mix()`, `light-dark()`, logical properties; the rendering stays the same.
+- Assets of FlaskSpark apps are plain CSS (no preprocessor): the bundle `css` (was `scss`) builds `ASSETS_CSS_ENTRY`
+  (default `css/app.css`, was `scss/app.scss`) into `styles/app.min.css`, minified with `rcssmin` in production
+  (`ASSETS_CSS_FILTERS`, `ASSETS_CSS_OUTPUT`); `ASSETS_BUNDLES` take the types `css` and `js`. Without a stylesheet of
+  its own an app gets FlaskSpark's default `css/app.css`: a small base in modern CSS (cascade layer `flaskspark`,
+  `:where()`, tokens `--fs-*` with `light-dark()`/`color-mix()`, nesting, a modular type scale with `pow()`, logical
+  properties, styled flash messages) that follows Bootstrap 6's colour mode and yields to Bootstrap 6 and the app.
+  A setting of the former pipeline (`ASSETS_SCSS_*`, `LIBSASS_INCLUDES`, `VENDOR_INCLUDE_BOOTSTRAP`) or a bundle of
+  type `scss` stops the start with the replacement named (README «Upgrading from 0.x»).
 - The logo in the docked sidebar takes the column's width (up to `--app-brand-max-height`, default `8rem`, aligned
   to the start); the top bar and the drawer's heading keep the small logo (`--app-brand-compact-height`). Themes no
   longer set the logo's height.
@@ -295,6 +302,13 @@ All notable changes to this project are documented in this file.
 - Settings of the kinds `text`, `time`, `ints`, `texts` and `json`.
 - Backups: `backup.mirror_dir` copies the backup folder to a second folder; the backup tile shows the mirror.
 - `Area.position`: the order of the areas across the modules.
+
+### Removed
+- Bootstrap 5 (`flaskspark/static/vendor/bootstrap`, `VENDOR_INCLUDE_BOOTSTRAP`): Bootstrap 6 comes with the web
+  components (`VENDOR_INCLUDE_WEBCOMPONENTS`).
+- SCSS: FlaskSpark's `scss/app.scss` (Bootstrap 5), the SCSS settings and include paths, the dependency `libsass`
+  and the transitional build `python -m webcomponents.build`.
+- The unused Bootstrap 5/webpack scripts `flaskspark/static/scripts/app.js` and `webpack.js`.
 
 ### Fixed
 - «Settings»: the switches of «Access» and the role selects of «Users» saved nothing, and «Remove» on «Data» did

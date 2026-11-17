@@ -14,7 +14,7 @@ BUILD_WITHOUT_SASS = """
 import runpy, sys
 sys.modules["sass"] = None
 app = runpy.run_path("docs/run.py", run_name="docs_app")["app"]
-print(app.config["ASSETS_SCSS_ENTRY"], app.config["ASSETS_SCSS_FILTERS"])
+print(app.config["ASSETS_CSS_ENTRY"], app.config["ASSETS_CSS_FILTERS"])
 """
 
 

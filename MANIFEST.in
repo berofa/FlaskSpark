@@ -1,1 +1,3 @@
 prune tests
+include THIRD_PARTY_NOTICES.md
+include CHANGELOG.md

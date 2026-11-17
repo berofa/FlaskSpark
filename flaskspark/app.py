@@ -159,7 +159,7 @@ class FlaskSpark:
             # Initialize i18n (Babel)
             self._init_babel()
 
-            # Initialize assets (SCSS/JS bundles)
+            # Initialize assets (CSS/JS bundles)
             self._init_assets()
 
             # Check if SECRET_KEY is set, either in .env or config
@@ -499,15 +499,8 @@ class FlaskSpark:
         ``vendor_include_webcomponents`` and ``webcomponents_url(filename)``. An app must not register the blueprint
         itself any more.
 
-        Raises:
-            ValueError: If ``VENDOR_INCLUDE_BOOTSTRAP`` (Bootstrap 5) is enabled as well.
         """
         enabled = bool(self.app.config.get("VENDOR_INCLUDE_WEBCOMPONENTS", False))
-        if enabled and self.app.config.get("VENDOR_INCLUDE_BOOTSTRAP", False):
-            raise ValueError(
-                "VENDOR_INCLUDE_WEBCOMPONENTS and VENDOR_INCLUDE_BOOTSTRAP exclude each other: "
-                "the web components bring Bootstrap 6."
-            )
         if enabled and "webcomponents" not in self.app.blueprints:
             from webcomponents import create_blueprint
 
@@ -628,12 +621,20 @@ class FlaskSpark:
 
     def _init_assets(self):
         """
-        Initialize Flask-Assets bundles for SCSS and JS if enabled.
+        Initialize Flask-Assets bundles for CSS and JS if enabled.
+
+        Plain CSS, no preprocessor: the bundle "css" concatenates ``ASSETS_CSS_ENTRY`` (default ``css/app.css``, the
+        app's own or FlaskSpark's) and minifies it with rcssmin in production; modern CSS (nesting, custom properties,
+        ``light-dark()``, ``color-mix()``) goes to the browser as written.
 
         Notes:
             - `ASSETS_AUTO_BUILD` enables build-on-request (on-demand) behavior.
             - `ASSETS_BUILD_ON_START` forces a build at application startup.
-            - `ASSETS_BUNDLES` can define additional bundles beyond the defaults.
+            - `ASSETS_BUNDLES` can define additional bundles (type "css" or "js") beyond the defaults.
+
+        Raises:
+            ValueError: If a setting of the former SCSS pipeline or Bootstrap 5 is still set, or an extra bundle has
+                the type "scss".
 
         Args:
             None
@@ -641,6 +642,7 @@ class FlaskSpark:
         Returns:
             None
         """
+        self._reject_retired_asset_settings()
         enabled = self.app.config.get("ASSETS_ENABLE", True)
         if not enabled:
             return
@@ -653,8 +655,7 @@ class FlaskSpark:
         if environment == "production":
             assets.auto_build = False
             assets.debug = False
-            # The filter cache is keyed on the entry file's content only, so edits in imported
-            # partials (e.g. _theme.scss) are not picked up; apps can turn it off via ASSETS_CACHE.
+            # The filter cache is keyed on the entry file's content; apps can turn it off via ASSETS_CACHE.
             assets.cache = self.app.config.get("ASSETS_CACHE", True)
             assets.manifest = "file"
             self.app.config.setdefault("ASSETS_BUILD_ON_START", True)
@@ -664,45 +665,23 @@ class FlaskSpark:
             assets.cache = False
             assets.manifest = False
             self.app.config.setdefault("ASSETS_BUILD_ON_START", False)
-            self.app.config.setdefault("ASSETS_SCSS_FILTERS", "libsass")
+            self.app.config.setdefault("ASSETS_CSS_FILTERS", "")
             self.app.config.setdefault("ASSETS_JS_FILTERS", "")
 
         static_root = self.app.static_folder
-        scss_entry = self.app.config.get("ASSETS_SCSS_ENTRY", "scss/app.scss")
+        css_entry = self.app.config.get("ASSETS_CSS_ENTRY", "css/app.css")
         js_entry = self.app.config.get("ASSETS_JS_ENTRY", "js/app.js")
-        scss_output = self.app.config.get("ASSETS_SCSS_OUTPUT", "styles/app.min.css")
+        css_output = self.app.config.get("ASSETS_CSS_OUTPUT", "styles/app.min.css")
         js_output = self.app.config.get("ASSETS_JS_OUTPUT", "scripts/app.min.js")
-        scss_filters = self.app.config.get("ASSETS_SCSS_FILTERS", "libsass,rcssmin")
+        css_filters = self.app.config.get("ASSETS_CSS_FILTERS", "rcssmin")
         js_filters = self.app.config.get("ASSETS_JS_FILTERS", "rjsmin")
 
-        self._validate_asset_filters(scss_filters)
+        self._validate_asset_filters(css_filters)
         self._validate_asset_filters(js_filters)
-        self._configure_scss_include_paths(scss_filters)
-        self._ensure_asset_output_dirs(static_root, [scss_output, js_output])
+        self._ensure_asset_output_dirs(static_root, [css_output, js_output])
 
-        scss_sources = [scss_entry]
-        js_sources = [js_entry]
-
-        # If enabled, merge framework-provided Bootstrap sources into the
-        # app bundles so outputs stay app-local (styles/app.min.css and
-        # scripts/app.min.js) and follow the same minification pipeline.
-        if self.app.config.get("VENDOR_INCLUDE_BOOTSTRAP", False):
-            scss_sources = ["vendor/bootstrap/scss/bootstrap.scss", *scss_sources]
-            js_sources = ["vendor/bootstrap/js/bootstrap.bundle.js", *js_sources]
-
-        scss_bundle = Bundle(
-            *scss_sources,
-            filters=scss_filters,
-            output=scss_output,
-        )
-        js_bundle = Bundle(
-            *js_sources,
-            filters=js_filters,
-            output=js_output,
-        )
-
-        assets.register("scss", scss_bundle)
-        assets.register("js", js_bundle)
+        assets.register("css", Bundle(css_entry, filters=css_filters, output=css_output))
+        assets.register("js", Bundle(js_entry, filters=js_filters, output=js_output))
 
         extra_bundles = self.app.config.get("ASSETS_BUNDLES", [])
         for bundle_config in extra_bundles:
@@ -715,8 +694,13 @@ class FlaskSpark:
             if not name or not entry or not output:
                 continue
 
+            if bundle_type not in ("css", "js"):
+                raise ValueError(
+                    f"ASSETS_BUNDLES: bundle '{name}' has the type '{bundle_type}'; only 'css' and 'js' exist "
+                    "(no SCSS any more: write plain CSS)."
+                )
             if not filters:
-                filters = scss_filters if bundle_type == "scss" else js_filters
+                filters = css_filters if bundle_type == "css" else js_filters
 
             self._validate_asset_filters(filters)
             self._ensure_asset_output_dirs(static_root, [output])
@@ -752,6 +736,30 @@ class FlaskSpark:
                     force = self.app.config.get("ASSETS_FORCE_BUILD", False) or self.app.debug
                     assets[key].build(force=force)
 
+    # Settings of the former SCSS pipeline and of Bootstrap 5 (removed in 1.0.0) and what replaces them.
+    RETIRED_ASSET_SETTINGS = {
+        "ASSETS_SCSS_ENTRY": "ASSETS_CSS_ENTRY (a plain CSS file, default css/app.css)",
+        "ASSETS_SCSS_OUTPUT": "ASSETS_CSS_OUTPUT",
+        "ASSETS_SCSS_FILTERS": "ASSETS_CSS_FILTERS (default rcssmin)",
+        "ASSETS_SCSS_INCLUDE_PATHS": "nothing (plain CSS has no imports to resolve at build time)",
+        "LIBSASS_INCLUDES": "nothing (libsass is no longer used)",
+        "VENDOR_INCLUDE_BOOTSTRAP": "VENDOR_INCLUDE_WEBCOMPONENTS (Bootstrap 6 and the web components)",
+    }
+
+    def _reject_retired_asset_settings(self) -> None:
+        """
+        Stop the start when a setting of the former SCSS pipeline or of Bootstrap 5 is still set (app config or
+        environment), naming what replaces it, instead of silently building something else.
+
+        Raises:
+            ValueError: If a retired setting is set.
+        """
+        retired = [name for name in self.RETIRED_ASSET_SETTINGS
+                   if self.app.config.get(name) not in (None, "", [], False) or os.environ.get(name)]
+        if retired:
+            hints = "; ".join(f"{name} -> {self.RETIRED_ASSET_SETTINGS[name]}" for name in retired)
+            raise ValueError(f"FlaskSpark no longer builds SCSS and no longer ships Bootstrap 5. Replace: {hints}.")
+
     @staticmethod
     def _validate_asset_filters(filters: str) -> None:
         """
@@ -772,7 +780,7 @@ class FlaskSpark:
             except FilterError as exc:
                 raise RuntimeError(
                     f"Asset filter '{name}' is not available. "
-                    "Install the corresponding package (e.g. rcssmin, rjsmin, libsass)."
+                    "Install the corresponding package (e.g. rcssmin, rjsmin)."
                 ) from exc
 
     @staticmethod
@@ -793,66 +801,6 @@ class FlaskSpark:
             directory = os.path.join(static_root, os.path.dirname(output))
             if directory and not os.path.exists(directory):
                 os.makedirs(directory, exist_ok=True)
-
-    def _configure_scss_include_paths(self, scss_filters: str) -> None:
-        """
-        Configure libsass include paths for shorter and more robust SCSS imports.
-
-        Args:
-            scss_filters (str): Comma-separated SCSS filter list.
-
-        Returns:
-            None
-        """
-        filter_names = [item.strip() for item in scss_filters.split(",") if item.strip()]
-        if "libsass" not in filter_names:
-            return
-
-        include_paths: List[str] = []
-        configured_paths = self.app.config.get("ASSETS_SCSS_INCLUDE_PATHS", [])
-        if isinstance(configured_paths, str):
-            configured_paths = [item.strip() for item in configured_paths.split(",") if item.strip()]
-
-        for path in configured_paths:
-            include_paths.append(self._resolve_asset_path(path))
-
-        # Always include app vendor assets. Include FlaskSpark vendor assets so
-        # imports like "bootstrap/scss/..." resolve without relative path hacks.
-        include_paths.append(os.path.join(self.app_static_dir, "vendor"))
-        include_paths.append(os.path.join(self.flaskspark_static_dir, "vendor"))
-
-        existing = self.app.config.get("LIBSASS_INCLUDES", [])
-        if isinstance(existing, str):
-            existing = [item.strip() for item in existing.split(",") if item.strip()]
-
-        merged = []
-        for path in [*existing, *include_paths]:
-            if path and path not in merged:
-                merged.append(path)
-        self.app.config["LIBSASS_INCLUDES"] = merged
-
-    def _resolve_asset_path(self, path: str) -> str:
-        """
-        Resolve asset include path candidates to an absolute path.
-
-        Resolution order:
-            1. absolute path
-            2. app base directory
-            3. app static directory
-            4. current working directory
-        """
-        if os.path.isabs(path):
-            return path
-
-        candidates = [
-            os.path.join(self.app_base_dir, path),
-            os.path.join(self.app_static_dir, path),
-            os.path.join(os.getcwd(), path),
-        ]
-        for candidate in candidates:
-            if os.path.exists(candidate):
-                return os.path.abspath(candidate)
-        return os.path.abspath(candidates[0])
 
     @staticmethod
     def search_directory(filename, dir_type="template"):

@@ -16,9 +16,8 @@ flask_spark_instance = FlaskSpark(
     config={
         "SECRET_KEY": os.environ.get("SECRET_KEY", "webcomponents-docs-secret"),
         "ASSETS_BUILD_ON_START": True,
-        # Plain CSS, no SCSS: the bundle only minifies (FlaskSpark still names the setting "SCSS").
-        "ASSETS_SCSS_ENTRY": "css/app.css",
-        "ASSETS_SCSS_FILTERS": "rcssmin",
+        # Plain CSS (css/app.css, FlaskSpark's default entry), minified with rcssmin also in development.
+        "ASSETS_CSS_FILTERS": "rcssmin",
         # Bootstrap 6 page CSS and the "bootstrap" module; FlaskSpark registers the components' blueprint.
         "VENDOR_INCLUDE_WEBCOMPONENTS": True,
     },
