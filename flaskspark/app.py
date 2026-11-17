@@ -327,6 +327,12 @@ class FlaskSpark:
             except (ImportError, AttributeError) as exc:
                 last_error = exc
 
+        if login_provider_name.lower() == "default":
+            raise ImportError(
+                "FlaskSpark has no built-in login provider 'Default' (it was a stub and is gone since 1.0). "
+                "Use 'OAuth' or a provider of the app "
+                f"({self.app_module}.helpers.{module_name}, class {class_name})."
+            ) from last_error
         raise ImportError(
             f"Could not load LoginProvider '{login_provider_name}'. "
             f"Tried modules: {', '.join(candidate_modules)}. "

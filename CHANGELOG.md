@@ -310,6 +310,8 @@ All notable changes to this project are documented in this file.
   apps no longer register the `webcomponents` blueprint themselves.
 
 ### Removed
+- The login provider `Default` (a stub that could not even be instantiated): `login_provider="Default"` stops the start
+  and names `OAuth` and a provider of the app (`<app_module>/helpers/login_provider_default.py`) instead.
 - Bootstrap 5 (`flaskspark/static/vendor/bootstrap`, `VENDOR_INCLUDE_BOOTSTRAP`): Bootstrap 6 comes with the web
   components (`VENDOR_INCLUDE_WEBCOMPONENTS`).
 - SCSS: FlaskSpark's `scss/app.scss` (Bootstrap 5), the SCSS settings and include paths, the dependency `libsass`

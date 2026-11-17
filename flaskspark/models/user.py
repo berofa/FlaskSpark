@@ -80,14 +80,12 @@ class User(db.Model, UserMixin):
         Dynamically configures fields based on the login provider.
 
         Args:
-            login_provider (str): The name of the login provider (e.g., 'OAuth', 'Default').
+            login_provider (str): The name of the login provider (e.g., 'OAuth').
 
         Returns:
             None
         """
-        if login_provider == "Default":
-            User.password = db.Column(db.String(255), nullable=False)
-        elif login_provider == "OAuth":
+        if login_provider == "OAuth":
             User.first_name = db.Column(db.String(255), nullable=True)
             User.last_name = db.Column(db.String(255), nullable=True)
             User.admin = db.Column(db.Boolean, default=False)

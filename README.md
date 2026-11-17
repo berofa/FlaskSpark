@@ -874,12 +874,11 @@ app = FlaskSpark(app_module="app").app
 ```
 
 If you need authentication, configure a provider:
-- `login_provider="Default"` reserved for the upcoming built-in default provider (currently a stub)
-- `login_provider="OAuth"` for OAuth/OIDC via `authlib`
+- `login_provider="OAuth"` for OAuth/OIDC via `authlib` (FlaskSpark's only built-in provider)
+- `login_provider="<Name>"` for a provider of your app (see [Build your own login provider](#build-your-own-login-provider))
 
-Current implementation status:
-- `OAuth` is implemented and usable.
-- `Default` exists as a provider stub but is not fully implemented yet.
+There is no built-in `Default` provider (0.x had a stub that could not sign anybody in); `login_provider="Default"`
+stops the start unless the app brings `<app_module>/helpers/login_provider_default.py` itself.
 
 Example:
 ```python
@@ -1037,7 +1036,7 @@ FLASK_APP=app.py python -m flask db downgrade -1
 
 #### When is DB required?
 - No database-related models and no login provider: DB can be omitted.
-- Login provider enabled (`Default` or `OAuth`): DB is required and schema must be migrated before startup.
+- Login provider enabled (e.g. `OAuth`): DB is required and schema must be migrated before startup.
 
 ### i18n
 FlaskSpark initializes Flask-Babel automatically.
