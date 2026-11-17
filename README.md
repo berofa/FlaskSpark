@@ -26,7 +26,7 @@ operations matter more than a front-end build of their own.
     [Your first modular app](#your-first-modular-app) · [Web components without Python](#web-components-without-python)
 - [FlaskSpark apps](#flaskspark-apps): [project structure](#project-structure-and-discovery),
   [configuration](#configuration), [class-based views](#class-based-views), [templates](#templates),
-  [assets](#assets-scss--js), [sign-in](#oauth-oidc-login-provider), [database](#database--migrations), [i18n](#i18n)
+  [assets](#assets-css--js), [sign-in](#oauth-oidc-login-provider), [database](#database--migrations), [i18n](#i18n)
 - [Modular apps (flaskspark.core)](#modular-apps-flasksparkcore): [project layout](#project-layout),
   [`config.yaml`](#configyaml), [environment](#environment-variables), [module manifest](#module-manifest),
   [access](#access), [start page](#start-page), [info screens](#info-screens), [settings](#settings), [personal settings](#personal-settings),
@@ -66,7 +66,7 @@ pip install "FlaskSpark[core,files]"    # + thumbnails of attachments
 
 | Extra | Adds | For |
 | --- | --- | --- |
-| (none) | Flask, Flask-Login, Flask-SQLAlchemy, Flask-Migrate, Flask-Babel, Flask-Session, Flask-Assets with libsass, rcssmin and rjsmin, authlib, markdown-it-py, nh3, requests, python-dotenv | FlaskSpark apps, `flaskspark.markdown`, the web components |
+| (none) | Flask, Flask-Login, Flask-SQLAlchemy, Flask-Migrate, Flask-Babel, Flask-Session, Flask-Assets with rcssmin and rjsmin, authlib, markdown-it-py, nh3, requests, python-dotenv | FlaskSpark apps, `flaskspark.markdown`, the web components |
 | `core` | SQLAlchemy 2, Alembic, nats-py, aiohttp, httpx, gunicorn, cryptography, cachelib, PyYAML | modular apps (`flaskspark.core`) and the command line `flaskspark` |
 | `files` | Pillow, pillow-heif, pypdfium2 | thumbnails of [attachments](#attachments) (images, HEIC photos, the first page of PDFs); without it attachments work, only without thumbnails |
 | `dev` | pytest | the [tests](#development-and-tests) |
@@ -409,7 +409,7 @@ A FlaskSpark app is a Flask application that `FlaskSpark(...)` builds from your 
 - i18n with Flask-Babel
 - templates and static files of the app first, FlaskSpark's as the fallback, and a base layout
   (`layouts/framework.html`) with hooks
-- an SCSS/JS asset pipeline with optional minification and extra bundles, optionally with Bootstrap 5
+- a CSS/JS asset pipeline (plain modern CSS, no preprocessor) with minification and extra bundles
 - the [web components](#web-components) on Bootstrap 6 (opt-in) and [Markdown](#markdown)
 
 ### Project structure and discovery
@@ -424,7 +424,7 @@ myproject/
     views/          # class-based views, registered automatically
     models/         # SQLAlchemy models, imported automatically
     templates/
-    static/         # scss/app.scss and js/app.js are the asset entries (optional)
+    static/         # css/app.css and js/app.js are the asset entries (optional)
     helpers/        # e.g. a login provider of your own (optional)
     locales/        # translations (optional)
   migrations/       # Flask-Migrate (created by `flask db init`)
@@ -507,17 +507,15 @@ Why not just `app.run()`?
 | `ASSETS_DEBUG` | `false` | Asset debug flag. |
 | `ASSETS_BUILD_ON_START` | `false` | Forces bundle builds at startup. |
 | `ASSETS_FORCE_BUILD` | `false` | Forces rebuild even when cached outputs exist. |
-| `ASSETS_CACHE` | `true` in production | webassets filter cache. It is keyed on the entry file's content, so changes in imported SCSS partials are missed; set `False` (app config) together with `ASSETS_FORCE_BUILD` to rebuild from all sources on start. |
-| `ASSETS_SCSS_ENTRY` | `scss/app.scss` | Main SCSS entry file (relative to app static root). |
+| `ASSETS_CACHE` | `true` in production | webassets filter cache, keyed on the entry file's content; set `False` (app config) together with `ASSETS_FORCE_BUILD` to rebuild on every start. |
+| `ASSETS_CSS_ENTRY` | `css/app.css` | Main CSS entry file (relative to the static roots: the app's first, FlaskSpark's default stylesheet as the fallback). |
 | `ASSETS_JS_ENTRY` | `js/app.js` | Main JS entry file (relative to app static root). |
-| `ASSETS_SCSS_OUTPUT` | `styles/app.min.css` | Main CSS output path. |
+| `ASSETS_CSS_OUTPUT` | `styles/app.min.css` | Main CSS output path. |
 | `ASSETS_JS_OUTPUT` | `scripts/app.min.js` | Main JS output path. |
-| `ASSETS_SCSS_FILTERS` | `libsass,rcssmin` | SCSS filter chain. |
+| `ASSETS_CSS_FILTERS` | `rcssmin` (none in development) | CSS filter chain. |
 | `ASSETS_JS_FILTERS` | `rjsmin` | JS filter chain. |
-| `ASSETS_SCSS_INCLUDE_PATHS` | `[]` | Extra SCSS include paths (CSV env input). |
-| `ASSETS_BUNDLES` | `[]` | Extra bundles list (config dict only, not env string). |
-| `VENDOR_INCLUDE_BOOTSTRAP` | `false` | If `true`, FlaskSpark prepends vendored Bootstrap SCSS/JS into app bundles. |
-| `VENDOR_INCLUDE_WEBCOMPONENTS` | `false` | If `true`, FlaskSpark registers the blueprint of the web components (`/webcomponents/…`) and `layouts/framework.html` loads the Bootstrap 6 CSS and their `bootstrap` module. Excludes `VENDOR_INCLUDE_BOOTSTRAP`. See [Web components](#web-components). |
+| `ASSETS_BUNDLES` | `[]` | Extra bundles of type `css` or `js` (config dict only, not env string). |
+| `VENDOR_INCLUDE_WEBCOMPONENTS` | `false` | If `true`, FlaskSpark registers the blueprint of the web components (`/webcomponents/…`) and `layouts/framework.html` loads the Bootstrap 6 CSS and their `bootstrap` module. See [Web components](#web-components). |
 | `APP_LAYOUT_TEMPLATE` | `layouts/framework.html` | Default layout injected into template context as `layout`. |
 | `APP_HOST` | `0.0.0.0` | Optional app host value for app-level logic. |
 | `APP_BIND_HOST` | `0.0.0.0` | Socket bind address used by `app.run(...)`. |
@@ -756,19 +754,22 @@ FlaskSpark itself does not ship page views. It provides framework plumbing
 (layout base, helpers, auth/database/assets integration), while applications
 provide their own frontend views/templates.
 
-### Assets (SCSS / JS)
+### Assets (CSS / JS)
 FlaskSpark uses Flask-Assets to build your frontend bundles.  
 In normal usage you define source entries once and FlaskSpark serves the generated outputs in the framework layout.
 
 #### What assets are for
-- Compile SCSS to CSS
-- Minify CSS/JS (depending on configured filters and environment)
-- Bundle app-level JavaScript and optional vendor sources (for example Bootstrap)
+- Bundle the app's stylesheet and JavaScript and minify them in production (`rcssmin`, `rjsmin`)
 - Keep output paths stable so templates can always include `styles/app.min.css` and `scripts/app.min.js`
+
+There is no preprocessor (no SCSS, no libsass) and no Bootstrap 5: write plain, modern CSS. Custom properties,
+nesting, `light-dark()`, `color-mix()`, `clamp()`/`calc()`, container queries and logical properties go to the browser
+as written. Bootstrap 6 and the web components come with `VENDOR_INCLUDE_WEBCOMPONENTS` (see
+[Web components](#web-components)).
 
 #### When to configure assets
 - You can skip most asset config if you follow defaults:
-  - SCSS entry: `app/static/scss/app.scss`
+  - CSS entry: `app/static/css/app.css`
   - JS entry: `app/static/js/app.js`
   - CSS output: `app/static/styles/app.min.css`
   - JS output: `app/static/scripts/app.min.js`
@@ -776,12 +777,11 @@ In normal usage you define source entries once and FlaskSpark serves the generat
   - you use different source filenames/paths
   - you want different output filenames
   - you need extra bundle definitions (`ASSETS_BUNDLES`)
-  - you need extra SCSS include paths
 
 #### Minimal default setup
 No extra config required, just create:
 ```text
-app/static/scss/app.scss
+app/static/css/app.css
 app/static/js/app.js
 ```
 
@@ -791,20 +791,24 @@ app/static/styles/app.min.css
 app/static/scripts/app.min.js
 ```
 
+Without a `css/app.css` of its own an app gets FlaskSpark's default stylesheet (`flaskspark/static/css/app.css`): a
+small base (reset, typography, links, focus ring, the flash messages of `layouts/framework.html`) on tokens
+`--fs-*` that follow the colour mode (`light-dark()`, Bootstrap 6's `data-bs-theme`). It sits in the cascade layer
+`flaskspark` and in `:where()`, so Bootstrap 6 and any rule of the app win.
+
 #### Typical `.env` asset settings
 ```dotenv
 ASSETS_ENABLE=true
 ASSETS_AUTO_BUILD=true
 ASSETS_BUILD_ON_START=true
 ASSETS_FORCE_BUILD=true
-ASSETS_SCSS_FILTERS=libsass,rcssmin
+ASSETS_CSS_FILTERS=rcssmin
 ASSETS_JS_FILTERS=rjsmin
-VENDOR_INCLUDE_BOOTSTRAP=true
+VENDOR_INCLUDE_WEBCOMPONENTS=true
 ```
 
 Notes:
-- `VENDOR_INCLUDE_BOOTSTRAP=true` prepends FlaskSpark's vendored Bootstrap SCSS/JS into your main app bundles.
-- In development, keep auto-build enabled for fast iteration.
+- In development, keep auto-build enabled for fast iteration (CSS and JS are bundled but not minified there).
 - In production, you typically build on startup and avoid unnecessary rebuilds.
 
 #### Advanced example (`config={...}`)
@@ -821,20 +825,43 @@ FlaskSpark(
                 "output": "scripts/reports.min.js",
                 "filters": "rjsmin",
             },
+            {
+                "name": "print_css",
+                "type": "css",
+                "entry": "css/print.css",
+                "output": "styles/print.min.css",
+            },
         ],
     },
 )
 ```
 
 What this does:
-- Each entry in `ASSETS_BUNDLES` registers an additional build target.
-- FlaskSpark will generate the configured output file (for example `scripts/reports.min.js`) using the given filters.
+- Each entry in `ASSETS_BUNDLES` registers an additional build target (`type` is `css` or `js`).
+- FlaskSpark will generate the configured output file (for example `scripts/reports.min.js`) using the given filters
+  (default: those of the main bundle of that type).
 - You can then include that generated file in templates via `url_for('static', filename='...')`.
 
 When to add bundle entries:
-- Add a new JS/SCSS file and you want it built as a separate output (for example page-specific assets).
+- Add a new JS/CSS file and you want it built as a separate output (for example page-specific assets).
 - Add an entry to `ASSETS_BUNDLES` so FlaskSpark knows source, output, and filters.
 - Without an entry, only the main default bundle (`app.min.css` / `app.min.js`) is generated.
+
+#### Upgrading from 0.x (SCSS, Bootstrap 5)
+FlaskSpark 1.0 builds no SCSS and ships no Bootstrap 5. The start stops with a message naming the replacement when a
+setting of the former pipeline is still set:
+
+| Former setting | Replacement |
+|---|---|
+| `ASSETS_SCSS_ENTRY` (`scss/app.scss`) | `ASSETS_CSS_ENTRY` (`css/app.css`), a plain CSS file |
+| `ASSETS_SCSS_OUTPUT` | `ASSETS_CSS_OUTPUT` |
+| `ASSETS_SCSS_FILTERS` (`libsass,rcssmin`) | `ASSETS_CSS_FILTERS` (`rcssmin`) |
+| `ASSETS_SCSS_INCLUDE_PATHS`, `LIBSASS_INCLUDES` | none |
+| `VENDOR_INCLUDE_BOOTSTRAP` | `VENDOR_INCLUDE_WEBCOMPONENTS` (Bootstrap 6 and the web components) |
+| `ASSETS_BUNDLES` entries of type `scss` | type `css` |
+
+SCSS variables become custom properties, nesting stays (native CSS nesting), colour functions become `color-mix()` or
+relative colours, mixins and loops are written out or become utility classes.
 
 ### OAuth (OIDC) Login Provider
 Login is optional in FlaskSpark.
@@ -2133,7 +2160,6 @@ FlaskSpark then:
 ```
 
 Notes:
-- `VENDOR_INCLUDE_WEBCOMPONENTS` and `VENDOR_INCLUDE_BOOTSTRAP` (Bootstrap 5) exclude each other; the start fails if both are set.
 - Apps must not register the `webcomponents` blueprint themselves.
 - Modular apps (`flaskspark.core`) have the components switched on and import them as `webcomponents/…` through the page's import map (see [Browser JavaScript](#browser-javascript)).
 
@@ -2232,7 +2258,7 @@ The core's own translations are updated with `scripts/core-i18n`. Changes are li
 ## License
 FlaskSpark is released under the MIT License; see [`LICENSE`](./LICENSE).
 
-It includes third-party components (among them Bootstrap 5 and 6, Bootstrap Icons, Vanilla Calendar Pro, FullCalendar
+It includes third-party components (among them Bootstrap 6, Bootstrap Icons, Vanilla Calendar Pro, FullCalendar
 and markdown-it); see [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md) for attribution and license
 references.
 

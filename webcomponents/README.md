@@ -21,7 +21,6 @@ holds the examples** and shows how each component is used.
 ```
 webcomponents/                 Python package = distributable asset tree
   __init__.py                  create_blueprint(), grid layout helpers
-  build.py                     transitional SCSS build for host-app modules (python -m webcomponents.build)
   export.py                    snapshot export (python -m webcomponents.export)
   grid_layout.py               server-side grid layout normalization
   tokens.py                    documented CSS variables of a component; ui-tokens.css generator
@@ -224,8 +223,7 @@ it provides the consumer side: `LightFeedElement` (core; implements
 ## Bootstrap 6
 
 Bootstrap 6 (`vendor/bootstrap6`, 6.0.0-alpha.1) is used as the precompiled
-`dist` CSS, without SCSS: its sources use Sass modules (`@use`), which libsass
-cannot compile. Every component is migrated and has plain CSS only. A
+`dist` CSS (no Sass sources). Every component is migrated and has plain CSS only. A
 component with a Bootstrap counterpart implements **every feature of
 Bootstrap's documentation** (variants, sizes, states, behaviour, events) and
 documents its CSS variables.
@@ -326,18 +324,8 @@ be compiled (a test keeps it that way). What SCSS used to do, native CSS does:
 - **Colour functions** → `color-mix()`, `light-dark()` and `oklch()` (as in
   Bootstrap 6's tokens); **nesting**, if needed → native CSS nesting.
 - The docs app's page styles (`docs/app/static/css/app.css`) go through
-  FlaskSpark's asset bundle with `rcssmin` only (`ASSETS_SCSS_ENTRY` /
-  `ASSETS_SCSS_FILTERS` in `docs/app/__init__.py`).
-
-The library ships no SCSS any more (no mixins, no vendored Bootstrap 5
-sources). Host applications whose own modules still have `*.scss` (same folder
-layout) compile them with the transitional build tool until they move to plain
-CSS; it uses `libsass` (a dependency of FlaskSpark), the include paths are the
-`scss/` folders of the given modules directories:
-
-```sh
-.venv/bin/python -m webcomponents.build path/to/app/modules
-```
+  FlaskSpark's asset bundle with `rcssmin` only (`ASSETS_CSS_FILTERS` in
+  `docs/app/__init__.py`).
 
 ## Python
 
@@ -381,8 +369,7 @@ FlaskSpark then
   `webcomponents_url(filename)`, e.g.
   `{{ webcomponents_url('modules/calendar/calendar.js') }}`.
 
-The option excludes `VENDOR_INCLUDE_BOOTSTRAP` (Bootstrap 5): the start fails
-if both are set. Apps must **not** register the blueprint themselves any more,
+Apps must **not** register the blueprint themselves any more,
 and they must not keep a copy of the package (the former snapshot under
 `flaskspark/static/vendor/webcomponents` is gone). Modular apps built on
 `flaskspark.core` have the option on by default and import the components as

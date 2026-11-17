@@ -126,16 +126,15 @@ def from_environment() -> type:
         ASSETS_DEBUG = os.environ.get("ASSETS_DEBUG", "False").lower() == "true"
         ASSETS_BUILD_ON_START = os.environ.get("ASSETS_BUILD_ON_START", "False").lower() == "true"
         ASSETS_FORCE_BUILD = os.environ.get("ASSETS_FORCE_BUILD", "False").lower() == "true"
-        ASSETS_SCSS_ENTRY = os.environ.get("ASSETS_SCSS_ENTRY", "scss/app.scss")
+        # Plain CSS (no preprocessor): the entry is bundled and, in production, minified with rcssmin.
+        ASSETS_CSS_ENTRY = os.environ.get("ASSETS_CSS_ENTRY", "css/app.css")
         ASSETS_JS_ENTRY = os.environ.get("ASSETS_JS_ENTRY", "js/app.js")
-        ASSETS_SCSS_OUTPUT = os.environ.get("ASSETS_SCSS_OUTPUT", "styles/app.min.css")
+        ASSETS_CSS_OUTPUT = os.environ.get("ASSETS_CSS_OUTPUT", "styles/app.min.css")
         ASSETS_JS_OUTPUT = os.environ.get("ASSETS_JS_OUTPUT", "scripts/app.min.js")
-        ASSETS_SCSS_FILTERS = os.environ.get("ASSETS_SCSS_FILTERS", "libsass,rcssmin")
+        ASSETS_CSS_FILTERS = os.environ.get("ASSETS_CSS_FILTERS", "rcssmin")
         ASSETS_JS_FILTERS = os.environ.get("ASSETS_JS_FILTERS", "rjsmin")
-        ASSETS_SCSS_INCLUDE_PATHS = _split_csv(os.environ.get("ASSETS_SCSS_INCLUDE_PATHS"))
         ASSETS_BUNDLES = []
-        VENDOR_INCLUDE_BOOTSTRAP = os.environ.get("VENDOR_INCLUDE_BOOTSTRAP", "False").lower() == "true"
-        # Web components with Bootstrap 6 (page CSS + "bootstrap" module); excludes VENDOR_INCLUDE_BOOTSTRAP.
+        # Web components with Bootstrap 6 (page CSS + "bootstrap" module).
         VENDOR_INCLUDE_WEBCOMPONENTS = os.environ.get("VENDOR_INCLUDE_WEBCOMPONENTS", "False").lower() == "true"
         APP_LAYOUT_TEMPLATE = os.environ.get("APP_LAYOUT_TEMPLATE", "layouts/framework.html")
 

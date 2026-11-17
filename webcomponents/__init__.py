@@ -6,8 +6,7 @@ The package directory is the distributable asset tree:
     vendor/      third-party libraries, shared by all modules
     modules/<module>/<submodule>/   one component each (JS, plain CSS, manifest)
 
-Python adds a Flask blueprint that serves the tree, a transitional SCSS build
-for host-app modules (``python -m webcomponents.build``), a snapshot export for projects without
+Python adds a Flask blueprint that serves the tree, a snapshot export for projects without
 Python (``python -m webcomponents.export``) and the server-side grid layout helpers.
 """
 

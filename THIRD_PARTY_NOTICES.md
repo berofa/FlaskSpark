@@ -2,16 +2,6 @@
 
 This project includes third-party software components.
 
-## Bootstrap
-
-- Component: Bootstrap 5 (SCSS and JS sources, `VENDOR_INCLUDE_BOOTSTRAP`)
-- Upstream: https://github.com/twbs/bootstrap
-- License: MIT License
-- License text: https://github.com/twbs/bootstrap/blob/main/LICENSE
-
-Bootstrap source files are distributed within this project under
-`flaskspark/static/vendor/bootstrap/`.
-
 ## Bootstrap 6
 
 - Component: Bootstrap 6.0.0-alpha.1 (precompiled CSS and JS bundle, `VENDOR_INCLUDE_WEBCOMPONENTS`)

@@ -21,7 +21,6 @@ dependencies = [
   "flask-migrate",
   "flask-session",
   "flask-sqlalchemy",
-  "libsass",
   "markdown-it-py[linkify]>=3.0",
   "nh3>=0.2.15",
   "python-dotenv",
