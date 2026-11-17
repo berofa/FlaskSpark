@@ -12,6 +12,7 @@ import socket
 import subprocess
 import sys
 import time
+import os
 import urllib.request
 from pathlib import Path
 
@@ -29,6 +30,12 @@ app.run(host="127.0.0.1", port=int(PORT), debug=False, use_reloader=False)
 """
 
 
+def _server_env() -> dict[str, str]:
+    """The environment for the docs server: without what in-process Flask CLI calls of other tests left behind
+    (FLASK_RUN_FROM_CLI=true makes app.run() return at once, the server never listens)."""
+    return {key: value for key, value in os.environ.items() if key != "FLASK_RUN_FROM_CLI"}
+
+
 def _free_port() -> int:
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
@@ -42,6 +49,7 @@ def docs_url(tmp_path_factory):
     process = subprocess.Popen(
         [sys.executable, "-c", SERVER.replace("PORT", str(port))],
         cwd=ROOT,
+        env=_server_env(),
         stdout=subprocess.DEVNULL,
         stderr=log.open("wb"),  # a file, not a pipe: nobody reads it while the server runs
     )
@@ -52,6 +60,8 @@ def docs_url(tmp_path_factory):
                 urllib.request.urlopen(url + "/_tests/components", timeout=1)
                 break
             except OSError:
+                if process.poll() is not None:
+                    pytest.fail(f"docs app exited ({process.returncode}): " + log.read_text(errors="replace")[-2000:])
                 time.sleep(0.1)
         else:
             pytest.fail("docs app did not start: " + log.read_text(errors="replace")[-2000:])
@@ -89,3 +99,9 @@ def test_customizing_demos_in_the_browser(docs_url):
     failed = [f"{r['name']}: {r['detail']}" for r in results if not r["ok"]]
     assert len(results) >= 30
     assert failed == []
+
+
+def test_the_docs_server_ignores_a_flask_cli_run_of_another_test(monkeypatch):
+    """flask's FlaskGroup sets FLASK_RUN_FROM_CLI in os.environ; inherited, the docs app's app.run() would not serve."""
+    monkeypatch.setenv("FLASK_RUN_FROM_CLI", "true")
+    assert "FLASK_RUN_FROM_CLI" not in _server_env()
