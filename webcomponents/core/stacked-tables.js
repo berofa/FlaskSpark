@@ -7,6 +7,7 @@
  * - A header's label is its data-cell attribute, else its text. Empty headers (icon columns) give no label.
  * - Cells spanning several columns get no label (e.g. a row "nothing yet" over the whole width).
  * - <ui-table stacked> does the same in its shadow tree; this is for tables rendered straight into the page.
+ * - Rows patched by morph() lose the labels (their html has none): they are set again before the next paint.
  *
  * installStackedTables(root = document) watches root (once); labelStackedCells(table) is the part without observer.
  */
@@ -82,10 +83,15 @@ export function installStackedTables(root = document) {
         }
       }
       // A class added later (e.g. re-rendered table element kept, class changed).
-      if (record.type === "attributes" && isStackedTable(record.target)) {
+      if (record.type === "attributes" && record.attributeName === "class" && isStackedTable(record.target)) {
         tables.add(record.target);
+      }
+      // A label taken away again: morph() patches a re-rendered table to its html, which has no labels.
+      if (record.type === "attributes" && record.attributeName === "data-cell" && !record.target.hasAttribute("data-cell")) {
+        const table = record.target.closest("table");
+        if (isStackedTable(table)) tables.add(table);
       }
     }
     tables.forEach(labelStackedCells);
-  }).observe(start, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  }).observe(start, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "data-cell"] });
 }

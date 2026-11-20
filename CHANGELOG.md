@@ -8,6 +8,9 @@ All notable changes to this project are documented in this file.
 - Stacked tables in the light DOM: a `<table>` with `.table-stacked` or a breakpoint variant (`.sm:table-stacked` …)
   gets the labels of its cells from the column headers (`webcomponents/core/stacked-tables.js`, installed by the
   core's `app.js`), also for rows rendered later (live data).
+- `LightComponentElement`: `static morph = true` patches the children with `morph()` from the second render on
+  instead of replacing them, so a component re-rendered on every live update keeps its elements and the page does not
+  jump (iOS Safari has no scroll anchoring). Listeners belong on the component then (delegated), not on its children.
 
 ### Changed
 - Stacked tables (light DOM and `<ui-table stacked>`): one line per cell, the label at the start and the value at the
@@ -19,6 +22,7 @@ All notable changes to this project are documented in this file.
   on phones and widened the page).
 - Layout: the page no longer scrolls sideways on iOS Safari when something sticks out (`overflow-x: clip` on the root
   too; the body alone was ignored there).
+- Stacked tables: cells patched by `morph()` lose their labels no longer (they are set again before the next paint).
 
 ## [1.0.0] - 2026-11-17
 

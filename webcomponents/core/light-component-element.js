@@ -1,3 +1,4 @@
+import { morph } from "./morph.js";
 import { SharedShadowStyles } from "./shared-shadow-styles.js";
 
 /**
@@ -13,10 +14,18 @@ import { SharedShadowStyles } from "./shared-shadow-styles.js";
  * that replaces the element's children, so it is meant for data-driven
  * components without author content. The stylesheet (static stylesheet, an
  * absolute URL) is adopted into the document once.
+ *
+ * `static morph = true`: the children are patched with morph() (core/morph.js)
+ * instead of replaced, for components rendered again on every live update:
+ * unchanged nodes stay, so the height does not jump for a moment (the page
+ * keeps its scroll position, also on iOS Safari without scroll anchoring) and
+ * focus and open states stay. Listeners belong on the component (delegation),
+ * not on rendered elements bound again in afterRender().
  */
 export class LightComponentElement extends HTMLElement {
   static observedAttributes = [];
   static stylesheet = "";
+  static morph = false;
 
   #renderScheduled = false;
 
@@ -47,7 +56,12 @@ export class LightComponentElement extends HTMLElement {
       if (!this.isConnected) {
         return;
       }
-      this.innerHTML = this.render();
+      const html = this.render();
+      if (this.constructor.morph && this.hasRendered) {
+        morph(this, html);
+      } else {
+        this.innerHTML = html;
+      }
       this.hasRendered = true;
       this.afterRender();
     });
