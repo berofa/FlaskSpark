@@ -6,10 +6,14 @@
  *   goes to the sign-in.
  * - Emoticons typed into any text field become emoji (webcomponents/core/emoticons.js; [data-emoticons="off"] keeps
  *   them as typed).
+ * - Stacked tables (.table-stacked, .sm:table-stacked …) get the labels of their cells from the column headers
+ *   (webcomponents/core/stacked-tables.js), also for rows rendered later.
  */
 import { installEmoticons } from "webcomponents/core/emoticons.js";
+import { installStackedTables } from "webcomponents/core/stacked-tables.js";
 
 installEmoticons();
+installStackedTables();
 
 const root = document.documentElement;
 

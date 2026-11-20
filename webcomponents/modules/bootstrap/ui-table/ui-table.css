@@ -71,3 +71,285 @@
     text-align: start;
   }
 }
+
+/* Stacked rows: one line per cell, the label at the start and the value at the end; the footer stacks like the body
+   (same as the light-DOM tables in flaskspark.core's frame.css). */
+.table-stacked {
+  /* As wide as the container, never wider: a table would take the width of its widest cell. */
+  display: block;
+  inline-size: 100%;
+
+  > :is(tbody, tfoot) {
+    display: block;
+  }
+
+  > :is(tbody, tfoot) > tr > * {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  > tfoot > tr {
+    display: block;
+    padding-block: var(--bs-table-cell-padding-y);
+    border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+  }
+
+  > tfoot > tr > td {
+    display: block;
+    padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+    border: 0;
+  }
+
+  > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+    display: flow-root;
+    text-align: end;
+    white-space: normal;
+
+    &::before {
+      content: attr(data-cell);
+      float: inline-start;
+      margin: 0;
+      margin-inline-end: 1rem;
+      color: var(--bs-fg-3, inherit);
+      font-family: var(--bs-body-font-family, system-ui, sans-serif); /* also in monospace cells */
+      font-variant-numeric: normal;
+      font-weight: 500;
+      text-align: start;
+    }
+  }
+}
+
+@container (width < 576px) {
+  .sm\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--bs-body-font-family, system-ui, sans-serif); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}
+
+@container (width < 768px) {
+  .md\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--bs-body-font-family, system-ui, sans-serif); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}
+
+@container (width < 1024px) {
+  .lg\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--bs-body-font-family, system-ui, sans-serif); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}
+
+@container (width < 1280px) {
+  .xl\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--bs-body-font-family, system-ui, sans-serif); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}
+
+@container (width < 1536px) {
+  .\32 xl\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--bs-body-font-family, system-ui, sans-serif); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}

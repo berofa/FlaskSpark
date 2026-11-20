@@ -2,6 +2,24 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Added
+- Stacked tables in the light DOM: a `<table>` with `.table-stacked` or a breakpoint variant (`.sm:table-stacked` …)
+  gets the labels of its cells from the column headers (`webcomponents/core/stacked-tables.js`, installed by the
+  core's `app.js`), also for rows rendered later (live data).
+
+### Changed
+- Stacked tables (light DOM and `<ui-table stacked>`): one line per cell, the label at the start and the value at the
+  end, in the page font also in monospace cells; the footer (totals) stacks like the body; the table is as wide as
+  its container, never wider. `<ui-table>` labels footer cells too, cells spanning several columns no longer.
+
+### Fixed
+- `<ui-tabs>`: the actions beside the tabs are never wider than the header and wrap inside (they stuck out of the card
+  on phones and widened the page).
+- Layout: the page no longer scrolls sideways on iOS Safari when something sticks out (`overflow-x: clip` on the root
+  too; the body alone was ignored there).
+
 ## [1.0.0] - 2026-11-17
 
 ### Highlights

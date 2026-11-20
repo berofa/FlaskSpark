@@ -22,8 +22,12 @@
 }
 
 .ui-tabs-header > .ui-tabs-actions {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   margin-inline-start: auto;
+  /* Never wider than the header: on narrow screens the actions wrap inside (e.g. a row of filter chips) instead of
+     sticking out of the card and widening the page. */
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Beside the panes: vertical pills or a list group. */

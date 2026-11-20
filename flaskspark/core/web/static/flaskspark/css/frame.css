@@ -118,10 +118,17 @@ html.theme-dark {
 }
 
 /* --- Page ---------------------------------------------------------------------------------------------------------- */
+/* The page never scrolls sideways: iOS Safari ignores overflow-x on the body alone (it pans the whole page when
+   anything sticks out), so the root clips too. clip, not hidden: no scroll container, the sticky top bar keeps working. */
+html:has(> body.app-body) {
+  overflow-x: clip;
+}
+
 body.app-body {
   position: relative;
   min-block-size: 100vh;
-  overflow-x: hidden;
+  overflow-x: hidden; /* browsers without clip */
+  overflow-x: clip;
   background: var(--app-page-bg);
   font-family: var(--app-font, var(--bs-font-sans-serif, system-ui, sans-serif));
 
@@ -854,6 +861,289 @@ ui-table { --ui-table-last-row-border-width: var(--app-table-last-row-border-wid
   > :is(tbody, tfoot) > tr:is(.app-total-row, .table-total) > * {
     border-block-start: 2px solid var(--bs-table-border-color);
     font-weight: 600;
+  }
+}
+
+/* Stacked tables (.table-stacked or .sm:table-stacked …, below a container width; labels from the column headers by
+   webcomponents/core/stacked-tables.js): one line per cell, the label at the start and the value at the end, so a row
+   reads like a small card instead of scrolling sideways. The footer (totals) stacks like the body. */
+.table-stacked {
+  /* As wide as the container, never wider: a table would take the width of its widest cell. */
+  display: block;
+  inline-size: 100%;
+
+  > :is(tbody, tfoot) {
+    display: block;
+  }
+
+  > :is(tbody, tfoot) > tr > * {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  > tfoot > tr {
+    display: block;
+    padding-block: var(--bs-table-cell-padding-y);
+    border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+  }
+
+  > tfoot > tr > td {
+    display: block;
+    padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+    border: 0;
+  }
+
+  > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+    display: flow-root;
+    text-align: end;
+    white-space: normal;
+
+    &::before {
+      content: attr(data-cell);
+      float: inline-start;
+      margin: 0;
+      margin-inline-end: 1rem;
+      color: var(--bs-fg-3, inherit);
+      font-family: var(--app-font, var(--bs-font-sans-serif, system-ui, sans-serif)); /* also in monospace cells */
+      font-variant-numeric: normal;
+      font-weight: 500;
+      text-align: start;
+    }
+  }
+}
+
+@container (width < 576px) {
+  .sm\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--app-font, var(--bs-font-sans-serif, system-ui, sans-serif)); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}
+
+@container (width < 768px) {
+  .md\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--app-font, var(--bs-font-sans-serif, system-ui, sans-serif)); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}
+
+@container (width < 1024px) {
+  .lg\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--app-font, var(--bs-font-sans-serif, system-ui, sans-serif)); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}
+
+@container (width < 1280px) {
+  .xl\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--app-font, var(--bs-font-sans-serif, system-ui, sans-serif)); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
+  }
+}
+
+@container (width < 1536px) {
+  .\32 xl\:table-stacked {
+    /* As wide as the container, never wider: a table would take the width of its widest cell. */
+    display: block;
+    inline-size: 100%;
+
+    > :is(tbody, tfoot) {
+      display: block;
+    }
+
+    > :is(tbody, tfoot) > tr > * {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    > tfoot > tr {
+      display: block;
+      padding-block: var(--bs-table-cell-padding-y);
+      border-block-start: calc(2 * var(--bs-table-border-width, 1px)) solid var(--bs-table-border-color);
+    }
+
+    > tfoot > tr > td {
+      display: block;
+      padding: calc(var(--bs-table-cell-padding-y) * .25) calc(var(--bs-table-cell-padding-x) * 2);
+      border: 0;
+    }
+
+    > :is(tbody, tfoot) > tr > td[data-cell]:not(:first-child) {
+      display: flow-root;
+      text-align: end;
+      white-space: normal;
+
+      &::before {
+        content: attr(data-cell);
+        float: inline-start;
+        margin: 0;
+        margin-inline-end: 1rem;
+        color: var(--bs-fg-3, inherit);
+        font-family: var(--app-font, var(--bs-font-sans-serif, system-ui, sans-serif)); /* also in monospace cells */
+        font-variant-numeric: normal;
+        font-weight: 500;
+        text-align: start;
+      }
+    }
   }
 }
 

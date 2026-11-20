@@ -22,7 +22,8 @@ const BREAKPOINTS = new Set(["sm", "md", "lg", "xl", "2xl"]);
  * - card: rounded, bordered and clipped like a card (.table-card).
  * - responsive: horizontal scrolling (.table-responsive), or below a breakpoint: sm | md | lg | xl | 2xl.
  * - stacked: rows as blocks with label–value pairs (.table-stacked), or below a container width:
- *   sm | md | lg | xl | 2xl. Cells without data-cell get the label of their column header.
+ *   sm | md | lg | xl | 2xl. Body and footer cells without data-cell get the label of their column header
+ *   (one line per cell: label at the start, value at the end).
  * Icon column: class="table-icons" on a column header (or on single cells) makes a narrow, right-aligned column
  * for icon buttons that never wraps; the body and footer cells of that column get the class too.
  * Total row: class="table-total" on a <tr> (usually in <tfoot>): a stronger line above, bold.
@@ -133,7 +134,7 @@ export class UiTable extends ShadowComponentElement {
         if (header?.icons && (cell.colSpan || 1) === 1) {
           cell.classList.add("table-icons");
         }
-        if (stacked && header?.label && !cell.hasAttribute("data-cell") && row.parentElement.tagName === "TBODY") {
+        if (stacked && header?.label && (cell.colSpan || 1) === 1 && !cell.hasAttribute("data-cell")) {
           cell.setAttribute("data-cell", header.label);
         }
         column += cell.colSpan || 1;
