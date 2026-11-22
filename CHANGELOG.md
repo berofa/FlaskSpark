@@ -4,6 +4,8 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-22
+
 ### Added
 - Stacked tables in the light DOM: a `<table>` with `.table-stacked` or a breakpoint variant (`.sm:table-stacked` …)
   gets the labels of its cells from the column headers (`webcomponents/core/stacked-tables.js`, installed by the
