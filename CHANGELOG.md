@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Navigation entries without a group: `NavItem("", …)` stands without a heading right below «Home», before every
+  group.
+
 ## [1.1.0] - 2026-11-22
 
 ### Added

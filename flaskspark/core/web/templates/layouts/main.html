@@ -68,7 +68,7 @@
               </a>
             {% endif %}
             {% for group in navigation %}
-              <div class="app-nav-group" data-nav-group="{{ group.key }}">{{ group.label }}</div>
+              {% if group.key %}<div class="app-nav-group" data-nav-group="{{ group.key }}">{{ group.label }}</div>{% endif %}
               {% for item in group["items"] %}
                 {% set current = item.href == nav_active %}
                 <a class="app-nav-link{% if current %} active{% endif %}" href="{{ item.href }}" data-nav-group="{{ group.key }}"{% if current %} aria-current="page"{% endif %}{% if item.disabled %} aria-disabled="true" tabindex="-1"{% endif %}>

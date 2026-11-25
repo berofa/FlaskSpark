@@ -71,7 +71,8 @@ class Area:
 
 @dataclass(frozen=True)
 class NavItem:
-    """An entry of the navigation in the group `group` (created after the existing ones if new).
+    """An entry of the navigation in the group `group` (created after the existing ones if new). The group "" has no
+    heading: its entries stand right below «Home», before every group.
 
     icon: the name of a Bootstrap Icon (e.g. "journal"), optional."""
 

@@ -58,6 +58,23 @@ def test_an_entry_a_module_disables_is_greyed_out_and_not_clickable(client, monk
         assert group["items"][0]["disabled"] is True
 
 
+def test_entries_without_a_group_come_first_and_have_no_heading(client, monkeypatch):
+    from flaskspark.core.module import NavItem
+    from flaskspark.core.web import ADMIN, navigation
+
+    demo = modules.load(config.load())[1]
+    monkeypatch.setattr(type(demo), "NAVIGATION",
+                        (*type(demo).NAVIGATION, NavItem("", N_("Loose"), "/demo/loose", ADMIN, icon="robot")))
+    with client.application.test_request_context("/"):
+        groups = navigation.navigation(modules.load(config.load())[1:])
+    assert [g["key"] for g in groups] == ["", "Demo"]
+    assert [item["href"] for item in groups[0]["items"]] == ["/demo/loose"]
+    html = client.get("/").get_data(as_text=True)
+    assert 'data-nav-group=""' in html  # the entry itself
+    assert '<div class="app-nav-group" data-nav-group=""' not in html  # but no heading for it
+    assert html.index('href="/demo/loose"') < html.index('<div class="app-nav-group" data-nav-group="Demo"')
+
+
 # --- SETTINGS -------------------------------------------------------------------------------------------------------
 def test_a_modules_sections_come_into_its_settings_tab_above_its_form(client):
     html = client.get("/settings").get_data(as_text=True)
